@@ -2,8 +2,37 @@
 # dump — open today's note; on new-day create new and commit+push previous note
 # Usage: dump [dump_dir]
 # First run: you can pass the path to your git-backed notes repo or set DUMP_DIR env var.
+#
+# Special case: If the first argument is a file path ending in .md, the script will
+# just add timestamps to headers in that file without opening it in the editor.
 
 set -euo pipefail
+
+# Parse the file after editing and add timestamps to h2 headers
+add_timestamps_to_headers() {
+  local file="$1"
+  local current_time
+  current_time="$(date +"%H:%M")"
+
+  # Use sed to find h2 headers (##) without timestamps and add timestamps
+  # This looks for lines starting with ##, not followed by @ and a timestamp
+  # Then adds the current time in HH:MM format after the header text
+  if [[ "$(uname)" == "Darwin" ]]; then
+    # macOS requires an empty string with -i to avoid creating a backup file
+    sed -i '' -E 's/^(## [^@]+)$/\1 @'"$current_time"'/g' "$file"
+  else
+    # Linux version
+    sed -i -E 's/^(## [^@]+)$/\1 @'"$current_time"'/g' "$file"
+  fi
+
+  echo "Timestamps added to headers in $file"
+}
+
+# Check if first argument is a markdown file for direct timestamp processing
+if [[ $# -gt 0 && "$1" == *.md && -f "$1" ]]; then
+  add_timestamps_to_headers "$1"
+  exit 0
+fi
 
 # Config: DUMP_DIR can be passed as first arg, or via env DUMP_DIR, or defaults to ~/notes
 DUMP_DIR="${1:-${DUMP_DIR:-$HOME/notes}}"
@@ -11,6 +40,7 @@ EDITOR="${EDITOR:-nvim}"
 BRANCH="${BRANCH:-main}"
 REMOTE="${REMOTE:-origin}"
 DATE_FMT="%Y-%m-%d"
+TIME_FMT="%H:%M"
 TODAY="$(date +"$DATE_FMT")"
 TODAY_FILE="$DUMP_DIR/$TODAY.md"
 
@@ -70,3 +100,6 @@ fi
 
 # Open today's file in editor
 "$EDITOR" "$TODAY_FILE"
+
+# Run the timestamp function on the file after editor exits
+add_timestamps_to_headers "$TODAY_FILE"
