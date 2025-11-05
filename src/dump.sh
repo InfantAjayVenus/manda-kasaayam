@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # dump — open today's note; on new-day create new and commit+push previous note
 # Usage: dump [dump_dir]
+#        dump do - lists all task items grouped by headers
 # First run: you can pass the path to your git-backed notes repo or set DUMP_DIR env var.
 #
 # Special case: If the first argument is a file path ending in .md, the script will
@@ -27,6 +28,48 @@ add_timestamps_to_headers() {
 
   echo "Timestamps added to headers in $file"
 }
+
+# Function to parse and display task list items grouped by headers
+list_tasks() {
+  local file="$1"
+  local current_header=""
+  local has_tasks=false
+
+  # Read the file line by line
+  while IFS= read -r line; do
+    # Check if the line is a header
+    if [[ "$line" =~ ^#+ ]]; then
+      current_header="$line"
+      # Reset the has_tasks flag for the new header
+      has_tasks=false
+    # Check if the line is a task list item
+    elif [[ "$line" =~ ^[[:space:]]*-[[:space:]]*\[[[:space:]xX]?\] ]]; then
+      # If this is the first task under this header, print the header
+      if [[ "$has_tasks" == false && -n "$current_header" ]]; then
+        echo "$current_header"
+        has_tasks=true
+      fi
+      # Print the task with added indentation
+      echo -e "\t$line"
+    fi
+  done < "$file"
+}
+
+# Check if first argument is "do" to list tasks
+if [[ $# -gt 0 && "$1" == "do" ]]; then
+  # Config setup for accessing the correct files
+  DUMP_DIR="${2:-${DUMP_DIR:-$HOME/notes}}"
+  TODAY="$(date +"%Y-%m-%d")"
+  TODAY_FILE="$DUMP_DIR/$TODAY.md"
+  
+  # Check if today's file exists
+  if [ -f "$TODAY_FILE" ]; then
+    list_tasks "$TODAY_FILE"
+  else
+    echo "Today's note file doesn't exist yet."
+  fi
+  exit 0
+fi
 
 # Check if first argument is a markdown file for direct timestamp processing
 if [[ $# -gt 0 && "$1" == *.md && -f "$1" ]]; then
