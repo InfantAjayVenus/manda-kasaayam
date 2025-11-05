@@ -83,7 +83,7 @@ if [ ! -f "$TODAY_FILE" ]; then
       # Use the git root directory for git operations
       cd "$GIT_ROOT"
       # Calculate the relative path from git root to the file
-      REL_PATH="$(realpath --relative-to="$GIT_ROOT" "$prev_path")"
+      REL_PATH="${prev_path#$GIT_ROOT/}"
       git add -- "$REL_PATH"
       # only commit if there are staged changes
       if ! git diff --cached --quiet; then
