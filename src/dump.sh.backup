@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+# dump — open today's note; on new-day create new and commit+push previous note
+# Usage: dump [dump_dir]
+# First run: you can pass the path to your git-backed notes repo or set DUMP_DIR env var.
+
+set -euo pipefail
+
+# Config: DUMP_DIR can be passed as first arg, or via env DUMP_DIR, or defaults to ~/notes
+DUMP_DIR="${1:-${DUMP_DIR:-$HOME/notes}}"
+EDITOR="${EDITOR:-vim}"
+BRANCH="${BRANCH:-main}"
+REMOTE="${REMOTE:-origin}"
+DATE_FMT="%Y-%m-%d"
+TODAY="$(date +"$DATE_FMT")"
+TODAY_FILE="$DUMP_DIR/$TODAY.md"
+
+# Ensure notes dir exists
+if [ ! -d "$DUMP_DIR" ]; then
+  echo "Notes dir not found: $DUMP_DIR"
+  echo "Create it and initialize a git repo (git init; git remote add origin ...), or run this script with an existing repo path."
+  exit 1
+fi
+
+# Ensure it's a git repo
+if [ ! -d "$DUMP_DIR/.git" ]; then
+  echo "Directory is not a git repo: $DUMP_DIR"
+  echo "Initialize one: cd \"$DUMP_DIR\" && git init && git remote add $REMOTE <url>"
+  exit 1
+fi
+
+# Find the most recent markdown file (not including today) sorted by name (ISO dates work)
+prev_file="$(find "$DUMP_DIR" -maxdepth 1 -type f -name '????-??-??.md' ! -name "$TODAY.md" -printf '%f\n' 2>/dev/null | sort -r | head -n1 || true)"
+prev_path=""
+if [ -n "$prev_file" ]; then
+  prev_path="$DUMP_DIR/$prev_file"
+fi
+
+# If today's file doesn't exist, commit & push the previous file (if any)
+if [ ! -f "$TODAY_FILE" ]; then
+  if [ -n "$prev_path" ] && [ -f "$prev_path" ]; then
+    (
+      cd "$DUMP_DIR"
+      git add -- "$prev_file"
+      # only commit if there are staged changes
+      if ! git diff --cached --quiet; then
+        git commit -m "Auto: save $prev_file"
+        # push, but do not fail the script if push fails (network etc.)
+        git push "$REMOTE" "$BRANCH" || echo "git push failed (continuing)"
+      fi
+    )
+  fi
+  # create today's file with a header
+  mkdir -p "$DUMP_DIR"
+  printf "# %s\n\n" "$TODAY" >"$TODAY_FILE"
+fi
+
+# Open today's file in editor
+"$EDITOR" "$TODAY_FILE"
