@@ -249,6 +249,46 @@ update_file_with_tasks() {
   mv "$temp_file" "$file"
 }
 
+# Function to display help
+show_help() {
+  cat <<EOF
+dump — open today's note; on new-day create new and commit+push previous note
+
+Usage:
+  dump [dump_dir]              Open today's note file in \$EDITOR
+  dump do [dump_dir]           Interactive task list view (toggle/delete tasks)
+  dump <file.md>               Add timestamps to headers in specified file
+  dump -h, --help              Show this help message
+
+Options:
+  dump_dir                     Path to git-backed notes directory
+                               Can also be set via DUMP_DIR environment variable
+                               Default: ~/notes
+
+Environment Variables:
+  DUMP_DIR                     Notes directory path
+  EDITOR                       Editor to use (default: nvim)
+  BRANCH                       Git branch to push to (default: main)
+  REMOTE                       Git remote to push to (default: origin)
+
+Examples:
+  dump                         Open today's note with default settings
+  dump ~/my-notes              Open today's note in ~/my-notes
+  dump do                      View and manage tasks interactively
+  dump 2025-11-07.md           Add timestamps to specified file
+  
+First run: Create a git-backed notes directory and initialize it with git, or
+pass the path to your existing notes repo.
+
+EOF
+}
+
+# Check for help flag
+if [[ $# -gt 0 && ("$1" == "-h" || "$1" == "--help") ]]; then
+  show_help
+  exit 0
+fi
+
 # Check if first argument is "do" to list tasks
 if [[ $# -gt 0 && "$1" == "do" ]]; then
   # Config setup for accessing the correct files
