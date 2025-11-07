@@ -62,6 +62,9 @@ extract_incomplete_tasks() {
   local current_header=""
   local has_incomplete_tasks=false
   local temp_output=""
+  
+  # Extract the filename from the full path
+  local source_filename="$(basename "$file")"
 
   # Read the file line by line
   while IFS= read -r line; do
@@ -70,7 +73,7 @@ extract_incomplete_tasks() {
       # If we had incomplete tasks under the previous header, write them
       if [[ "$has_incomplete_tasks" == true && -n "$current_header" ]]; then
         echo "" >> "$output_file"
-        echo "$current_header" >> "$output_file"
+        echo "$current_header [[${source_filename}]]" >> "$output_file"
         echo "" >> "$output_file"
         echo "$temp_output" >> "$output_file"
       fi
@@ -92,7 +95,7 @@ extract_incomplete_tasks() {
   # Write any remaining incomplete tasks at the end of the file
   if [[ "$has_incomplete_tasks" == true && -n "$current_header" ]]; then
     echo "" >> "$output_file"
-    echo "$current_header" >> "$output_file"
+    echo "$current_header [[${source_filename}]]" >> "$output_file"
     echo "" >> "$output_file"
     echo "$temp_output" >> "$output_file"
   fi
