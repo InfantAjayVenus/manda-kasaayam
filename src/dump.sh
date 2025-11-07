@@ -101,6 +101,154 @@ extract_incomplete_tasks() {
   fi
 }
 
+# Function to display tasks in an interactive TUI
+interactive_task_view() {
+  local file="$1"
+  local tasks=()
+  local headers=()
+  local current_header=""
+  
+  # Parse tasks and headers
+  while IFS= read -r line; do
+    if [[ "$line" =~ ^##[[:space:]] ]]; then
+      current_header="$line"
+    elif [[ "$line" =~ ^[[:space:]]*-[[:space:]]*\[[[:space:]xX]?\] ]]; then
+      tasks+=("$line")
+      headers+=("$current_header")
+    fi
+  done < "$file"
+  
+  # Exit if no tasks found
+  if [ ${#tasks[@]} -eq 0 ]; then
+    echo "No tasks found in today's file."
+    return
+  fi
+  
+  local selected=0
+  local total=${#tasks[@]}
+  
+  # Function to draw the screen
+  draw_screen() {
+    clear
+    echo "=== Task List (q: quit, ↑↓/jk: navigate, space: toggle, d: delete) ==="
+    echo ""
+    
+    for i in "${!tasks[@]}"; do
+      if [ $i -eq $selected ]; then
+        echo -e "\033[7m> ${headers[$i]}\033[0m"  # Reverse video for selection
+        echo -e "\033[7m  ${tasks[$i]}\033[0m"
+      else
+        echo "  ${headers[$i]}"
+        echo "    ${tasks[$i]}"
+      fi
+      echo ""
+    done
+  }
+  
+  # Main loop
+  while true; do
+    draw_screen
+    
+    # Read single character
+    IFS= read -rsn1 key
+    
+    case "$key" in
+      $'\x1b')  # Escape sequence
+        read -rsn2 -t 0.1 key
+        case "$key" in
+          '[A'|'[D') # Up arrow
+            ((selected > 0)) && ((selected--))
+            ;;
+          '[B'|'[C') # Down arrow
+            ((selected < total - 1)) && ((selected++))
+            ;;
+        esac
+        ;;
+      'k'|'K')  # Vi-style up
+        ((selected > 0)) && ((selected--))
+        ;;
+      'j'|'J')  # Vi-style down
+        ((selected < total - 1)) && ((selected++))
+        ;;
+      ' ')  # Space to toggle task
+        local task="${tasks[$selected]}"
+        if [[ "$task" =~ \[[[:space:]]\] ]]; then
+          # Mark as complete
+          tasks[$selected]="${task//\[ \]/[x]}"
+        elif [[ "$task" =~ \[[xX]\] ]]; then
+          # Mark as incomplete
+          tasks[$selected]="${task//\[[xX]\]/[ ]}"
+        fi
+        # Update the file
+        update_file_with_tasks "$file"
+        ;;
+      'd'|'D')  # Delete task
+        unset 'tasks[$selected]'
+        unset 'headers[$selected]'
+        tasks=("${tasks[@]}")  # Re-index array
+        headers=("${headers[@]}")
+        total=${#tasks[@]}
+        if [ $total -eq 0 ]; then
+          update_file_with_tasks "$file"
+          echo "All tasks processed!"
+          return
+        fi
+        ((selected >= total)) && ((selected--))
+        update_file_with_tasks "$file"
+        ;;
+      'q'|'Q')  # Quit
+        clear
+        return
+        ;;
+    esac
+  done
+}
+
+# Function to update the file with modified tasks
+update_file_with_tasks() {
+  local file="$1"
+  
+  # Create a temporary file with updated content
+  local temp_file=$(mktemp)
+  local current_header=""
+  local in_task_section=false
+  
+  # First, write everything from the original file except task lines
+  while IFS= read -r line; do
+    if [[ "$line" =~ ^##[[:space:]] ]]; then
+      current_header="$line"
+      echo "$line" >> "$temp_file"
+      in_task_section=true
+    elif [[ "$line" =~ ^[[:space:]]*-[[:space:]]*\[[[:space:]xX]?\] ]]; then
+      # Skip task lines, we'll add them back from our arrays
+      continue
+    else
+      if [ "$in_task_section" = true ] && [ -z "$line" ]; then
+        # This is the blank line after tasks, write updated tasks first
+        for i in "${!headers[@]}"; do
+          if [ "${headers[$i]}" = "$current_header" ]; then
+            echo "${tasks[$i]}" >> "$temp_file"
+          fi
+        done
+        in_task_section=false
+      fi
+      echo "$line" >> "$temp_file"
+    fi
+  done < "$file"
+  
+  # Handle tasks at the end of file (no trailing blank line)
+  if [ "$in_task_section" = true ]; then
+    for i in "${!headers[@]}"; do
+      if [ "${headers[$i]}" = "$current_header" ]; then
+        echo "${tasks[$i]}" >> "$temp_file"
+      fi
+    done
+  fi
+  
+  # Replace original file
+  mv "$temp_file" "$file"
+}
+
 # Check if first argument is "do" to list tasks
 if [[ $# -gt 0 && "$1" == "do" ]]; then
   # Config setup for accessing the correct files
@@ -110,7 +258,7 @@ if [[ $# -gt 0 && "$1" == "do" ]]; then
   
   # Check if today's file exists
   if [ -f "$TODAY_FILE" ]; then
-    list_tasks "$TODAY_FILE"
+    interactive_task_view "$TODAY_FILE"
   else
     echo "Today's note file doesn't exist yet."
   fi
