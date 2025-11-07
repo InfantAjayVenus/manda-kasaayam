@@ -55,6 +55,49 @@ list_tasks() {
   done < "$file"
 }
 
+# Function to extract incomplete tasks from a file and write them to the output
+extract_incomplete_tasks() {
+  local file="$1"
+  local output_file="$2"
+  local current_header=""
+  local has_incomplete_tasks=false
+  local temp_output=""
+
+  # Read the file line by line
+  while IFS= read -r line; do
+    # Check if the line is a header (## level)
+    if [[ "$line" =~ ^##[[:space:]] ]]; then
+      # If we had incomplete tasks under the previous header, write them
+      if [[ "$has_incomplete_tasks" == true && -n "$current_header" ]]; then
+        echo "" >> "$output_file"
+        echo "$current_header" >> "$output_file"
+        echo "" >> "$output_file"
+        echo "$temp_output" >> "$output_file"
+      fi
+      # Store the new header and reset flags
+      current_header="$line"
+      has_incomplete_tasks=false
+      temp_output=""
+    # Check if the line is an incomplete task (- [ ])
+    elif [[ "$line" =~ ^[[:space:]]*-[[:space:]]*\[[[:space:]]\] ]]; then
+      has_incomplete_tasks=true
+      if [[ -z "$temp_output" ]]; then
+        temp_output="$line"
+      else
+        temp_output="$temp_output"$'\n'"$line"
+      fi
+    fi
+  done < "$file"
+
+  # Write any remaining incomplete tasks at the end of the file
+  if [[ "$has_incomplete_tasks" == true && -n "$current_header" ]]; then
+    echo "" >> "$output_file"
+    echo "$current_header" >> "$output_file"
+    echo "" >> "$output_file"
+    echo "$temp_output" >> "$output_file"
+  fi
+}
+
 # Check if first argument is "do" to list tasks
 if [[ $# -gt 0 && "$1" == "do" ]]; then
   # Config setup for accessing the correct files
@@ -139,6 +182,11 @@ if [ ! -f "$TODAY_FILE" ]; then
   # create today's file with a header
   mkdir -p "$DUMP_DIR"
   printf "# %s\n\n" "$TODAY" >"$TODAY_FILE"
+  
+  # Extract incomplete tasks from the previous file if it exists
+  if [ -n "$prev_path" ] && [ -f "$prev_path" ]; then
+    extract_incomplete_tasks "$prev_path" "$TODAY_FILE"
+  fi
 fi
 
 # Open today's file in editor
