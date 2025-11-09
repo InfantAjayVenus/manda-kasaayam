@@ -399,49 +399,27 @@ if [ ! -f "$TODAY_FILE" ]; then
   # Extract incomplete tasks from the previous file if it exists
   if [ -n "$prev_path" ] && [ -f "$prev_path" ]; then
     extract_incomplete_tasks "$prev_path" "$TODAY_FILE"
-  fi
-fi
-
-# Add markdown separator and entry header only if previous entry has content
-# Count existing entries by looking for "###### Entry" headers
-entry_count=$(grep -c "^###### Entry" "$TODAY_FILE" 2>/dev/null || echo 0)
-entry_count=${entry_count%%$'\n'*}  # Remove any newlines
-
-# Check if we need to add a new entry
-# If there are no entries yet, or if the last entry has content, add a new entry
-should_add_entry=true
-
-if [ "$entry_count" -gt 0 ]; then
-  # Get the last entry header line number
-  last_entry_line=$(grep -n "^###### Entry $entry_count" "$TODAY_FILE" | tail -1 | cut -d: -f1)
-  
-  # Get total lines in file
-  total_lines=$(wc -l < "$TODAY_FILE")
-  total_lines=${total_lines%%$'\n'*}  # Remove any newlines
-  
-  # Extract content after the last entry header
-  content_after_header=$(tail -n +$((last_entry_line + 1)) "$TODAY_FILE" | sed '/^$/d; /^---$/d; /^###### Entry/d')
-  
-  # If there's no content after the last entry header, don't add a new entry
-  if [ -z "$content_after_header" ]; then
-    should_add_entry=false
-  fi
-fi
-
-if [ "$should_add_entry" = true ]; then
-  next_entry=$((entry_count + 1))
-  
-  # If this is not the first entry, add a separator
-  if [ "$entry_count" -gt 0 ]; then
     echo "" >> "$TODAY_FILE"
     echo "---" >> "$TODAY_FILE"
     echo "" >> "$TODAY_FILE"
   fi
-  
-  # Add entry header
-  echo "###### Entry $next_entry" >> "$TODAY_FILE"
+fi
+
+# Add timestamp as a link
+# Get current time in HH:MM format
+current_time="$(date +"$TIME_FMT")"
+
+# Check if the last line is empty or if we need to add spacing
+last_line=$(tail -n 1 "$TODAY_FILE" 2>/dev/null || echo "")
+
+# Add appropriate spacing before timestamp
+if [ -n "$last_line" ]; then
   echo "" >> "$TODAY_FILE"
 fi
+
+# Add timestamp as a markdown link
+echo "[[${current_time}]]" >> "$TODAY_FILE"
+echo "" >> "$TODAY_FILE"
 
 # Open today's file in editor
 "$EDITOR" "$TODAY_FILE"
