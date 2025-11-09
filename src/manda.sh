@@ -428,6 +428,3 @@ echo "" >> "$TODAY_FILE"
 echo "" >> "$TODAY_FILE"
 echo "---" >> "$TODAY_FILE"
 echo "" >> "$TODAY_FILE"
-
-# Run the timestamp function on the file after editor exits
-add_timestamps_to_headers "$TODAY_FILE"
