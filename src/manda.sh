@@ -560,25 +560,58 @@ else
 fi
 
 # Find the most recent markdown file (not including today) sorted by name (ISO dates work)
-# Using ls instead of find with -printf which is GNU-specific and not available on macOS
-prev_file="$(cd "$MANDA_DIR" && ls -1 ????-??-??.md 2>/dev/null | grep -v "$TODAY.md" | sort -r | head -n1 || true)"
+# Search in both root directory and archive directories (YYYY/MM/)
+# Using find to search across the directory structure
 prev_path=""
-if [ -n "$prev_file" ]; then
-  prev_path="$MANDA_DIR/$prev_file"
+if command -v find &>/dev/null; then
+  # Find all .md files matching the date pattern, exclude today's file
+  prev_path="$(find "$MANDA_DIR" -type f -name '????-??-??.md' ! -name "$TODAY.md" 2>/dev/null | sort -r | head -n1 || true)"
+else
+  # Fallback to ls for just the root directory if find is not available
+  prev_file="$(cd "$MANDA_DIR" && ls -1 ????-??-??.md 2>/dev/null | grep -v "$TODAY.md" | sort -r | head -n1 || true)"
+  if [ -n "$prev_file" ]; then
+    prev_path="$MANDA_DIR/$prev_file"
+  fi
 fi
 
 # If today's file doesn't exist, commit & push the previous file (if any)
 if [ ! -f "$TODAY_FILE" ]; then
+  # Store the archive path for task extraction
+  prev_archive_path=""
+  
   if [ -n "$prev_path" ] && [ -f "$prev_path" ]; then
+    # Extract date from previous file name (YYYY-MM-DD.md)
+    prev_filename="$(basename "$prev_path")"
+    prev_date="${prev_filename%.md}"
+    
+    # Extract year and month from date
+    prev_year="${prev_date:0:4}"
+    prev_month="${prev_date:5:2}"
+    
+    # Create archive directory structure: MANDA_DIR/YYYY/MM/
+    archive_dir="$MANDA_DIR/$prev_year/$prev_month"
+    mkdir -p "$archive_dir"
+    
+    # New path for archived file: MANDA_DIR/YYYY/MM/YYYY-MM-DD.md
+    archive_path="$archive_dir/$prev_filename"
+    
+    # Move the file to the archive location
+    mv "$prev_path" "$archive_path"
+    prev_archive_path="$archive_path"
+    
     (
       # Use the git root directory for git operations
       cd "$GIT_ROOT"
-      # Calculate the relative path from git root to the file
-      REL_PATH="${prev_path#$GIT_ROOT/}"
-      git add -- "$REL_PATH"
+      # Calculate the relative paths from git root
+      REL_PATH_OLD="${prev_path#$GIT_ROOT/}"
+      REL_PATH_NEW="${archive_path#$GIT_ROOT/}"
+      
+      # Stage the move operation
+      git add -- "$REL_PATH_OLD" "$REL_PATH_NEW"
+      
       # only commit if there are staged changes
       if ! git diff --cached --quiet; then
-        git commit -m "Auto: save $REL_PATH"
+        git commit -m "Auto: archive $prev_filename to $prev_year/$prev_month/"
         # push, but do not fail the script if push fails (network etc.)
         git push "$REMOTE" "$BRANCH" || echo "git push failed (continuing)"
       fi
@@ -589,8 +622,8 @@ if [ ! -f "$TODAY_FILE" ]; then
   printf "# %s\n\n" "$TODAY" >"$TODAY_FILE"
 
   # Extract incomplete tasks from the previous file if it exists
-  if [ -n "$prev_path" ] && [ -f "$prev_path" ]; then
-    extract_incomplete_tasks "$prev_path" "$TODAY_FILE"
+  if [ -n "$prev_archive_path" ] && [ -f "$prev_archive_path" ]; then
+    extract_incomplete_tasks "$prev_archive_path" "$TODAY_FILE"
     echo "" >> "$TODAY_FILE"
     echo "---" >> "$TODAY_FILE"
     echo "" >> "$TODAY_FILE"
