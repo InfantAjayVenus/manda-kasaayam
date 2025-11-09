@@ -1,242 +1,91 @@
 # Manda-Kasaayam
 
-A simple daily note-taking tool that automatically commits and pushes your previous day's notes.
+For when your brain is a sieve and you need to remember what you did yesterday. It's a simple script that wrangles your daily notes in a git repo, because who has time for GUIs?
 
-## Features
+It creates a new markdown file for you every day. When you start a new day, it sneakily commits yesterday's note, so you can't forget. It also yanks your unfinished todos over to the new file, because procrastination is a feature, not a bug.
 
-- **Daily Notes Management**
-  - Automatically creates dated markdown files (YYYY-MM-DD.md)
-  - Commits and pushes the previous day's notes when you open today's note
-  - Works with your preferred editor (defaults to nvim)
-  - Git-backed for version control and synchronization
-  - Works with notes in any subdirectory of a git repository
+## What it does
 
-- **Time Tracking & Organization**
-  - Automatic timestamp entries (HH:MM format) when opening notes
-  - Timestamps are added as markdown wikilinks: `[[HH:MM]]`
-  - Automatic separator lines (`---`) between entries
-  - Smart entry detection: only adds new entries if previous one has content
-  - Automatic timestamps on h2 headers (`##`) when saving notes
-
-- **Task Management**
-  - Automatic rollover of incomplete tasks from previous day
-  - Tasks carry source file references for context (e.g., `[[2025-11-08.md]]`)
-  - Interactive TUI for task management with collapsible sections
-  - Toggle task completion status ([ ] ↔ [x])
-  - Delete tasks interactively
-  - Navigate with arrow keys or Vim-style (j/k/h/l)
-  - Collapse/expand task sections by header (h/l/c keys)
-  - Dual-mode navigation: header selection (h) and task selection (l)
-
-- **Markdown Preview**
-  - Preview today's note with rich markdown formatting
-  - Uses `glow`, `mdcat`, `bat`, or fallback to `less`
-  - Quick view without opening editor
+- **Daily Notes:** Creates a `YYYY-MM-DD.md` file for your daily thoughts.
+- **Auto-Commit:** When you create a new day's note, it adds and commits the previous one. No more "WIP" commits at midnight.
+- **Task Rollover:** Incomplete markdown tasks (`- [ ]`) from the previous day are carried over to the new note, complete with a link back to the original file.
+- **Timestamps:** Adds `[[HH:MM]]` timestamps when you open the note, and can add `@HH:MM` to `## headers` in any markdown file on command.
+- **Interactive TUI:** A `do` command that pops up a terminal UI for your tasks. You can check things off, delete them, and collapse headers if you're feeling overwhelmed. All with glorious keyboard navigation, of course.
+- **Markdown Preview:** The `see` command lets you peek at your note without firing up your editor. It uses `bat`, `glow`, or `mdcat` if you have them, otherwise it falls back to `less`. Fancy.
 
 ## Installation
 
-1. Clone this repository:
-   ```bash
-   git clone <repository-url>
-   cd manda-kasaayam
-   ```
-
-2. Run the install script:
-   ```bash
-   chmod +x install.sh
-   ./install.sh
-   ```
-
-3. Restart your terminal or run:
-   ```bash
-   source ~/.zshrc
-   ```
+1.  Clone the repo.
+2.  `chmod +x install.sh && ./install.sh`
+3.  `source ~/.zshrc` (or whatever your shell's rc file is).
 
 ## Usage
 
-### Basic Usage
-
-Open today's note:
+### The Basics
 
 ```bash
+# Open today's note. This is the main event.
 manda
-# or
+# or use the alias
 mk
 ```
 
-This will:
-- Create today's note file if it doesn't exist
-- Commit and push yesterday's note if it exists and has changes
-- Copy incomplete tasks from yesterday's note to today's note (with source file links)
-- Add a new timestamped entry (`[[HH:MM]]`) if the previous entry has content
-- Open today's note in your configured editor
-- Automatically add a separator line (`---`) after you exit the editor (if content was added)
-
-### Interactive Task Management
-
-View and manage tasks interactively:
+### The Task Manager
 
 ```bash
+# Fire up the interactive task manager for today's note.
 manda do
-# or
 mk do
 ```
 
-This opens an interactive TUI where you can:
-- Navigate tasks with arrow keys (`↑↓`) or Vim-style keys (`j`/`k`)
-- Switch between header and task selection modes (`h` for headers, `l` for tasks)
-- Toggle task completion with `space` (in task mode)
-- Collapse/expand header sections with `c` (in header mode) or `space` (in header mode)
-- Delete tasks with `d` (in task mode)
-- Quit with `q`
+In the TUI:
+- `j/k` or `↑/↓` to navigate.
+- `h` to select headers, `l` to select tasks.
+- `space` or `c` to toggle task completion or collapse a header.
+- `d` to delete a task.
+- `q` to quit.
 
-**Navigation Modes:**
-- **Header Mode** (press `h`): Navigate and collapse/expand sections
-- **Task Mode** (press `l`): Navigate and modify individual tasks
-
-Headers show collapse state with symbols:
-- `▼` = expanded (tasks visible)
-- `▶` = collapsed (tasks hidden)
-
-### Preview Today's Note
-
-View today's note with markdown formatting:
+### The Quick Peek
 
 ```bash
+# Preview today's note.
 manda see
-# or
 mk see
 ```
 
-This displays today's note with rich markdown rendering using available tools (glow, mdcat, bat, or less). Perfect for a quick review without opening the editor.
-
-### Add Timestamps to Specific File
-
-Process any markdown file to add timestamps to h2 headers without opening it:
+### The "Oh, I forgot to timestamp this" command
 
 ```bash
-manda /path/to/file.md
-# or
-mk /path/to/file.md
+# Adds @HH:MM to all H2 headers in a file that don't have one.
+manda /path/to/any.md
 ```
-
-This will add `@HH:MM` timestamps to all h2 headers (`## Header`) that don't already have one.
 
 ### Help
 
-Display help information:
-
 ```bash
 manda --help
-# or
-manda -h
-# or
-mk --help
 ```
 
-### Configuration
+## Configuration
 
-You can configure the tool with these environment variables:
+Set these environment variables, probably in your `.zshrc` or `.bashrc`.
 
-- `MANDA_DIR`: Directory for your notes (required - must be set or passed as argument)
-- `EDITOR`: Your preferred text editor (default: nvim)
-- `BRANCH`: Git branch to use (default: main)
-- `REMOTE`: Git remote to use (default: origin)
+- `MANDA_DIR`: **(Required)** The absolute path to your notes directory. This directory must be inside a git repository.
+- `EDITOR`: Your editor of choice (default: `nvim`).
+- `BRANCH`: The git branch to push to (default: `main`).
+- `REMOTE`: The git remote to push to (default: `origin`).
 
-You must either set the `MANDA_DIR` environment variable or pass the directory as an argument:
-
+Example:
 ```bash
-# Set MANDA_DIR environment variable (recommended)
-export MANDA_DIR=/path/to/notes
-manda
-
-# Or pass directory as argument
-manda /path/to/alternative/notes
-# or
-mk /path/to/alternative/notes
+export MANDA_DIR="/Users/you/Documents/notes"
+export EDITOR="vim"
 ```
 
-### Examples
-
+You can also pass the notes directory as an argument, which will override the `MANDA_DIR` variable for that command.
 ```bash
-# Open today's note (requires MANDA_DIR to be set)
-manda
-
-# Open today's note in a custom directory
-manda ~/my-notes
-
-# Manage tasks interactively (header and task navigation)
-manda do
-
-# Manage tasks in a custom directory
-manda do ~/my-notes
-
-# Preview today's note with markdown formatting
-manda see
-
-# Preview note in a custom directory
-manda see ~/my-notes
-
-# Add @HH:MM timestamps to h2 headers in a specific file
-manda 2025-11-07.md
-
-# Process a file in a specific directory
-manda ~/my-notes/2025-11-08.md
-
-# Show help
-manda --help
-
-# Using the shorter alias
-mk
-mk do
-mk see
-mk --help
+manda /path/to/some/other/notes
 ```
-
-## How It Works
-
-### Daily Note Workflow
-
-1. **Opening a note**: When you run `manda`, it:
-   - Checks if today's note exists
-   - If not, commits and pushes yesterday's note (if it has changes)
-   - Copies incomplete tasks from yesterday to today (with source links like `[[YYYY-MM-DD.md]]`)
-   - Creates today's note with date header (`# YYYY-MM-DD`)
-   - Adds a timestamped entry (`[[HH:MM]]`) if needed
-   - Opens in your editor
-
-2. **During editing**: 
-   - Add content under timestamp entries
-   - Create h2 headers (`## Header`) for organization
-   - Add tasks as markdown checkboxes (`- [ ] task` or `- [x] done`)
-
-3. **After closing**: The script automatically:
-   - Adds a separator line (`---`) if you added content
-   - Prepares for the next entry
-
-### Task Rollover
-
-Incomplete tasks (`- [ ] task`) are automatically:
-- Extracted from the previous day's note
-- Grouped by their h2 headers
-- Tagged with source file reference (e.g., `## Header [[2025-11-08.md]]`)
-- Added to the top of the new day's note
-- Placed above the first timestamp entry
-
-### Timestamp Entries
-
-The script creates structured daily logs with:
-- Timestamp links: `[[HH:MM]]` marking when you opened the note
-- Content sections between timestamps
-- Separators (`---`) between entries
-- Smart detection: no new entry if previous one is empty
-
-## Directory Structure
-
-- `src/`: Contains the main script
-- `bin/`: Contains the symlinks to the script (manda and mk)
-- `notes/`: Default location for your notes
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT. See [LICENSE](LICENSE).
