@@ -263,10 +263,10 @@ Usage:
 Options:
   notes_dir                    Path to git-backed notes directory
                                Can also be set via MANDA_DIR environment variable
-                               Default: ~/notes
+                               (Required if MANDA_DIR is not set)
 
 Environment Variables:
-  MANDA_DIR                    Notes directory path
+  MANDA_DIR                    Notes directory path (required)
   EDITOR                       Editor to use (default: nvim)
   BRANCH                       Git branch to push to (default: main)
   REMOTE                       Git remote to push to (default: origin)
@@ -292,7 +292,16 @@ fi
 # Check if first argument is "do" to list tasks
 if [[ $# -gt 0 && "$1" == "do" ]]; then
   # Config setup for accessing the correct files
-  MANDA_DIR="${2:-${MANDA_DIR:-$HOME/notes}}"
+  MANDA_DIR="${2:-${MANDA_DIR}}"
+  
+  # Check if MANDA_DIR is set
+  if [ -z "$MANDA_DIR" ]; then
+    echo "Error: Notes directory not specified."
+    echo "Set MANDA_DIR environment variable or pass the directory as an argument:"
+    echo "  manda do /path/to/notes"
+    exit 1
+  fi
+  
   TODAY="$(date +"%Y-%m-%d")"
   TODAY_FILE="$MANDA_DIR/$TODAY.md"
   
@@ -311,8 +320,21 @@ if [[ $# -gt 0 && "$1" == *.md && -f "$1" ]]; then
   exit 0
 fi
 
-# Config: MANDA_DIR can be passed as first arg, or via env MANDA_DIR, or defaults to ~/notes
-MANDA_DIR="${1:-${MANDA_DIR:-$HOME/notes}}"
+# Config: MANDA_DIR can be passed as first arg, or via env MANDA_DIR
+MANDA_DIR="${1:-${MANDA_DIR}}"
+
+# Check if MANDA_DIR is set
+if [ -z "$MANDA_DIR" ]; then
+  echo "Error: Notes directory not specified."
+  echo ""
+  echo "Set MANDA_DIR environment variable or pass the directory as an argument:"
+  echo "  export MANDA_DIR=/path/to/notes"
+  echo "  manda /path/to/notes"
+  echo ""
+  echo "See 'manda --help' for more information."
+  exit 1
+fi
+
 EDITOR="${EDITOR:-nvim}"
 BRANCH="${BRANCH:-main}"
 REMOTE="${REMOTE:-origin}"

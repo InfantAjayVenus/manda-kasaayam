@@ -93,14 +93,19 @@ mk --help
 
 You can configure the tool with these environment variables:
 
-- `MANDA_DIR`: Directory for your notes (default: ~/notes)
+- `MANDA_DIR`: Directory for your notes (required - must be set or passed as argument)
 - `EDITOR`: Your preferred text editor (default: nvim)
 - `BRANCH`: Git branch to use (default: main)
 - `REMOTE`: Git remote to use (default: origin)
 
-You can also pass an alternative directory as an argument:
+You must either set the `MANDA_DIR` environment variable or pass the directory as an argument:
 
 ```bash
+# Set MANDA_DIR environment variable (recommended)
+export MANDA_DIR=/path/to/notes
+manda
+
+# Or pass directory as argument
 manda /path/to/alternative/notes
 # or
 mk /path/to/alternative/notes
@@ -109,7 +114,7 @@ mk /path/to/alternative/notes
 ### Examples
 
 ```bash
-# Open today's note with default settings
+# Open today's note (requires MANDA_DIR to be set)
 manda
 
 # Open today's note in a custom directory
