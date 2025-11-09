@@ -28,6 +28,11 @@ A simple daily note-taking tool that automatically commits and pushes your previ
   - Collapse/expand task sections by header (h/l/c keys)
   - Dual-mode navigation: header selection (h) and task selection (l)
 
+- **Markdown Preview**
+  - Preview today's note with rich markdown formatting
+  - Uses `glow`, `mdcat`, `bat`, or fallback to `less`
+  - Quick view without opening editor
+
 ## Installation
 
 1. Clone this repository:
@@ -93,6 +98,18 @@ Headers show collapse state with symbols:
 - `▼` = expanded (tasks visible)
 - `▶` = collapsed (tasks hidden)
 
+### Preview Today's Note
+
+View today's note with markdown formatting:
+
+```bash
+manda see
+# or
+mk see
+```
+
+This displays today's note with rich markdown rendering using available tools (glow, mdcat, bat, or less). Perfect for a quick review without opening the editor.
+
 ### Add Timestamps to Specific File
 
 Process any markdown file to add timestamps to h2 headers without opening it:
@@ -154,6 +171,12 @@ manda do
 # Manage tasks in a custom directory
 manda do ~/my-notes
 
+# Preview today's note with markdown formatting
+manda see
+
+# Preview note in a custom directory
+manda see ~/my-notes
+
 # Add @HH:MM timestamps to h2 headers in a specific file
 manda 2025-11-07.md
 
@@ -166,6 +189,7 @@ manda --help
 # Using the shorter alias
 mk
 mk do
+mk see
 mk --help
 ```
 

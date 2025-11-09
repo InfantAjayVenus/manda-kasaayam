@@ -370,6 +370,49 @@ update_file_with_tasks() {
   mv "$temp_file" "$file"
 }
 
+# Function to preview markdown with formatting
+preview_markdown() {
+  local file="$1"
+  
+  # Check if file exists
+  if [ ! -f "$file" ]; then
+    echo "Error: File not found: $file"
+    return 1
+  fi
+  
+  # Create a temporary file for preprocessed markdown
+  local temp_file=$(mktemp)
+  
+  # Set up trap to clean up temp file on exit
+  trap "rm -f '$temp_file'" EXIT INT TERM
+  
+  # Preprocess the markdown to improve rendering:
+  # 1. Convert wiki-style timestamp links [[HH:MM]] to bold with emoji
+  # 2. Convert wiki-style file links in headers to italic references
+  # 3. Convert standalone wiki-style links to italic
+  sed -E \
+    -e 's/\[\[([0-9][0-9]:[0-9][0-9])\]\]/🕐 **\1**/g' \
+    -e 's/## (.+) \[\[([^]]+\.md)\]\]/## \1 _[\2]_/g' \
+    -e 's/\[\[([^]]+)\]\]/_\1_/g' \
+    "$file" > "$temp_file"
+  
+  # Try different markdown previewers in order of preference
+  if command -v bat &>/dev/null; then
+    # bat has excellent syntax highlighting and works reliably in scripts
+    bat --paging=always --style=numbers,grid --language=markdown --theme="TwoDark" "$temp_file"
+  elif command -v glow &>/dev/null; then
+    # glow with pager mode - works if TTY is available
+    glow -p "$temp_file"
+  elif command -v mdcat &>/dev/null; then
+    mdcat "$temp_file" | less -R
+  else
+    # Fallback to less with line numbers
+    less -N "$temp_file"
+  fi
+  
+  # Cleanup handled by trap
+}
+
 # Function to display help
 show_help() {
   cat <<EOF
@@ -378,6 +421,7 @@ manda — open today's note; on new-day create new and commit+push previous note
 Usage:
   manda [notes_dir]            Open today's note file in \$EDITOR
   manda do [notes_dir]         Interactive task list view (toggle/delete tasks)
+  manda see [notes_dir]        Preview today's note with markdown formatting
   manda <file.md>              Add timestamps to headers in specified file
   manda -h, --help             Show this help message
 
@@ -396,6 +440,7 @@ Examples:
   manda                        Open today's note with default settings
   manda ~/my-notes             Open today's note in ~/my-notes
   manda do                     View and manage tasks interactively
+  manda see                    Preview today's note with markdown formatting
   manda 2025-11-07.md          Add timestamps to specified file
   
 First run: Create a git-backed notes directory and initialize it with git, or
@@ -431,6 +476,32 @@ if [[ $# -gt 0 && "$1" == "do" ]]; then
     interactive_task_view "$TODAY_FILE"
   else
     echo "Today's note file doesn't exist yet."
+  fi
+  exit 0
+fi
+
+# Check if first argument is "see" to preview today's note
+if [[ $# -gt 0 && "$1" == "see" ]]; then
+  # Config setup for accessing the correct files
+  MANDA_DIR="${2:-${MANDA_DIR:-}}"
+
+  # Check if MANDA_DIR is set
+  if [ -z "$MANDA_DIR" ]; then
+    echo "Error: Notes directory not specified."
+    echo "Set MANDA_DIR environment variable or pass the directory as an argument:"
+    echo "  manda see /path/to/notes"
+    exit 1
+  fi
+
+  TODAY="$(date +"%Y-%m-%d")"
+  TODAY_FILE="$MANDA_DIR/$TODAY.md"
+
+  # Check if today's file exists
+  if [ -f "$TODAY_FILE" ]; then
+    preview_markdown "$TODAY_FILE"
+  else
+    echo "Today's note file doesn't exist yet."
+    echo "Run 'manda' to create it."
   fi
   exit 0
 fi
