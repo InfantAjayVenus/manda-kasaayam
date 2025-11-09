@@ -7,11 +7,12 @@ It creates a new markdown file for you every day. When you start a new day, it s
 ## What it does
 
 - **Daily Notes:** Creates a `YYYY-MM-DD.md` file for your daily thoughts.
-- **Auto-Commit:** When you create a new day's note, it adds and commits the previous one. No more "WIP" commits at midnight.
-- **Task Rollover:** Incomplete markdown tasks (`- [ ]`) from the previous day are carried over to the new note, complete with a link back to the original file.
-- **Timestamps:** Adds `[[HH:MM]]` timestamps when you open the note, and can add `@HH:MM` to `## headers` in any markdown file on command.
-- **Interactive TUI:** A `do` command that pops up a terminal UI for your tasks. You can check things off, delete them, and collapse headers if you're feeling overwhelmed. All with glorious keyboard navigation, of course.
-- **Markdown Preview:** The `see` command lets you peek at your note without firing up your editor. It uses `bat`, `glow`, or `mdcat` if you have them, otherwise it falls back to `less`. Fancy.
+- **Auto-Commit:** When you open a new day's note, it commits and pushes the previous day's note automatically.
+- **Task Rollover:** Incomplete markdown tasks (`- [ ]`) from the previous day are carried over to the new note, with a reference link back to the original file (`## Header [[YYYY-MM-DD.md]]`).
+- **Session Timestamps:** Adds `[[HH:MM]]` timestamps each time you open the note (only if you added content since last opening), separated by `---` dividers.
+- **Header Timestamps:** Run `manda <file.md>` to add `@HH:MM` timestamps to all `## headers` that don't already have one.
+- **Interactive TUI:** The `do` command launches a terminal UI for managing tasks. Toggle completion with space, delete with `d`, navigate with `j/k` or arrows, switch between headers (`h`) and tasks (`l`), and collapse/expand headers with `c`.
+- **Markdown Preview:** The `see` command previews today's note without opening your editor. Uses `bat`, `glow`, or `mdcat` if available, otherwise falls back to `less`.
 
 ## Installation
 
@@ -53,11 +54,13 @@ manda see
 mk see
 ```
 
-### The "Oh, I forgot to timestamp this" command
+### Add Timestamps to Headers
 
 ```bash
-# Adds @HH:MM to all H2 headers in a file that don't have one.
+# Adds @HH:MM to all ## headers in a file that don't already have one.
 manda /path/to/any.md
+# Example:
+manda 2025-11-07.md
 ```
 
 ### Help
