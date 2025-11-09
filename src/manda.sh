@@ -292,7 +292,7 @@ fi
 # Check if first argument is "do" to list tasks
 if [[ $# -gt 0 && "$1" == "do" ]]; then
   # Config setup for accessing the correct files
-  MANDA_DIR="${2:-${MANDA_DIR}}"
+  MANDA_DIR="${2:-${MANDA_DIR:-}}"
 
   # Check if MANDA_DIR is set
   if [ -z "$MANDA_DIR" ]; then
@@ -321,7 +321,7 @@ if [[ $# -gt 0 && "$1" == *.md && -f "$1" ]]; then
 fi
 
 # Config: MANDA_DIR can be passed as first arg, or via env MANDA_DIR
-MANDA_DIR="${1:-${MANDA_DIR}}"
+MANDA_DIR="${1:-${MANDA_DIR:-}}"
 
 # Check if MANDA_DIR is set
 if [ -z "$MANDA_DIR" ]; then
