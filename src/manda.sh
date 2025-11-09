@@ -273,6 +273,16 @@ interactive_task_view() {
       ;;
     'l' | 'L') # Switch to task selection mode
       selecting_header=false
+      # Uncollapse the header that contains the currently selected task
+      if [ ${#tasks[@]} -gt 0 ]; then
+        local task_header="${headers[$selected]}"
+        for h_idx in "${!unique_headers[@]}"; do
+          if [ "${unique_headers[$h_idx]}" = "$task_header" ]; then
+            collapsed_state[$h_idx]=0  # Uncollapse
+            break
+          fi
+        done
+      fi
       ;;
     'c' | 'C' | ' ') # Space or 'c' to toggle collapse/expand or task completion
       if [ "$selecting_header" = true ] && [ ${#unique_headers[@]} -gt 0 ]; then
