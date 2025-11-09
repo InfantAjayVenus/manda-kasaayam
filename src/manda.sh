@@ -133,36 +133,93 @@ interactive_task_view() {
     return
   fi
 
+  # Build list of unique headers and track collapsed state
+  # Using parallel arrays instead of associative arrays for bash 3.2 compatibility
+  declare -a unique_headers
+  declare -a collapsed_state  # 0 = expanded, 1 = collapsed
+  local last_header=""
+  for header in "${headers[@]}"; do
+    if [ "$header" != "$last_header" ]; then
+      if [ -n "$header" ]; then
+        unique_headers+=("$header")
+        collapsed_state+=(0)  # 0 = expanded, 1 = collapsed
+      fi
+      last_header="$header"
+    fi
+  done
+
   local selected=0
-  local total=${#tasks[@]}
+  local selecting_header=false  # true if selecting a header, false if selecting a task
+  local selected_header_index=0
+
+  # Helper function to check if a header is collapsed
+  is_collapsed() {
+    local target_header="$1"
+    for h_idx in "${!unique_headers[@]}"; do
+      if [ "${unique_headers[$h_idx]}" = "$target_header" ]; then
+        return ${collapsed_state[$h_idx]}
+      fi
+    done
+    return 0  # Default to expanded
+  }
+
+  # Helper function to toggle collapse state
+  toggle_collapse() {
+    local h_idx=$1
+    if [ "${collapsed_state[$h_idx]}" = "0" ]; then
+      collapsed_state[$h_idx]=1
+    else
+      collapsed_state[$h_idx]=0
+    fi
+  }
 
   # Function to draw the screen
   draw_screen() {
     clear
-    echo "=== Task List (q: quit, ↑↓/jk: navigate, space: toggle, d: delete) ==="
+    echo "=== Task List (q: quit, ↑↓/jk: navigate, space: toggle, d: delete, c: collapse/expand) ==="
     echo ""
 
+    local display_index=0
     local last_header=""
-    for i in "${!tasks[@]}"; do
-      # Print header only when it changes
-      if [ "${headers[$i]}" != "$last_header" ]; then
-        if [ -n "${headers[$i]}" ]; then
-          echo "${headers[$i]}"
-        fi
-        last_header="${headers[$i]}"
+    
+    # First, display all headers with their collapse state
+    for h_idx in "${!unique_headers[@]}"; do
+      local header="${unique_headers[$h_idx]}"
+      local collapse_symbol="▼"
+      if [ "${collapsed_state[$h_idx]}" = "1" ]; then
+        collapse_symbol="▶"
       fi
       
-      if [ $i -eq $selected ]; then
-        # Show selected task with highlighting
-        if [ -n "${headers[$i]}" ]; then
-          echo -e "\033[7m  > ${tasks[$i]}\033[0m"
-        else
-          echo -e "\033[7m> ${tasks[$i]}\033[0m"
-        fi
+      if [ "$selecting_header" = true ] && [ $h_idx -eq $selected_header_index ]; then
+        echo -e "\033[7m> $collapse_symbol $header\033[0m"
       else
-        # Show normal task
-        if [ -n "${headers[$i]}" ]; then
-          echo "    ${tasks[$i]}"
+        echo "  $collapse_symbol $header"
+      fi
+      
+      # Show tasks under this header if not collapsed
+      if [ "${collapsed_state[$h_idx]}" = "0" ]; then
+        for i in "${!tasks[@]}"; do
+          if [ "${headers[$i]}" = "$header" ]; then
+            if [ "$selecting_header" = false ] && [ $i -eq $selected ]; then
+              echo -e "\033[7m    > ${tasks[$i]}\033[0m"
+            else
+              echo "      ${tasks[$i]}"
+            fi
+          fi
+        done
+      fi
+    done
+    
+    # Display tasks without headers
+    local has_headerless_tasks=false
+    for i in "${!tasks[@]}"; do
+      if [ -z "${headers[$i]}" ]; then
+        if ! $has_headerless_tasks; then
+          has_headerless_tasks=true
+          echo ""
+        fi
+        if [ "$selecting_header" = false ] && [ $i -eq $selected ]; then
+          echo -e "\033[7m> ${tasks[$i]}\033[0m"
         else
           echo "  ${tasks[$i]}"
         fi
@@ -182,44 +239,73 @@ interactive_task_view() {
       read -rsn2 -t 0.1 key
       case "$key" in
       '[A' | '[D') # Up arrow
-        ((selected > 0)) && ((selected--))
+        if [ "$selecting_header" = true ]; then
+          ((selected_header_index > 0)) && ((selected_header_index--))
+        else
+          ((selected > 0)) && ((selected--))
+        fi
         ;;
       '[B' | '[C') # Down arrow
-        ((selected < total - 1)) && ((selected++))
+        if [ "$selecting_header" = true ]; then
+          ((selected_header_index < ${#unique_headers[@]} - 1)) && ((selected_header_index++))
+        else
+          ((selected < ${#tasks[@]} - 1)) && ((selected++))
+        fi
         ;;
       esac
       ;;
     'k' | 'K') # Vi-style up
-      ((selected > 0)) && ((selected--))
+      if [ "$selecting_header" = true ]; then
+        ((selected_header_index > 0)) && ((selected_header_index--))
+      else
+        ((selected > 0)) && ((selected--))
+      fi
       ;;
     'j' | 'J') # Vi-style down
-      ((selected < total - 1)) && ((selected++))
-      ;;
-    ' ') # Space to toggle task
-      local task="${tasks[$selected]}"
-      if [[ "$task" =~ \[[[:space:]]\] ]]; then
-        # Mark as complete
-        tasks[$selected]="${task//\[ \]/[x]}"
-      elif [[ "$task" =~ \[[xX]\] ]]; then
-        # Mark as incomplete
-        tasks[$selected]="${task//\[[xX]\]/[ ]}"
+      if [ "$selecting_header" = true ]; then
+        ((selected_header_index < ${#unique_headers[@]} - 1)) && ((selected_header_index++))
+      else
+        ((selected < ${#tasks[@]} - 1)) && ((selected++))
       fi
-      # Update the file
-      update_file_with_tasks "$file"
+      ;;
+    'h' | 'H') # Switch to header selection mode
+      selecting_header=true
+      ;;
+    'l' | 'L') # Switch to task selection mode
+      selecting_header=false
+      ;;
+    'c' | 'C' | ' ') # Space or 'c' to toggle collapse/expand or task completion
+      if [ "$selecting_header" = true ] && [ ${#unique_headers[@]} -gt 0 ]; then
+        # In header mode: toggle collapse
+        toggle_collapse $selected_header_index
+      elif [ "$selecting_header" = false ]; then
+        # In task mode: toggle task completion
+        local task="${tasks[$selected]}"
+        if [[ "$task" =~ \[[[:space:]]\] ]]; then
+          # Mark as complete
+          tasks[$selected]="${task//\[ \]/[x]}"
+        elif [[ "$task" =~ \[[xX]\] ]]; then
+          # Mark as incomplete
+          tasks[$selected]="${task//\[[xX]\]/[ ]}"
+        fi
+        # Update the file
+        update_file_with_tasks "$file"
+      fi
       ;;
     'd' | 'D') # Delete task
-      unset 'tasks[$selected]'
-      unset 'headers[$selected]'
-      tasks=("${tasks[@]}") # Re-index array
-      headers=("${headers[@]}")
-      total=${#tasks[@]}
-      if [ $total -eq 0 ]; then
+      if [ "$selecting_header" = false ]; then
+        unset 'tasks[$selected]'
+        unset 'headers[$selected]'
+        tasks=("${tasks[@]}") # Re-index array
+        headers=("${headers[@]}")
+        if [ ${#tasks[@]} -eq 0 ]; then
+          update_file_with_tasks "$file"
+          echo "All tasks processed!"
+          return
+        fi
+        ((selected >= ${#tasks[@]})) && ((selected--))
         update_file_with_tasks "$file"
-        echo "All tasks processed!"
-        return
       fi
-      ((selected >= total)) && ((selected--))
-      update_file_with_tasks "$file"
       ;;
     'q' | 'Q') # Quit
       clear
