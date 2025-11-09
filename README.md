@@ -1,95 +1,78 @@
-# Manda-Kasaayam
+# மண்ட கஷாயம்
 
-For when your brain is a sieve and you need to remember what you did yesterday. It's a simple script that wrangles your daily notes in a git repo, because who has time for GUIs?
+> To access this README in English go to [README.en.md](./README.en.md)
 
-It creates a new markdown file for you every day. When you start a new day, it sneakily commits yesterday's note, so you can't forget. It also yanks your unfinished todos over to the new file, because procrastination is a feature, not a bug.
+**மண்ட கஷாயம்** என்பது உங்கள் தினசரி குறிப்புகளை எளிதாக நிர்வகிக்க உதவும் ஒரு கருவி. உங்கள் மூளை சல்லடையாக இருக்கும்போதும், நேற்று என்ன செய்தீர்கள் என்பதை நினைவில் கொள்ள வேண்டும் என்ற சூழலிலும் இது உங்களுக்கு உதவும். இது ஒரு Git ரெப்போவில் உங்கள் குறிப்புகளை கையாளும் எளிய ஸ்கிரிப்ட் ஆகும்.
 
-## What it does
+ஒவ்வொரு நாளும் உங்களுக்காக ஒரு புதிய மார்க்டவுன் கோப்பை இது உருவாக்கும். நீங்கள் ஒரு புதிய நாளைத் தொடங்கும்போது, முந்தைய நாள் குறிப்பை தானா��வே கமிட் செய்துவிடும், எனவே நீங்கள் அதை மறக்க மாட்டீர்கள். மேலும், முடிக்கப்படாத பணிகளை புதிய கோப்பிற்கு கொண்டு வந்துவிடும்.
 
-- **Daily Notes:** Creates a `YYYY-MM-DD.md` file for your daily thoughts.
-- **Auto-Commit:** When you open a new day's note, it commits and pushes the previous day's note automatically.
-- **Auto-Archive:** Previous notes are automatically organized into `YYYY/MM/` directories (e.g., `2025/11/2025-11-07.md`), keeping your notes folder tidy.
-- **Task Rollover:** Incomplete markdown tasks (`- [ ]`) from the previous day are carried over to the new note, with a reference link back to the original file (`## Header [[YYYY-MM-DD.md]]`).
-- **Session Timestamps:** Adds `[[HH:MM]]` timestamps each time you open the note (only if you added content since last opening), separated by `---` dividers.
-- **Header Timestamps:** Run `manda <file.md>` to add `@HH:MM` timestamps to all `## headers` that don't already have one.
-- **Interactive TUI:** The `do` command launches a terminal UI for managing tasks. Toggle completion with space, delete with `d`, navigate with `j/k` or arrows, switch between headers (`h`) and tasks (`l`), and collapse/expand headers with `c`.
-- **Markdown Preview:** The `see` command previews today's note without opening your editor. Uses `bat`, `glow`, or `mdcat` if available, otherwise falls back to `less`.
+## முக்கிய அம்சங்கள்
 
-## Installation
+- **தினசரி குறிப்புகள்:** ஒவ்வொரு நாளும் `YYYY-MM-DD.md` என்ற பெயரில் ஒரு புதிய மார்க்டவுன் கோப்பை உருவாக்கித் தரும்.
+- **தானியங்கு கமிட்:** புதிய நாள் குறிப்பைத் திறக்கும்போது, முந்தைய நாள் குறிப்பை தானாகவே கமிட் செய்துவிடும்.
+- **பணி தொடர்ச்சி:** முந்தைய நாளில் முடிக்கப்படாத பணிகள் (`- [ ]`) புதிய நாள் குறிப்பிற்கு மாற்றப்படும்.
+- **தானியங்கு காப்பகம்:** முந்தைய குறிப்புகள் தானாகவே `YYYY/MM/` கோப்பகங்களில் ஒழுங்கமைக்கப்படும் (உதா: `2025/11/2025-11-07.md`), இதனால் உங்கள் குறிப்புகள் கோப்பகம் நேர்த்தியாக இருக்கும்.
+- **நேர முத்திரைகள்:** நீங்கள் கு���ிப்பைத் திறக்கும் ஒவ்வொரு முறையும் `[[HH:MM]]` என நேர முத்திரையைச் சேர்க்கும்.
+- **ஊடாடும் TUI:** `do` கட்டளை மூலம் பணிகளை நிர்வகிக்க ஒரு டெர்மினல் இடைமுகம் (TUI) வழங்கப்படும்.
+- **மார்க்டவுன் மாதிரிக்காட்சி:** `see` கட்டளை மூலம் உங்கள் குறிப்பை எடிட்டரில் திறக்காமல் பார்க்கலாம்.
 
-1.  Clone the repo.
-2.  `chmod +x install.sh && ./install.sh`
-3.  `source ~/.zshrc` (or whatever your shell's rc file is).
+## நிறுவல்
 
-## Usage
+1. இந்த ரெப்போவை குளோன் செய்யவும்.
+2. `chmod +x install.sh && ./install.sh` கட்டளையை இயக்கவும்.
+3. `source ~/.zshrc` (அல்லது உங்கள் ஷெல்லின் rc கோப்பு) கட்டளையை இயக்கவும்.
 
-### The Basics
+## பயன்பாடு
 
+### அடிப்படைகள்
+
+இன்றைய குறிப்பைத் திறக்க:
 ```bash
-# Open today's note. This is the main event.
 manda
-# or use the alias
+# அல்லது
 mk
 ```
 
-### The Task Manager
+### பணி மேலாளர்
 
+���டாடும் பணி மேலாளரைத் தொடங்க:
 ```bash
-# Fire up the interactive task manager for today's note.
 manda do
+# அல்லது
 mk do
 ```
 
-In the TUI:
-- `j/k` or `↑/↓` to navigate.
-- `h` to select headers, `l` to select tasks.
-- `space` or `c` to toggle task completion or collapse a header.
-- `d` to delete a task.
-- `q` to quit.
+### விரைவுப் பார்வை
 
-### The Quick Peek
-
+இன்றைய குறிப்பை மாதிரிக்காட்சி செய்ய:
 ```bash
-# Preview today's note.
 manda see
+# அல்லது
 mk see
 ```
 
-### Add Timestamps to Headers
+### உதவி
 
-```bash
-# Adds @HH:MM to all ## headers in a file that don't already have one.
-manda /path/to/any.md
-# Example:
-manda 2025-11-07.md
-```
-
-### Help
-
+உதவிக்கு:
 ```bash
 manda --help
 ```
 
-## Configuration
+## கட்டமைப்பு
 
-Set these environment variables, probably in your `.zshrc` or `.bashrc`.
+உங்கள் `.zshrc` அல்லது `.bashrc` கோப்பில் இந்த சூழல் மாறிகளை அமைக்கவும்:
 
-- `MANDA_DIR`: **(Required)** The absolute path to your notes directory. This directory must be inside a git repository.
-- `EDITOR`: Your editor of choice (default: `nvim`).
-- `BRANCH`: The git branch to push to (default: `main`).
-- `REMOTE`: The git remote to push to (default: `origin`).
+- `MANDA_DIR`: **(கட்டாயம்)** உங்கள் குறிப்புகள் கோப்பகத்தின் முழுமையான பாதை.
+- `EDITOR`: உங்கள் விருப்பமான எடிட்டர் (இயல்புநிலை: `nvim`).
+- `BRANCH`: Git கிளையின் பெயர் (இயல்புநிலை: `main`).
+- `REMOTE`: Git ரிமோட்டின் பெயர் (இயல்புநிலை: `origin`).
 
-Example:
+**உதாரணம்:**
 ```bash
-export MANDA_DIR="/Users/you/Documents/notes"
+export MANDA_DIR="/Users/your_username/Documents/notes"
 export EDITOR="vim"
 ```
 
-You can also pass the notes directory as an argument, which will override the `MANDA_DIR` variable for that command.
-```bash
-manda /path/to/some/other/notes
-```
+## உரிமம்
 
-## License
-
-MIT. See [LICENSE](LICENSE).
+இந்த திட்டம் MIT உரிமத்தின் கீழ் வெளியிடப்பட்டுள்ளது. மேலும் விவரங்களுக்கு [LICENSE](LICENSE) கோப்பைப் பார்க்கவும்.
