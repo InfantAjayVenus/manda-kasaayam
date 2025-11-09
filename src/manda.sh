@@ -107,10 +107,19 @@ interactive_task_view() {
   local tasks=()
   local headers=()
   local current_header=""
+  local in_timestamp_entry=false
 
   # Parse tasks and headers
   while IFS= read -r line; do
-    if [[ "$line" =~ ^##[[:space:]] ]]; then
+    # Check if we're entering a timestamp entry
+    if [[ "$line" =~ ^\[\[[0-9][0-9]:[0-9][0-9]\]\]$ ]]; then
+      in_timestamp_entry=true
+      current_header=""  # Reset header when entering new timestamp entry
+    # Check if we hit a separator (end of timestamp entry)
+    elif [[ "$line" =~ ^---$ ]]; then
+      in_timestamp_entry=false
+      current_header=""
+    elif [[ "$line" =~ ^##[[:space:]] ]]; then
       current_header="$line"
     elif [[ "$line" =~ ^[[:space:]]*-[[:space:]]*\[[[:space:]xX]?\] ]]; then
       tasks+=("$line")
@@ -135,10 +144,18 @@ interactive_task_view() {
 
     for i in "${!tasks[@]}"; do
       if [ $i -eq $selected ]; then
-        echo -e "\033[7m> ${headers[$i]}\033[0m" # Reverse video for selection
+        # Only show header if it exists
+        if [ -n "${headers[$i]}" ]; then
+          echo -e "\033[7m> ${headers[$i]}\033[0m" # Reverse video for selection
+        else
+          echo -e "\033[7m>\033[0m"
+        fi
         echo -e "\033[7m  ${tasks[$i]}\033[0m"
       else
-        echo "  ${headers[$i]}"
+        # Only show header if it exists
+        if [ -n "${headers[$i]}" ]; then
+          echo "  ${headers[$i]}"
+        fi
         echo "    ${tasks[$i]}"
       fi
       echo ""
