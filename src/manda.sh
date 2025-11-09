@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# dump — open today's note; on new-day create new and commit+push previous note
-# Usage: dump [dump_dir]
-#        dump do - lists all task items grouped by headers
-# First run: you can pass the path to your git-backed notes repo or set DUMP_DIR env var.
+# manda — open today's note; on new-day create new and commit+push previous note
+# Usage: manda [notes_dir]
+#        manda do - lists all task items grouped by headers
+# First run: you can pass the path to your git-backed notes repo or set MANDA_DIR env var.
 #
 # Special case: If the first argument is a file path ending in .md, the script will
 # just add timestamps to headers in that file without opening it in the editor.
@@ -252,30 +252,30 @@ update_file_with_tasks() {
 # Function to display help
 show_help() {
   cat <<EOF
-dump — open today's note; on new-day create new and commit+push previous note
+manda — open today's note; on new-day create new and commit+push previous note
 
 Usage:
-  dump [dump_dir]              Open today's note file in \$EDITOR
-  dump do [dump_dir]           Interactive task list view (toggle/delete tasks)
-  dump <file.md>               Add timestamps to headers in specified file
-  dump -h, --help              Show this help message
+  manda [notes_dir]            Open today's note file in \$EDITOR
+  manda do [notes_dir]         Interactive task list view (toggle/delete tasks)
+  manda <file.md>              Add timestamps to headers in specified file
+  manda -h, --help             Show this help message
 
 Options:
-  dump_dir                     Path to git-backed notes directory
-                               Can also be set via DUMP_DIR environment variable
+  notes_dir                    Path to git-backed notes directory
+                               Can also be set via MANDA_DIR environment variable
                                Default: ~/notes
 
 Environment Variables:
-  DUMP_DIR                     Notes directory path
+  MANDA_DIR                    Notes directory path
   EDITOR                       Editor to use (default: nvim)
   BRANCH                       Git branch to push to (default: main)
   REMOTE                       Git remote to push to (default: origin)
 
 Examples:
-  dump                         Open today's note with default settings
-  dump ~/my-notes              Open today's note in ~/my-notes
-  dump do                      View and manage tasks interactively
-  dump 2025-11-07.md           Add timestamps to specified file
+  manda                        Open today's note with default settings
+  manda ~/my-notes             Open today's note in ~/my-notes
+  manda do                     View and manage tasks interactively
+  manda 2025-11-07.md          Add timestamps to specified file
   
 First run: Create a git-backed notes directory and initialize it with git, or
 pass the path to your existing notes repo.
@@ -292,9 +292,9 @@ fi
 # Check if first argument is "do" to list tasks
 if [[ $# -gt 0 && "$1" == "do" ]]; then
   # Config setup for accessing the correct files
-  DUMP_DIR="${2:-${DUMP_DIR:-$HOME/notes}}"
+  MANDA_DIR="${2:-${MANDA_DIR:-$HOME/notes}}"
   TODAY="$(date +"%Y-%m-%d")"
-  TODAY_FILE="$DUMP_DIR/$TODAY.md"
+  TODAY_FILE="$MANDA_DIR/$TODAY.md"
   
   # Check if today's file exists
   if [ -f "$TODAY_FILE" ]; then
@@ -311,25 +311,25 @@ if [[ $# -gt 0 && "$1" == *.md && -f "$1" ]]; then
   exit 0
 fi
 
-# Config: DUMP_DIR can be passed as first arg, or via env DUMP_DIR, or defaults to ~/notes
-DUMP_DIR="${1:-${DUMP_DIR:-$HOME/notes}}"
+# Config: MANDA_DIR can be passed as first arg, or via env MANDA_DIR, or defaults to ~/notes
+MANDA_DIR="${1:-${MANDA_DIR:-$HOME/notes}}"
 EDITOR="${EDITOR:-nvim}"
 BRANCH="${BRANCH:-main}"
 REMOTE="${REMOTE:-origin}"
 DATE_FMT="%Y-%m-%d"
 TIME_FMT="%H:%M"
 TODAY="$(date +"$DATE_FMT")"
-TODAY_FILE="$DUMP_DIR/$TODAY.md"
+TODAY_FILE="$MANDA_DIR/$TODAY.md"
 
 # Ensure notes dir exists
-if [ ! -d "$DUMP_DIR" ]; then
-  echo "Notes dir not found: $DUMP_DIR"
+if [ ! -d "$MANDA_DIR" ]; then
+  echo "Notes dir not found: $MANDA_DIR"
   echo "Create it and initialize a git repo (git init; git remote add origin ...), or run this script with an existing repo path."
   exit 1
 fi
 
-# Check if DUMP_DIR is within a git repo (not necessarily the root)
-GIT_DIR="$DUMP_DIR"
+# Check if MANDA_DIR is within a git repo (not necessarily the root)
+GIT_DIR="$MANDA_DIR"
 GIT_ROOT=""
 
 # Walk up the directory tree to find .git
@@ -340,17 +340,17 @@ done
 if [ -d "$GIT_DIR/.git" ]; then
   GIT_ROOT="$GIT_DIR"
 else
-  echo "No git repository found for: $DUMP_DIR"
-  echo "Please ensure $DUMP_DIR is within a git repository."
+  echo "No git repository found for: $MANDA_DIR"
+  echo "Please ensure $MANDA_DIR is within a git repository."
   exit 1
 fi
 
 # Find the most recent markdown file (not including today) sorted by name (ISO dates work)
 # Using ls instead of find with -printf which is GNU-specific and not available on macOS
-prev_file="$(cd "$DUMP_DIR" && ls -1 ????-??-??.md 2>/dev/null | grep -v "$TODAY.md" | sort -r | head -n1 || true)"
+prev_file="$(cd "$MANDA_DIR" && ls -1 ????-??-??.md 2>/dev/null | grep -v "$TODAY.md" | sort -r | head -n1 || true)"
 prev_path=""
 if [ -n "$prev_file" ]; then
-  prev_path="$DUMP_DIR/$prev_file"
+  prev_path="$MANDA_DIR/$prev_file"
 fi
 
 # If today's file doesn't exist, commit & push the previous file (if any)
@@ -371,7 +371,7 @@ if [ ! -f "$TODAY_FILE" ]; then
     )
   fi
   # create today's file with a header
-  mkdir -p "$DUMP_DIR"
+  mkdir -p "$MANDA_DIR"
   printf "# %s\n\n" "$TODAY" >"$TODAY_FILE"
   
   # Extract incomplete tasks from the previous file if it exists

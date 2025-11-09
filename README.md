@@ -1,4 +1,4 @@
-# Brain-Dump
+# Manda-Kasaayam
 
 A simple daily note-taking tool that automatically commits and pushes your previous day's notes.
 
@@ -18,7 +18,7 @@ A simple daily note-taking tool that automatically commits and pushes your previ
 1. Clone this repository:
    ```bash
    git clone <repository-url>
-   cd brain-dump
+   cd manda-kasaayam
    ```
 
 2. Run the install script:
@@ -39,7 +39,9 @@ A simple daily note-taking tool that automatically commits and pushes your previ
 Open today's note:
 
 ```bash
-dump
+manda
+# or
+md
 ```
 
 This will:
@@ -54,7 +56,9 @@ This will:
 View and manage tasks interactively:
 
 ```bash
-dump do
+manda do
+# or
+md do
 ```
 
 This opens an interactive TUI where you can:
@@ -68,7 +72,9 @@ This opens an interactive TUI where you can:
 Add timestamps to headers in any markdown file without opening it:
 
 ```bash
-dump /path/to/file.md
+manda /path/to/file.md
+# or
+md /path/to/file.md
 ```
 
 ### Help
@@ -76,16 +82,18 @@ dump /path/to/file.md
 Display help information:
 
 ```bash
-dump --help
+manda --help
 # or
-dump -h
+manda -h
+# or
+md --help
 ```
 
 ### Configuration
 
 You can configure the tool with these environment variables:
 
-- `DUMP_DIR`: Directory for your notes (default: ~/notes)
+- `MANDA_DIR`: Directory for your notes (default: ~/notes)
 - `EDITOR`: Your preferred text editor (default: nvim)
 - `BRANCH`: Git branch to use (default: main)
 - `REMOTE`: Git remote to use (default: origin)
@@ -93,36 +101,43 @@ You can configure the tool with these environment variables:
 You can also pass an alternative directory as an argument:
 
 ```bash
-dump /path/to/alternative/notes
+manda /path/to/alternative/notes
+# or
+md /path/to/alternative/notes
 ```
 
 ### Examples
 
 ```bash
 # Open today's note with default settings
-dump
+manda
 
 # Open today's note in a custom directory
-dump ~/my-notes
+manda ~/my-notes
 
 # Manage tasks interactively
-dump do
+manda do
 
 # Manage tasks in a custom directory
-dump do ~/my-notes
+manda do ~/my-notes
 
 # Add timestamps to a specific file
-dump 2025-11-07.md
+manda 2025-11-07.md
 
 # Show help
-dump --help
+manda --help
+
+# Using the shorter alias
+md
+md do
+md --help
 ```
 
 ## Directory Structure
 
 - `src/`: Contains the main script
-- `bin/`: Contains the symlink to the script
-- `dumps/`: Default location for your notes
+- `bin/`: Contains the symlinks to the script (manda and md)
+- `notes/`: Default location for your notes
 
 ## License
 
