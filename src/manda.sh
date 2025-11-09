@@ -405,26 +405,59 @@ if [ ! -f "$TODAY_FILE" ]; then
   fi
 fi
 
-# Add timestamp as a link
+# Add timestamp as a link and separator only if previous entry has content
 # Get current time in HH:MM format
 current_time="$(date +"$TIME_FMT")"
 
-# Check if the last line is empty or if we need to add spacing
-last_line=$(tail -n 1 "$TODAY_FILE" 2>/dev/null || echo "")
+# Check if the file has content after the header and tasks section
+# Look for the last timestamp entry and check if there's content after it
+last_timestamp_line=$(grep -n "^\[\[[0-9][0-9]:[0-9][0-9]\]\]$" "$TODAY_FILE" 2>/dev/null | tail -1 | cut -d: -f1 || echo "0")
 
-# Add appropriate spacing before timestamp
-if [ -n "$last_line" ]; then
-  echo "" >> "$TODAY_FILE"
+# Determine if we should add a new entry
+should_add_entry=true
+
+if [ "$last_timestamp_line" != "0" ]; then
+  # Get content after the last timestamp
+  content_after_timestamp=$(tail -n +$((last_timestamp_line + 1)) "$TODAY_FILE" | sed '/^$/d; /^---$/d')
+  
+  # If there's no content after the last timestamp, don't add a new entry
+  if [ -z "$content_after_timestamp" ]; then
+    should_add_entry=false
+  fi
 fi
 
-# Add timestamp as a markdown link
-echo "[[${current_time}]]" >> "$TODAY_FILE"
-echo "" >> "$TODAY_FILE"
+if [ "$should_add_entry" = true ]; then
+  # Check if the last line is empty or if we need to add spacing
+  last_line=$(tail -n 1 "$TODAY_FILE" 2>/dev/null || echo "")
+  
+  # Add appropriate spacing before timestamp
+  if [ -n "$last_line" ]; then
+    echo "" >> "$TODAY_FILE"
+  fi
+  
+  # Add timestamp as a markdown link
+  echo "[[${current_time}]]" >> "$TODAY_FILE"
+  echo "" >> "$TODAY_FILE"
+fi
 
 # Open today's file in editor
 "$EDITOR" "$TODAY_FILE"
 
-# Add line separator after editor exits
-echo "" >> "$TODAY_FILE"
-echo "---" >> "$TODAY_FILE"
-echo "" >> "$TODAY_FILE"
+# Add line separator after editor exits only if content was added
+# Find the last timestamp in the file (whether it was just added or already existed)
+last_timestamp_line_after=$(grep -n "^\[\[[0-9][0-9]:[0-9][0-9]\]\]$" "$TODAY_FILE" 2>/dev/null | tail -1 | cut -d: -f1 || echo "0")
+
+if [ "$last_timestamp_line_after" != "0" ]; then
+  # Get content after the last timestamp
+  content_after_edit=$(tail -n +$((last_timestamp_line_after + 1)) "$TODAY_FILE" | sed '/^$/d; /^---$/d')
+  
+  # Get the last line of the file
+  last_line_of_file=$(tail -n 1 "$TODAY_FILE" 2>/dev/null || echo "")
+  
+  # Only add separator if there's actual content and the last line is not already a separator
+  if [ -n "$content_after_edit" ] && [ "$last_line_of_file" != "---" ]; then
+    echo "" >> "$TODAY_FILE"
+    echo "---" >> "$TODAY_FILE"
+    echo "" >> "$TODAY_FILE"
+  fi
+fi
