@@ -52,7 +52,7 @@ list_tasks() {
       # Print the task with added indentation
       echo -e "\t$line"
     fi
-  done < "$file"
+  done <"$file"
 }
 
 # Function to extract incomplete tasks from a file and write them to the output
@@ -62,7 +62,7 @@ extract_incomplete_tasks() {
   local current_header=""
   local has_incomplete_tasks=false
   local temp_output=""
-  
+
   # Extract the filename from the full path
   local source_filename="$(basename "$file")"
 
@@ -72,10 +72,10 @@ extract_incomplete_tasks() {
     if [[ "$line" =~ ^##[[:space:]] ]]; then
       # If we had incomplete tasks under the previous header, write them
       if [[ "$has_incomplete_tasks" == true && -n "$current_header" ]]; then
-        echo "" >> "$output_file"
-        echo "$current_header [[${source_filename}]]" >> "$output_file"
-        echo "" >> "$output_file"
-        echo "$temp_output" >> "$output_file"
+        echo "" >>"$output_file"
+        echo "$current_header [[${source_filename}]]" >>"$output_file"
+        echo "" >>"$output_file"
+        echo "$temp_output" >>"$output_file"
       fi
       # Store the new header and reset flags
       current_header="$line"
@@ -90,14 +90,14 @@ extract_incomplete_tasks() {
         temp_output="$temp_output"$'\n'"$line"
       fi
     fi
-  done < "$file"
+  done <"$file"
 
   # Write any remaining incomplete tasks at the end of the file
   if [[ "$has_incomplete_tasks" == true && -n "$current_header" ]]; then
-    echo "" >> "$output_file"
-    echo "$current_header [[${source_filename}]]" >> "$output_file"
-    echo "" >> "$output_file"
-    echo "$temp_output" >> "$output_file"
+    echo "" >>"$output_file"
+    echo "$current_header [[${source_filename}]]" >>"$output_file"
+    echo "" >>"$output_file"
+    echo "$temp_output" >>"$output_file"
   fi
 }
 
@@ -107,7 +107,7 @@ interactive_task_view() {
   local tasks=()
   local headers=()
   local current_header=""
-  
+
   # Parse tasks and headers
   while IFS= read -r line; do
     if [[ "$line" =~ ^##[[:space:]] ]]; then
@@ -116,26 +116,26 @@ interactive_task_view() {
       tasks+=("$line")
       headers+=("$current_header")
     fi
-  done < "$file"
-  
+  done <"$file"
+
   # Exit if no tasks found
   if [ ${#tasks[@]} -eq 0 ]; then
     echo "No tasks found in today's file."
     return
   fi
-  
+
   local selected=0
   local total=${#tasks[@]}
-  
+
   # Function to draw the screen
   draw_screen() {
     clear
     echo "=== Task List (q: quit, ↑↓/jk: navigate, space: toggle, d: delete) ==="
     echo ""
-    
+
     for i in "${!tasks[@]}"; do
       if [ $i -eq $selected ]; then
-        echo -e "\033[7m> ${headers[$i]}\033[0m"  # Reverse video for selection
+        echo -e "\033[7m> ${headers[$i]}\033[0m" # Reverse video for selection
         echo -e "\033[7m  ${tasks[$i]}\033[0m"
       else
         echo "  ${headers[$i]}"
@@ -144,62 +144,62 @@ interactive_task_view() {
       echo ""
     done
   }
-  
+
   # Main loop
   while true; do
     draw_screen
-    
+
     # Read single character
     IFS= read -rsn1 key
-    
+
     case "$key" in
-      $'\x1b')  # Escape sequence
-        read -rsn2 -t 0.1 key
-        case "$key" in
-          '[A'|'[D') # Up arrow
-            ((selected > 0)) && ((selected--))
-            ;;
-          '[B'|'[C') # Down arrow
-            ((selected < total - 1)) && ((selected++))
-            ;;
-        esac
-        ;;
-      'k'|'K')  # Vi-style up
+    $'\x1b') # Escape sequence
+      read -rsn2 -t 0.1 key
+      case "$key" in
+      '[A' | '[D') # Up arrow
         ((selected > 0)) && ((selected--))
         ;;
-      'j'|'J')  # Vi-style down
+      '[B' | '[C') # Down arrow
         ((selected < total - 1)) && ((selected++))
         ;;
-      ' ')  # Space to toggle task
-        local task="${tasks[$selected]}"
-        if [[ "$task" =~ \[[[:space:]]\] ]]; then
-          # Mark as complete
-          tasks[$selected]="${task//\[ \]/[x]}"
-        elif [[ "$task" =~ \[[xX]\] ]]; then
-          # Mark as incomplete
-          tasks[$selected]="${task//\[[xX]\]/[ ]}"
-        fi
-        # Update the file
+      esac
+      ;;
+    'k' | 'K') # Vi-style up
+      ((selected > 0)) && ((selected--))
+      ;;
+    'j' | 'J') # Vi-style down
+      ((selected < total - 1)) && ((selected++))
+      ;;
+    ' ') # Space to toggle task
+      local task="${tasks[$selected]}"
+      if [[ "$task" =~ \[[[:space:]]\] ]]; then
+        # Mark as complete
+        tasks[$selected]="${task//\[ \]/[x]}"
+      elif [[ "$task" =~ \[[xX]\] ]]; then
+        # Mark as incomplete
+        tasks[$selected]="${task//\[[xX]\]/[ ]}"
+      fi
+      # Update the file
+      update_file_with_tasks "$file"
+      ;;
+    'd' | 'D') # Delete task
+      unset 'tasks[$selected]'
+      unset 'headers[$selected]'
+      tasks=("${tasks[@]}") # Re-index array
+      headers=("${headers[@]}")
+      total=${#tasks[@]}
+      if [ $total -eq 0 ]; then
         update_file_with_tasks "$file"
-        ;;
-      'd'|'D')  # Delete task
-        unset 'tasks[$selected]'
-        unset 'headers[$selected]'
-        tasks=("${tasks[@]}")  # Re-index array
-        headers=("${headers[@]}")
-        total=${#tasks[@]}
-        if [ $total -eq 0 ]; then
-          update_file_with_tasks "$file"
-          echo "All tasks processed!"
-          return
-        fi
-        ((selected >= total)) && ((selected--))
-        update_file_with_tasks "$file"
-        ;;
-      'q'|'Q')  # Quit
-        clear
+        echo "All tasks processed!"
         return
-        ;;
+      fi
+      ((selected >= total)) && ((selected--))
+      update_file_with_tasks "$file"
+      ;;
+    'q' | 'Q') # Quit
+      clear
+      return
+      ;;
     esac
   done
 }
@@ -207,17 +207,17 @@ interactive_task_view() {
 # Function to update the file with modified tasks
 update_file_with_tasks() {
   local file="$1"
-  
+
   # Create a temporary file with updated content
   local temp_file=$(mktemp)
   local current_header=""
   local in_task_section=false
-  
+
   # First, write everything from the original file except task lines
   while IFS= read -r line; do
     if [[ "$line" =~ ^##[[:space:]] ]]; then
       current_header="$line"
-      echo "$line" >> "$temp_file"
+      echo "$line" >>"$temp_file"
       in_task_section=true
     elif [[ "$line" =~ ^[[:space:]]*-[[:space:]]*\[[[:space:]xX]?\] ]]; then
       # Skip task lines, we'll add them back from our arrays
@@ -227,24 +227,24 @@ update_file_with_tasks() {
         # This is the blank line after tasks, write updated tasks first
         for i in "${!headers[@]}"; do
           if [ "${headers[$i]}" = "$current_header" ]; then
-            echo "${tasks[$i]}" >> "$temp_file"
+            echo "${tasks[$i]}" >>"$temp_file"
           fi
         done
         in_task_section=false
       fi
-      echo "$line" >> "$temp_file"
+      echo "$line" >>"$temp_file"
     fi
-  done < "$file"
-  
+  done <"$file"
+
   # Handle tasks at the end of file (no trailing blank line)
   if [ "$in_task_section" = true ]; then
     for i in "${!headers[@]}"; do
       if [ "${headers[$i]}" = "$current_header" ]; then
-        echo "${tasks[$i]}" >> "$temp_file"
+        echo "${tasks[$i]}" >>"$temp_file"
       fi
     done
   fi
-  
+
   # Replace original file
   mv "$temp_file" "$file"
 }
@@ -293,7 +293,7 @@ fi
 if [[ $# -gt 0 && "$1" == "do" ]]; then
   # Config setup for accessing the correct files
   MANDA_DIR="${2:-${MANDA_DIR}}"
-  
+
   # Check if MANDA_DIR is set
   if [ -z "$MANDA_DIR" ]; then
     echo "Error: Notes directory not specified."
@@ -301,10 +301,10 @@ if [[ $# -gt 0 && "$1" == "do" ]]; then
     echo "  manda do /path/to/notes"
     exit 1
   fi
-  
+
   TODAY="$(date +"%Y-%m-%d")"
   TODAY_FILE="$MANDA_DIR/$TODAY.md"
-  
+
   # Check if today's file exists
   if [ -f "$TODAY_FILE" ]; then
     interactive_task_view "$TODAY_FILE"
@@ -395,11 +395,52 @@ if [ ! -f "$TODAY_FILE" ]; then
   # create today's file with a header
   mkdir -p "$MANDA_DIR"
   printf "# %s\n\n" "$TODAY" >"$TODAY_FILE"
-  
+
   # Extract incomplete tasks from the previous file if it exists
   if [ -n "$prev_path" ] && [ -f "$prev_path" ]; then
     extract_incomplete_tasks "$prev_path" "$TODAY_FILE"
   fi
+fi
+
+# Add markdown separator and entry header only if previous entry has content
+# Count existing entries by looking for "###### Entry" headers
+entry_count=$(grep -c "^###### Entry" "$TODAY_FILE" 2>/dev/null || echo 0)
+entry_count=${entry_count%%$'\n'*}  # Remove any newlines
+
+# Check if we need to add a new entry
+# If there are no entries yet, or if the last entry has content, add a new entry
+should_add_entry=true
+
+if [ "$entry_count" -gt 0 ]; then
+  # Get the last entry header line number
+  last_entry_line=$(grep -n "^###### Entry $entry_count" "$TODAY_FILE" | tail -1 | cut -d: -f1)
+  
+  # Get total lines in file
+  total_lines=$(wc -l < "$TODAY_FILE")
+  total_lines=${total_lines%%$'\n'*}  # Remove any newlines
+  
+  # Extract content after the last entry header
+  content_after_header=$(tail -n +$((last_entry_line + 1)) "$TODAY_FILE" | sed '/^$/d; /^---$/d; /^###### Entry/d')
+  
+  # If there's no content after the last entry header, don't add a new entry
+  if [ -z "$content_after_header" ]; then
+    should_add_entry=false
+  fi
+fi
+
+if [ "$should_add_entry" = true ]; then
+  next_entry=$((entry_count + 1))
+  
+  # If this is not the first entry, add a separator
+  if [ "$entry_count" -gt 0 ]; then
+    echo "" >> "$TODAY_FILE"
+    echo "---" >> "$TODAY_FILE"
+    echo "" >> "$TODAY_FILE"
+  fi
+  
+  # Add entry header
+  echo "###### Entry $next_entry" >> "$TODAY_FILE"
+  echo "" >> "$TODAY_FILE"
 fi
 
 # Open today's file in editor
