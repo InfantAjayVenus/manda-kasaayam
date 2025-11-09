@@ -8,6 +8,7 @@ It creates a new markdown file for you every day. When you start a new day, it s
 
 - **Daily Notes:** Creates a `YYYY-MM-DD.md` file for your daily thoughts.
 - **Auto-Commit:** When you open a new day's note, it commits and pushes the previous day's note automatically.
+- **Auto-Archive:** Previous notes are automatically organized into `YYYY/MM/` directories (e.g., `2025/11/2025-11-07.md`), keeping your notes folder tidy.
 - **Task Rollover:** Incomplete markdown tasks (`- [ ]`) from the previous day are carried over to the new note, with a reference link back to the original file (`## Header [[YYYY-MM-DD.md]]`).
 - **Session Timestamps:** Adds `[[HH:MM]]` timestamps each time you open the note (only if you added content since last opening), separated by `---` dividers.
 - **Header Timestamps:** Run `manda <file.md>` to add `@HH:MM` timestamps to all `## headers` that don't already have one.
