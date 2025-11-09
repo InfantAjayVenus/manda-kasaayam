@@ -4,14 +4,29 @@ A simple daily note-taking tool that automatically commits and pushes your previ
 
 ## Features
 
-- Automatically creates dated markdown files (YYYY-MM-DD.md)
-- Commits and pushes the previous day's notes when you open today's note
-- Works with your preferred editor (defaults to nvim)
-- Git-backed for version control and synchronization
-- Works with notes in any subdirectory of a git repository
-- Automatic timestamp addition to headers when saving notes
-- Interactive task management with TUI (toggle, delete tasks)
-- Automatic rollover of incomplete tasks to the next day
+- **Daily Notes Management**
+  - Automatically creates dated markdown files (YYYY-MM-DD.md)
+  - Commits and pushes the previous day's notes when you open today's note
+  - Works with your preferred editor (defaults to nvim)
+  - Git-backed for version control and synchronization
+  - Works with notes in any subdirectory of a git repository
+
+- **Time Tracking & Organization**
+  - Automatic timestamp entries (HH:MM format) when opening notes
+  - Timestamps are added as markdown wikilinks: `[[HH:MM]]`
+  - Automatic separator lines (`---`) between entries
+  - Smart entry detection: only adds new entries if previous one has content
+  - Automatic timestamps on h2 headers (`##`) when saving notes
+
+- **Task Management**
+  - Automatic rollover of incomplete tasks from previous day
+  - Tasks carry source file references for context (e.g., `[[2025-11-08.md]]`)
+  - Interactive TUI for task management with collapsible sections
+  - Toggle task completion status ([ ] ↔ [x])
+  - Delete tasks interactively
+  - Navigate with arrow keys or Vim-style (j/k/h/l)
+  - Collapse/expand task sections by header (h/l/c keys)
+  - Dual-mode navigation: header selection (h) and task selection (l)
 
 ## Installation
 
@@ -47,9 +62,10 @@ mk
 This will:
 - Create today's note file if it doesn't exist
 - Commit and push yesterday's note if it exists and has changes
-- Copy incomplete tasks from yesterday's note to today's note
+- Copy incomplete tasks from yesterday's note to today's note (with source file links)
+- Add a new timestamped entry (`[[HH:MM]]`) if the previous entry has content
 - Open today's note in your configured editor
-- Automatically add timestamps to headers when you save and exit
+- Automatically add a separator line (`---`) after you exit the editor (if content was added)
 
 ### Interactive Task Management
 
@@ -62,20 +78,32 @@ mk do
 ```
 
 This opens an interactive TUI where you can:
-- Navigate tasks with arrow keys or `j`/`k`
-- Toggle task completion with `space`
-- Delete tasks with `d`
+- Navigate tasks with arrow keys (`↑↓`) or Vim-style keys (`j`/`k`)
+- Switch between header and task selection modes (`h` for headers, `l` for tasks)
+- Toggle task completion with `space` (in task mode)
+- Collapse/expand header sections with `c` (in header mode) or `space` (in header mode)
+- Delete tasks with `d` (in task mode)
 - Quit with `q`
+
+**Navigation Modes:**
+- **Header Mode** (press `h`): Navigate and collapse/expand sections
+- **Task Mode** (press `l`): Navigate and modify individual tasks
+
+Headers show collapse state with symbols:
+- `▼` = expanded (tasks visible)
+- `▶` = collapsed (tasks hidden)
 
 ### Add Timestamps to Specific File
 
-Add timestamps to headers in any markdown file without opening it:
+Process any markdown file to add timestamps to h2 headers without opening it:
 
 ```bash
 manda /path/to/file.md
 # or
 mk /path/to/file.md
 ```
+
+This will add `@HH:MM` timestamps to all h2 headers (`## Header`) that don't already have one.
 
 ### Help
 
@@ -120,14 +148,17 @@ manda
 # Open today's note in a custom directory
 manda ~/my-notes
 
-# Manage tasks interactively
+# Manage tasks interactively (header and task navigation)
 manda do
 
 # Manage tasks in a custom directory
 manda do ~/my-notes
 
-# Add timestamps to a specific file
+# Add @HH:MM timestamps to h2 headers in a specific file
 manda 2025-11-07.md
+
+# Process a file in a specific directory
+manda ~/my-notes/2025-11-08.md
 
 # Show help
 manda --help
@@ -137,6 +168,44 @@ mk
 mk do
 mk --help
 ```
+
+## How It Works
+
+### Daily Note Workflow
+
+1. **Opening a note**: When you run `manda`, it:
+   - Checks if today's note exists
+   - If not, commits and pushes yesterday's note (if it has changes)
+   - Copies incomplete tasks from yesterday to today (with source links like `[[YYYY-MM-DD.md]]`)
+   - Creates today's note with date header (`# YYYY-MM-DD`)
+   - Adds a timestamped entry (`[[HH:MM]]`) if needed
+   - Opens in your editor
+
+2. **During editing**: 
+   - Add content under timestamp entries
+   - Create h2 headers (`## Header`) for organization
+   - Add tasks as markdown checkboxes (`- [ ] task` or `- [x] done`)
+
+3. **After closing**: The script automatically:
+   - Adds a separator line (`---`) if you added content
+   - Prepares for the next entry
+
+### Task Rollover
+
+Incomplete tasks (`- [ ] task`) are automatically:
+- Extracted from the previous day's note
+- Grouped by their h2 headers
+- Tagged with source file reference (e.g., `## Header [[2025-11-08.md]]`)
+- Added to the top of the new day's note
+- Placed above the first timestamp entry
+
+### Timestamp Entries
+
+The script creates structured daily logs with:
+- Timestamp links: `[[HH:MM]]` marking when you opened the note
+- Content sections between timestamps
+- Separators (`---`) between entries
+- Smart detection: no new entry if previous one is empty
 
 ## Directory Structure
 
