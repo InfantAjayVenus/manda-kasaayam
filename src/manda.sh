@@ -147,16 +147,18 @@ interactive_task_view() {
         # Only show header if it exists
         if [ -n "${headers[$i]}" ]; then
           echo -e "\033[7m> ${headers[$i]}\033[0m" # Reverse video for selection
+          echo -e "\033[7m  ${tasks[$i]}\033[0m"
         else
-          echo -e "\033[7m>\033[0m"
+          echo -e "\033[7m> ${tasks[$i]}\033[0m"
         fi
-        echo -e "\033[7m  ${tasks[$i]}\033[0m"
       else
         # Only show header if it exists
         if [ -n "${headers[$i]}" ]; then
           echo "  ${headers[$i]}"
+          echo "    ${tasks[$i]}"
+        else
+          echo "  ${tasks[$i]}"
         fi
-        echo "    ${tasks[$i]}"
       fi
       echo ""
     done
