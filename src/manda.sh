@@ -142,25 +142,31 @@ interactive_task_view() {
     echo "=== Task List (q: quit, ↑↓/jk: navigate, space: toggle, d: delete) ==="
     echo ""
 
+    local last_header=""
     for i in "${!tasks[@]}"; do
-      if [ $i -eq $selected ]; then
-        # Only show header if it exists
+      # Print header only when it changes
+      if [ "${headers[$i]}" != "$last_header" ]; then
         if [ -n "${headers[$i]}" ]; then
-          echo -e "\033[7m> ${headers[$i]}\033[0m" # Reverse video for selection
-          echo -e "\033[7m  ${tasks[$i]}\033[0m"
+          echo "${headers[$i]}"
+        fi
+        last_header="${headers[$i]}"
+      fi
+      
+      if [ $i -eq $selected ]; then
+        # Show selected task with highlighting
+        if [ -n "${headers[$i]}" ]; then
+          echo -e "\033[7m  > ${tasks[$i]}\033[0m"
         else
           echo -e "\033[7m> ${tasks[$i]}\033[0m"
         fi
       else
-        # Only show header if it exists
+        # Show normal task
         if [ -n "${headers[$i]}" ]; then
-          echo "  ${headers[$i]}"
           echo "    ${tasks[$i]}"
         else
           echo "  ${tasks[$i]}"
         fi
       fi
-      echo ""
     done
   }
 
