@@ -41,7 +41,7 @@ Open today's note:
 ```bash
 manda
 # or
-md
+mk
 ```
 
 This will:
@@ -58,7 +58,7 @@ View and manage tasks interactively:
 ```bash
 manda do
 # or
-md do
+mk do
 ```
 
 This opens an interactive TUI where you can:
@@ -74,7 +74,7 @@ Add timestamps to headers in any markdown file without opening it:
 ```bash
 manda /path/to/file.md
 # or
-md /path/to/file.md
+mk /path/to/file.md
 ```
 
 ### Help
@@ -86,7 +86,7 @@ manda --help
 # or
 manda -h
 # or
-md --help
+mk --help
 ```
 
 ### Configuration
@@ -103,7 +103,7 @@ You can also pass an alternative directory as an argument:
 ```bash
 manda /path/to/alternative/notes
 # or
-md /path/to/alternative/notes
+mk /path/to/alternative/notes
 ```
 
 ### Examples
@@ -128,15 +128,15 @@ manda 2025-11-07.md
 manda --help
 
 # Using the shorter alias
-md
-md do
-md --help
+mk
+mk do
+mk --help
 ```
 
 ## Directory Structure
 
 - `src/`: Contains the main script
-- `bin/`: Contains the symlinks to the script (manda and md)
+- `bin/`: Contains the symlinks to the script (manda and mk)
 - `notes/`: Default location for your notes
 
 ## License
