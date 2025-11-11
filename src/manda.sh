@@ -422,6 +422,7 @@ Usage:
   manda [notes_dir]            Open today's note file in \$EDITOR
   manda do [notes_dir]         Interactive task list view (toggle/delete tasks)
   manda see [notes_dir]        Preview today's note with markdown formatting
+  manda see yester [notes_dir] Preview yesterday's note with markdown formatting
   manda <file.md>              Add timestamps to headers in specified file
   manda -h, --help             Show this help message
 
@@ -441,6 +442,7 @@ Examples:
   manda ~/my-notes             Open today's note in ~/my-notes
   manda do                     View and manage tasks interactively
   manda see                    Preview today's note with markdown formatting
+  manda see yester             Preview yesterday's note with markdown formatting
   manda 2025-11-07.md          Add timestamps to specified file
   
 First run: Create a git-backed notes directory and initialize it with git, or
@@ -482,6 +484,51 @@ fi
 
 # Check if first argument is "see" to preview today's note
 if [[ $# -gt 0 && "$1" == "see" ]]; then
+  # Check for "yester" sub-command
+  if [[ $# -gt 1 && "$2" == "yester" ]]; then
+    # Config setup for accessing the correct files
+    MANDA_DIR="${3:-${MANDA_DIR:-}}"
+
+    # Check if MANDA_DIR is set
+    if [ -z "$MANDA_DIR" ]; then
+      echo "Error: Notes directory not specified."
+      echo "Set MANDA_DIR environment variable or pass the directory as an argument:"
+      echo "  manda see yester /path/to/notes"
+      exit 1
+    fi
+
+    # Calculate yesterday's date
+    if [[ "$(uname)" == "Darwin" ]]; then
+      # macOS date command
+      YESTERDAY="$(date -v-1d +"%Y-%m-%d")"
+    else
+      # Linux date command
+      YESTERDAY="$(date -d "yesterday" +"%Y-%m-%d")"
+    fi
+
+    # Extract year and month from yesterday's date
+    YESTER_YEAR="${YESTERDAY:0:4}"
+    YESTER_MONTH="${YESTERDAY:5:2}"
+    
+    # Check possible locations for yesterday's file
+    # 1. Archive location: MANDA_DIR/YYYY/MM/YYYY-MM-DD.md
+    # 2. Root location: MANDA_DIR/YYYY-MM-DD.md
+    YESTER_FILE_ARCHIVE="$MANDA_DIR/$YESTER_YEAR/$YESTER_MONTH/$YESTERDAY.md"
+    YESTER_FILE_ROOT="$MANDA_DIR/$YESTERDAY.md"
+    
+    if [ -f "$YESTER_FILE_ARCHIVE" ]; then
+      preview_markdown "$YESTER_FILE_ARCHIVE"
+    elif [ -f "$YESTER_FILE_ROOT" ]; then
+      preview_markdown "$YESTER_FILE_ROOT"
+    else
+      echo "Yesterday's note file ($YESTERDAY.md) not found."
+      echo "Checked locations:"
+      echo "  - $YESTER_FILE_ARCHIVE"
+      echo "  - $YESTER_FILE_ROOT"
+    fi
+    exit 0
+  fi
+
   # Config setup for accessing the correct files
   MANDA_DIR="${2:-${MANDA_DIR:-}}"
 
