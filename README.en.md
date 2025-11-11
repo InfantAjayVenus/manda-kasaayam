@@ -53,6 +53,10 @@ In the TUI:
 # Preview today's note.
 manda see
 mk see
+
+# Preview yesterday's note.
+manda see yester
+mk see yester
 ```
 
 ### Add Timestamps to Headers

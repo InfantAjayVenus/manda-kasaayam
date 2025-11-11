@@ -51,6 +51,13 @@ manda see
 mk see
 ```
 
+நேற்றைய குறிப்பை மாதிரிக்காட்சி செய்ய:
+```bash
+manda see yester
+# அல்லது
+mk see yester
+```
+
 ### உதவி
 
 உதவிக்கு:
