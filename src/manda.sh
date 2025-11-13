@@ -497,34 +497,32 @@ if [[ $# -gt 0 && "$1" == "see" ]]; then
       exit 1
     fi
 
-    # Calculate yesterday's date
-    if [[ "$(uname)" == "Darwin" ]]; then
-      # macOS date command
-      YESTERDAY="$(date -v-1d +"%Y-%m-%d")"
+    # Get today's date for exclusion
+    TODAY="$(date +"%Y-%m-%d")"
+    
+    # Find the most recent markdown file (not including today)
+    # Search in both root directory and archive directories (YYYY/MM/)
+    prev_path=""
+    if command -v find &>/dev/null; then
+      # Find all .md files matching the date pattern, exclude today's file, get the most recent one
+      prev_path="$(find "$MANDA_DIR" -type f -name '????-??-??.md' ! -name "$TODAY.md" 2>/dev/null | sort -r | head -n1 || true)"
     else
-      # Linux date command
-      YESTERDAY="$(date -d "yesterday" +"%Y-%m-%d")"
+      # Fallback to ls for just the root directory if find is not available
+      prev_file="$(cd "$MANDA_DIR" && ls -1 ????-??-??.md 2>/dev/null | grep -v "$TODAY.md" | sort -r | head -n1 || true)"
+      if [ -n "$prev_file" ]; then
+        prev_path="$MANDA_DIR/$prev_file"
+      fi
     fi
-
-    # Extract year and month from yesterday's date
-    YESTER_YEAR="${YESTERDAY:0:4}"
-    YESTER_MONTH="${YESTERDAY:5:2}"
     
-    # Check possible locations for yesterday's file
-    # 1. Archive location: MANDA_DIR/YYYY/MM/YYYY-MM-DD.md
-    # 2. Root location: MANDA_DIR/YYYY-MM-DD.md
-    YESTER_FILE_ARCHIVE="$MANDA_DIR/$YESTER_YEAR/$YESTER_MONTH/$YESTERDAY.md"
-    YESTER_FILE_ROOT="$MANDA_DIR/$YESTERDAY.md"
-    
-    if [ -f "$YESTER_FILE_ARCHIVE" ]; then
-      preview_markdown "$YESTER_FILE_ARCHIVE"
-    elif [ -f "$YESTER_FILE_ROOT" ]; then
-      preview_markdown "$YESTER_FILE_ROOT"
+    if [ -n "$prev_path" ] && [ -f "$prev_path" ]; then
+      # Extract the date from the filename for display
+      prev_filename="$(basename "$prev_path")"
+      prev_date="${prev_filename%.md}"
+      echo "Showing previous note: $prev_date"
+      echo ""
+      preview_markdown "$prev_path"
     else
-      echo "Yesterday's note file ($YESTERDAY.md) not found."
-      echo "Checked locations:"
-      echo "  - $YESTER_FILE_ARCHIVE"
-      echo "  - $YESTER_FILE_ROOT"
+      echo "No previous note files found in $MANDA_DIR"
     fi
     exit 0
   fi
