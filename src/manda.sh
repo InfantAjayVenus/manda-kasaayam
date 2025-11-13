@@ -370,6 +370,44 @@ update_file_with_tasks() {
   mv "$temp_file" "$file"
 }
 
+# Function to get all note files sorted by date
+get_all_note_files() {
+  local notes_dir="$1"
+  local files=()
+  
+  if command -v find &>/dev/null; then
+    # Find all .md files matching the date pattern and sort them
+    while IFS= read -r file; do
+      files+=("$file")
+    done < <(find "$notes_dir" -type f -name '????-??-??.md' 2>/dev/null | sort)
+  else
+    # Fallback to ls for just the root directory
+    while IFS= read -r file; do
+      files+=("$notes_dir/$file")
+    done < <(cd "$notes_dir" && ls -1 ????-??-??.md 2>/dev/null | sort || true)
+  fi
+  
+  printf '%s\n' "${files[@]}"
+}
+
+# Function to find the index of a file in an array
+find_file_index() {
+  local target="$1"
+  shift
+  local files=("$@")
+  local i
+  
+  for i in "${!files[@]}"; do
+    if [ "${files[$i]}" = "$target" ]; then
+      echo "$i"
+      return 0
+    fi
+  done
+  
+  echo "-1"
+  return 1
+}
+
 # Function to preview markdown with formatting
 preview_markdown() {
   local file="$1"
@@ -413,6 +451,112 @@ preview_markdown() {
   # Cleanup handled by trap
 }
 
+# Function to preview markdown with navigation
+preview_markdown_interactive() {
+  local initial_file="$1"
+  local notes_dir="$2"
+  
+  # Get all note files
+  local all_files=()
+  while IFS= read -r file; do
+    all_files+=("$file")
+  done < <(get_all_note_files "$notes_dir")
+  
+  if [ ${#all_files[@]} -eq 0 ]; then
+    echo "No note files found in $notes_dir"
+    return 1
+  fi
+  
+  # Find the index of the initial file
+  local current_index
+  current_index=$(find_file_index "$initial_file" "${all_files[@]}")
+  
+  if [ "$current_index" = "-1" ]; then
+    echo "Error: Could not find $initial_file in notes directory"
+    return 1
+  fi
+  
+  while true; do
+    local current_file="${all_files[$current_index]}"
+    local filename="$(basename "$current_file")"
+    local date="${filename%.md}"
+    
+    # Clear screen and show header
+    clear
+    echo "═══════════════════════════════════════════════════════════════════════════════"
+    echo "  Viewing: $date"
+    echo "  Navigation: [h] previous  [l] next  [q] quit"
+    if [ $current_index -gt 0 ]; then
+      local prev_file="$(basename "${all_files[$((current_index - 1))]}")"
+      echo "  ← ${prev_file%.md}"
+    fi
+    if [ $current_index -lt $((${#all_files[@]} - 1)) ]; then
+      local next_file="$(basename "${all_files[$((current_index + 1))]}")"
+      echo "  → ${next_file%.md}"
+    fi
+    echo "═══════════════════════════════════════════════════════════════════════════════"
+    echo ""
+    
+    # Create a temporary file for preprocessed markdown
+    local temp_file=$(mktemp)
+    
+    # Preprocess the markdown
+    sed -E \
+      -e 's/\[\[([0-9][0-9]:[0-9][0-9])\]\]/🕐 **\1**/g' \
+      -e 's/## (.+) \[\[([^]]+\.md)\]\]/## \1 _[\2]_/g' \
+      -e 's/\[\[([^]]+)\]\]/_\1_/g' \
+      "$current_file" > "$temp_file"
+    
+    # Display the content
+    if command -v bat &>/dev/null; then
+      bat --paging=never --style=plain --language=markdown --theme="TwoDark" "$temp_file"
+    elif command -v glow &>/dev/null; then
+      glow "$temp_file"
+    elif command -v mdcat &>/dev/null; then
+      mdcat "$temp_file"
+    else
+      cat "$temp_file"
+    fi
+    
+    rm -f "$temp_file"
+    
+    echo ""
+    echo "═══════════════════════════════════════════════════════════════════════════════"
+    echo -n "Command [h/l/q]: "
+    
+    # Read single character
+    IFS= read -rsn1 key
+    echo ""
+    
+    case "$key" in
+      'h' | 'H')
+        if [ $current_index -gt 0 ]; then
+          current_index=$((current_index - 1))
+        else
+          echo "Already at the first note."
+          sleep 1
+        fi
+        ;;
+      'l' | 'L')
+        if [ $current_index -lt $((${#all_files[@]} - 1)) ]; then
+          current_index=$((current_index + 1))
+        else
+          echo "Already at the last note."
+          sleep 1
+        fi
+        ;;
+      'q' | 'Q')
+        clear
+        return 0
+        ;;
+      *)
+        echo "Invalid command. Use h (previous), l (next), or q (quit)."
+        sleep 1
+        ;;
+    esac
+  done
+}
+
 # Function to display help
 show_help() {
   cat <<EOF
@@ -421,8 +565,8 @@ manda — open today's note; on new-day create new and commit+push previous note
 Usage:
   manda [notes_dir]            Open today's note file in \$EDITOR
   manda do [notes_dir]         Interactive task list view (toggle/delete tasks)
-  manda see [notes_dir]        Preview today's note with markdown formatting
-  manda see yester [notes_dir] Preview yesterday's note with markdown formatting
+  manda see [notes_dir]        Preview notes with navigation (h/l to browse)
+  manda see yester [notes_dir] Preview previous note with navigation
   manda <file.md>              Add timestamps to headers in specified file
   manda -h, --help             Show this help message
 
@@ -441,8 +585,8 @@ Examples:
   manda                        Open today's note with default settings
   manda ~/my-notes             Open today's note in ~/my-notes
   manda do                     View and manage tasks interactively
-  manda see                    Preview today's note with markdown formatting
-  manda see yester             Preview yesterday's note with markdown formatting
+  manda see                    Preview today's note (h/l to navigate, q to quit)
+  manda see yester             Preview previous note (h/l to navigate, q to quit)
   manda 2025-11-07.md          Add timestamps to specified file
   
 First run: Create a git-backed notes directory and initialize it with git, or
@@ -515,12 +659,7 @@ if [[ $# -gt 0 && "$1" == "see" ]]; then
     fi
     
     if [ -n "$prev_path" ] && [ -f "$prev_path" ]; then
-      # Extract the date from the filename for display
-      prev_filename="$(basename "$prev_path")"
-      prev_date="${prev_filename%.md}"
-      echo "Showing previous note: $prev_date"
-      echo ""
-      preview_markdown "$prev_path"
+      preview_markdown_interactive "$prev_path" "$MANDA_DIR"
     else
       echo "No previous note files found in $MANDA_DIR"
     fi
@@ -543,7 +682,7 @@ if [[ $# -gt 0 && "$1" == "see" ]]; then
 
   # Check if today's file exists
   if [ -f "$TODAY_FILE" ]; then
-    preview_markdown "$TODAY_FILE"
+    preview_markdown_interactive "$TODAY_FILE" "$MANDA_DIR"
   else
     echo "Today's note file doesn't exist yet."
     echo "Run 'manda' to create it."
