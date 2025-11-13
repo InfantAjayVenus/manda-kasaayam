@@ -1,0 +1,1872 @@
+﻿2025-12-01T00:02:27.4657373Z Current runner version: '2.329.0'
+2025-12-01T00:02:27.4690218Z ##[group]Runner Image Provisioner
+2025-12-01T00:02:27.4691666Z Hosted Compute Agent
+2025-12-01T00:02:27.4692553Z Version: 20251016.436
+2025-12-01T00:02:27.4693508Z Commit: 8ab8ac8bfd662a3739dab9fe09456aba92132568
+2025-12-01T00:02:27.4694699Z Build Date: 2025-10-15T20:44:12Z
+2025-12-01T00:02:27.4695616Z ##[endgroup]
+2025-12-01T00:02:27.4696433Z ##[group]Operating System
+2025-12-01T00:02:27.4697312Z Ubuntu
+2025-12-01T00:02:27.4698063Z 24.04.3
+2025-12-01T00:02:27.4698743Z LTS
+2025-12-01T00:02:27.4699622Z ##[endgroup]
+2025-12-01T00:02:27.4700368Z ##[group]Runner Image
+2025-12-01T00:02:27.4701186Z Image: ubuntu-24.04
+2025-12-01T00:02:27.4702296Z Version: 20251112.124.1
+2025-12-01T00:02:27.4703981Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20251112.124/images/ubuntu/Ubuntu2404-Readme.md
+2025-12-01T00:02:27.4706529Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20251112.124
+2025-12-01T00:02:27.4708291Z ##[endgroup]
+2025-12-01T00:02:27.4710119Z ##[group]GITHUB_TOKEN Permissions
+2025-12-01T00:02:27.4712923Z Contents: read
+2025-12-01T00:02:27.4713695Z Metadata: read
+2025-12-01T00:02:27.4714557Z Packages: read
+2025-12-01T00:02:27.4715353Z ##[endgroup]
+2025-12-01T00:02:27.4718257Z Secret source: Actions
+2025-12-01T00:02:27.4719391Z Prepare workflow directory
+2025-12-01T00:02:27.5174520Z Prepare all required actions
+2025-12-01T00:02:27.5228980Z Getting action download info
+2025-12-01T00:02:27.8114396Z Download action repository 'actions/checkout@v4' (SHA:34e114876b0b11c390a56381ad16ebd13914f8d5)
+2025-12-01T00:02:28.1178251Z Download action repository 'pnpm/action-setup@v3' (SHA:a3252b78c470c02df07e9d59298aecedc3ccdd6d)
+2025-12-01T00:02:28.3888684Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+2025-12-01T00:02:28.5719922Z Complete job name: Test on Node.js 22
+2025-12-01T00:02:28.6362086Z ##[group]Run actions/checkout@v4
+2025-12-01T00:02:28.6362999Z with:
+2025-12-01T00:02:28.6363495Z   repository: InfantAjayVenus/manda-kasaayam
+2025-12-01T00:02:28.6364235Z   token: ***
+2025-12-01T00:02:28.6364631Z   ssh-strict: true
+2025-12-01T00:02:28.6365039Z   ssh-user: git
+2025-12-01T00:02:28.6365454Z   persist-credentials: true
+2025-12-01T00:02:28.6365919Z   clean: true
+2025-12-01T00:02:28.6366333Z   sparse-checkout-cone-mode: true
+2025-12-01T00:02:28.6366837Z   fetch-depth: 1
+2025-12-01T00:02:28.6367241Z   fetch-tags: false
+2025-12-01T00:02:28.6367676Z   show-progress: true
+2025-12-01T00:02:28.6368104Z   lfs: false
+2025-12-01T00:02:28.6368502Z   submodules: false
+2025-12-01T00:02:28.6368912Z   set-safe-directory: true
+2025-12-01T00:02:28.6369583Z ##[endgroup]
+2025-12-01T00:02:28.7435530Z Syncing repository: InfantAjayVenus/manda-kasaayam
+2025-12-01T00:02:28.7437321Z ##[group]Getting Git version info
+2025-12-01T00:02:28.7438188Z Working directory is '/home/runner/work/manda-kasaayam/manda-kasaayam'
+2025-12-01T00:02:28.7439234Z [command]/usr/bin/git version
+2025-12-01T00:02:28.7532719Z git version 2.51.2
+2025-12-01T00:02:28.7559567Z ##[endgroup]
+2025-12-01T00:02:28.7576052Z Temporarily overriding HOME='/home/runner/work/_temp/cb2f1bef-24f5-42d5-baa1-028631e12efa' before making global git config changes
+2025-12-01T00:02:28.7578494Z Adding repository directory to the temporary git global config as a safe directory
+2025-12-01T00:02:28.7582835Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/manda-kasaayam/manda-kasaayam
+2025-12-01T00:02:28.7619924Z Deleting the contents of '/home/runner/work/manda-kasaayam/manda-kasaayam'
+2025-12-01T00:02:28.7624332Z ##[group]Initializing the repository
+2025-12-01T00:02:28.7629137Z [command]/usr/bin/git init /home/runner/work/manda-kasaayam/manda-kasaayam
+2025-12-01T00:02:28.7755107Z hint: Using 'master' as the name for the initial branch. This default branch name
+2025-12-01T00:02:28.7756478Z hint: is subject to change. To configure the initial branch name to use in all
+2025-12-01T00:02:28.7757391Z hint: of your new repositories, which will suppress this warning, call:
+2025-12-01T00:02:28.7758351Z hint:
+2025-12-01T00:02:28.7758904Z hint: 	git config --global init.defaultBranch <name>
+2025-12-01T00:02:28.7759482Z hint:
+2025-12-01T00:02:28.7760023Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2025-12-01T00:02:28.7760902Z hint: 'development'. The just-created branch can be renamed via this command:
+2025-12-01T00:02:28.7761876Z hint:
+2025-12-01T00:02:28.7762273Z hint: 	git branch -m <name>
+2025-12-01T00:02:28.7762741Z hint:
+2025-12-01T00:02:28.7763351Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2025-12-01T00:02:28.7776623Z Initialized empty Git repository in /home/runner/work/manda-kasaayam/manda-kasaayam/.git/
+2025-12-01T00:02:28.7788713Z [command]/usr/bin/git remote add origin https://github.com/InfantAjayVenus/manda-kasaayam
+2025-12-01T00:02:28.7823183Z ##[endgroup]
+2025-12-01T00:02:28.7824411Z ##[group]Disabling automatic garbage collection
+2025-12-01T00:02:28.7828046Z [command]/usr/bin/git config --local gc.auto 0
+2025-12-01T00:02:28.7856758Z ##[endgroup]
+2025-12-01T00:02:28.7858008Z ##[group]Setting up auth
+2025-12-01T00:02:28.7864430Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2025-12-01T00:02:28.7894958Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2025-12-01T00:02:28.8289943Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2025-12-01T00:02:28.8319929Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2025-12-01T00:02:28.8539334Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2025-12-01T00:02:28.8570107Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2025-12-01T00:02:28.8790043Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2025-12-01T00:02:28.8824033Z ##[endgroup]
+2025-12-01T00:02:28.8825338Z ##[group]Fetching the repository
+2025-12-01T00:02:28.8833716Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +e6e23486060df3a81163c16e5c79aa62449691f4:refs/remotes/pull/1/merge
+2025-12-01T00:02:29.0971726Z From https://github.com/InfantAjayVenus/manda-kasaayam
+2025-12-01T00:02:29.0972745Z  * [new ref]         e6e23486060df3a81163c16e5c79aa62449691f4 -> pull/1/merge
+2025-12-01T00:02:29.1005711Z ##[endgroup]
+2025-12-01T00:02:29.1006438Z ##[group]Determining the checkout info
+2025-12-01T00:02:29.1008202Z ##[endgroup]
+2025-12-01T00:02:29.1013710Z [command]/usr/bin/git sparse-checkout disable
+2025-12-01T00:02:29.1056378Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2025-12-01T00:02:29.1083490Z ##[group]Checking out the ref
+2025-12-01T00:02:29.1087064Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/1/merge
+2025-12-01T00:02:29.1182189Z Note: switching to 'refs/remotes/pull/1/merge'.
+2025-12-01T00:02:29.1182929Z 
+2025-12-01T00:02:29.1183600Z You are in 'detached HEAD' state. You can look around, make experimental
+2025-12-01T00:02:29.1185034Z changes and commit them, and you can discard any commits you make in this
+2025-12-01T00:02:29.1186418Z state without impacting any branches by switching back to a branch.
+2025-12-01T00:02:29.1187262Z 
+2025-12-01T00:02:29.1187626Z If you want to create a new branch to retain commits you create, you may
+2025-12-01T00:02:29.1188442Z do so (now or later) by using -c with the switch command. Example:
+2025-12-01T00:02:29.1188899Z 
+2025-12-01T00:02:29.1189131Z   git switch -c <new-branch-name>
+2025-12-01T00:02:29.1189475Z 
+2025-12-01T00:02:29.1189671Z Or undo this operation with:
+2025-12-01T00:02:29.1190434Z 
+2025-12-01T00:02:29.1190717Z   git switch -
+2025-12-01T00:02:29.1191116Z 
+2025-12-01T00:02:29.1191870Z Turn off this advice by setting config variable advice.detachedHead to false
+2025-12-01T00:02:29.1192431Z 
+2025-12-01T00:02:29.1193050Z HEAD is now at e6e2348 Merge 0736e80b8849cf108068dde7e5a4089c1fd1b093 into d1757e7f4a2c297b04540216c1d4ed333a956c4d
+2025-12-01T00:02:29.1195189Z ##[endgroup]
+2025-12-01T00:02:29.1225376Z [command]/usr/bin/git log -1 --format=%H
+2025-12-01T00:02:29.1247062Z e6e23486060df3a81163c16e5c79aa62449691f4
+2025-12-01T00:02:29.1459211Z ##[group]Run pnpm/action-setup@v3
+2025-12-01T00:02:29.1459817Z with:
+2025-12-01T00:02:29.1460320Z   version: 9.15.1
+2025-12-01T00:02:29.1460789Z   dest: ~/setup-pnpm
+2025-12-01T00:02:29.1461557Z   run_install: null
+2025-12-01T00:02:29.1462142Z   package_json_file: package.json
+2025-12-01T00:02:29.1462702Z   standalone: false
+2025-12-01T00:02:29.1463192Z ##[endgroup]
+2025-12-01T00:02:29.2328473Z ##[group]Running self-installer...
+2025-12-01T00:02:29.8233662Z Progress: resolved 1, reused 0, downloaded 0, added 0
+2025-12-01T00:02:29.8340946Z Packages: +1
+2025-12-01T00:02:29.8343733Z +
+2025-12-01T00:02:30.2655190Z Progress: resolved 1, reused 0, downloaded 1, added 1, done
+2025-12-01T00:02:30.3000952Z 
+2025-12-01T00:02:30.3002045Z dependencies:
+2025-12-01T00:02:30.3003456Z + pnpm 9.15.1 (10.24.0 is available)
+2025-12-01T00:02:30.3004701Z 
+2025-12-01T00:02:30.3042196Z Done in 892ms
+2025-12-01T00:02:30.3249168Z ##[endgroup]
+2025-12-01T00:02:30.3251886Z Installation Completed!
+2025-12-01T00:02:30.3493571Z ##[group]Run actions/setup-node@v4
+2025-12-01T00:02:30.3494777Z with:
+2025-12-01T00:02:30.3495515Z   node-version: 22
+2025-12-01T00:02:30.3496394Z   cache: pnpm
+2025-12-01T00:02:30.3497244Z   always-auth: false
+2025-12-01T00:02:30.3498130Z   check-latest: false
+2025-12-01T00:02:30.3499305Z   token: ***
+2025-12-01T00:02:30.3500156Z env:
+2025-12-01T00:02:30.3501123Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2025-12-01T00:02:30.3502590Z ##[endgroup]
+2025-12-01T00:02:30.5431853Z Found in cache @ /opt/hostedtoolcache/node/22.21.1/x64
+2025-12-01T00:02:30.5436795Z ##[group]Environment details
+2025-12-01T00:02:32.7147895Z node: v22.21.1
+2025-12-01T00:02:32.7148401Z npm: 10.9.4
+2025-12-01T00:02:32.7148675Z yarn: 1.22.22
+2025-12-01T00:02:32.7149651Z ##[endgroup]
+2025-12-01T00:02:32.7178020Z [command]/home/runner/setup-pnpm/node_modules/.bin/pnpm store path --silent
+2025-12-01T00:02:33.2392341Z /home/runner/setup-pnpm/node_modules/.bin/store/v3
+2025-12-01T00:02:33.3324428Z pnpm cache is not found
+2025-12-01T00:02:33.3438601Z ##[group]Run pnpm install --frozen-lockfile
+2025-12-01T00:02:33.3439011Z [36;1mpnpm install --frozen-lockfile[0m
+2025-12-01T00:02:33.3484219Z shell: /usr/bin/bash -e {0}
+2025-12-01T00:02:33.3484473Z env:
+2025-12-01T00:02:33.3484699Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2025-12-01T00:02:33.3484992Z ##[endgroup]
+2025-12-01T00:02:33.7848529Z Lockfile is up to date, resolution step is skipped
+2025-12-01T00:02:33.8195657Z Progress: resolved 1, reused 0, downloaded 0, added 0
+2025-12-01T00:02:33.8628650Z Packages: +216
+2025-12-01T00:02:33.8629409Z ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+2025-12-01T00:02:34.8208931Z Progress: resolved 216, reused 0, downloaded 156, added 156
+2025-12-01T00:02:35.0868587Z Progress: resolved 216, reused 0, downloaded 216, added 216, done
+2025-12-01T00:02:35.1774981Z .../esbuild@0.25.12/node_modules/esbuild postinstall$ node install.js
+2025-12-01T00:02:35.2245070Z .../esbuild@0.25.12/node_modules/esbuild postinstall: Done
+2025-12-01T00:02:35.3194305Z 
+2025-12-01T00:02:35.3194864Z dependencies:
+2025-12-01T00:02:35.3195282Z + commander 14.0.2
+2025-12-01T00:02:35.3195616Z + husky 9.1.7
+2025-12-01T00:02:35.3195805Z + ink 6.5.0
+2025-12-01T00:02:35.3195997Z + marked 17.0.0
+2025-12-01T00:02:35.3196195Z + react 19.2.0
+2025-12-01T00:02:35.3196438Z + simple-git 3.30.0
+2025-12-01T00:02:35.3196583Z 
+2025-12-01T00:02:35.3196684Z devDependencies:
+2025-12-01T00:02:35.3197268Z + @types/marked 6.0.0
+2025-12-01T00:02:35.3197524Z + @types/node 24.10.1
+2025-12-01T00:02:35.3197736Z + @types/react 19.2.6
+2025-12-01T00:02:35.3198004Z + @typescript-eslint/eslint-plugin 8.48.0
+2025-12-01T00:02:35.3198353Z + @typescript-eslint/parser 8.48.0
+2025-12-01T00:02:35.3198591Z + eslint 9.39.1
+2025-12-01T00:02:35.3198809Z + ink-testing-library 4.0.0
+2025-12-01T00:02:35.3199051Z + lint-staged 16.2.7
+2025-12-01T00:02:35.3199243Z + prettier 3.7.3
+2025-12-01T00:02:35.3199427Z + tsx 4.20.6
+2025-12-01T00:02:35.3199649Z + typescript 5.9.3
+2025-12-01T00:02:35.3199852Z + vitest 4.0.10
+2025-12-01T00:02:35.3199962Z 
+2025-12-01T00:02:35.3351196Z 
+2025-12-01T00:02:35.3352207Z > manda-kasaayam@1.0.0 prepare /home/runner/work/manda-kasaayam/manda-kasaayam
+2025-12-01T00:02:35.3352641Z > husky
+2025-12-01T00:02:35.3352757Z 
+2025-12-01T00:02:35.3801739Z Done in 2s
+2025-12-01T00:02:35.4137236Z ##[group]Run pnpm build
+2025-12-01T00:02:35.4137539Z [36;1mpnpm build[0m
+2025-12-01T00:02:35.4170336Z shell: /usr/bin/bash -e {0}
+2025-12-01T00:02:35.4170565Z env:
+2025-12-01T00:02:35.4170794Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2025-12-01T00:02:35.4171064Z ##[endgroup]
+2025-12-01T00:02:35.8417228Z 
+2025-12-01T00:02:35.8418040Z > manda-kasaayam@1.0.0 build /home/runner/work/manda-kasaayam/manda-kasaayam
+2025-12-01T00:02:35.8418712Z > pnpm exec tsc
+2025-12-01T00:02:35.8418912Z 
+2025-12-01T00:02:38.8215611Z ##[group]Run pnpm test
+2025-12-01T00:02:38.8215997Z [36;1mpnpm test[0m
+2025-12-01T00:02:38.8250290Z shell: /usr/bin/bash -e {0}
+2025-12-01T00:02:38.8250512Z env:
+2025-12-01T00:02:38.8250730Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2025-12-01T00:02:38.8251130Z   MANDA_DIR: /home/runner/work/manda-kasaayam/manda-kasaayam/manda-data
+2025-12-01T00:02:38.8251652Z   CI: true
+2025-12-01T00:02:38.8251813Z ##[endgroup]
+2025-12-01T00:02:39.2377495Z 
+2025-12-01T00:02:39.2378275Z > manda-kasaayam@1.0.0 test /home/runner/work/manda-kasaayam/manda-kasaayam
+2025-12-01T00:02:39.2378989Z > vitest
+2025-12-01T00:02:39.2379160Z 
+2025-12-01T00:02:39.6042995Z 
+2025-12-01T00:02:39.6045357Z [1m[46m RUN [49m[22m [36mv4.0.10 [39m[90m/home/runner/work/manda-kasaayam/manda-kasaayam[39m
+2025-12-01T00:02:39.6046022Z 
+2025-12-01T00:02:40.2234563Z  [31m❯[39m dist/test/domain/note.service.test.js [2m([22m[2m54 tests[22m[2m | [22m[31m4 failed[39m[2m)[22m[32m 93[2mms[22m[39m
+2025-12-01T00:02:40.2236074Z        [32m✓[39m should return file name in YYYY-MM-DD.md format[32m 5[2mms[22m[39m
+2025-12-01T00:02:40.2237276Z        [32m✓[39m should pad single digit month and day with zero[32m 1[2mms[22m[39m
+2025-12-01T00:02:40.2238390Z        [32m✓[39m should return full path to today's note[32m 1[2mms[22m[39m
+2025-12-01T00:02:40.2239751Z        [32m✓[39m should create note file with incomplete tasks if it does not exist and is today's note[32m 12[2mms[22m[39m
+2025-12-01T00:02:40.2241587Z        [32m✓[39m should create empty note file if it does not exist and is not today's note[32m 2[2mms[22m[39m
+2025-12-01T00:02:40.2242980Z        [32m✓[39m should not create note file if it already exists[32m 1[2mms[22m[39m
+2025-12-01T00:02:40.2244371Z        [32m✓[39m should generate note content with incomplete tasks from yesterday's note[32m 4[2mms[22m[39m
+2025-12-01T00:02:40.2245824Z        [32m✓[39m should preserve existing date links when extracting tasks[32m 2[2mms[22m[39m
+2025-12-01T00:02:40.2247262Z        [32m✓[39m should return empty string when yesterday's note has no incomplete tasks[32m 1[2mms[22m[39m
+2025-12-01T00:02:40.2248710Z        [32m✓[39m should return empty string when yesterday's note does not exist[32m 1[2mms[22m[39m
+2025-12-01T00:02:40.2250077Z        [32m✓[39m should extract incomplete tasks from markdown content[32m 1[2mms[22m[39m
+2025-12-01T00:02:40.2251589Z        [32m✓[39m should return empty array when no incomplete tasks[32m 0[2mms[22m[39m
+2025-12-01T00:02:40.2252740Z        [32m✓[39m should extract tasks grouped by date links[32m 1[2mms[22m[39m
+2025-12-01T00:02:40.2254394Z        [32m✓[39m should handle content without date links[32m 1[2mms[22m[39m
+2025-12-01T00:02:40.2255566Z        [32m✓[39m should return empty array when no incomplete tasks[32m 0[2mms[22m[39m
+2025-12-01T00:02:40.2256703Z        [32m✓[39m should ensure notes directory exists[32m 2[2mms[22m[39m
+2025-12-01T00:02:40.2257922Z        [32m✓[39m should move yesterday's note to organized directory structure[32m 1[2mms[22m[39m
+2025-12-01T00:02:40.2259217Z        [32m✓[39m should not move note if yesterday's note does not exist[32m 1[2mms[22m[39m
+2025-12-01T00:02:40.2260508Z        [32m✓[39m should create correct directory structure with padded month[32m 1[2mms[22m[39m
+2025-12-01T00:02:40.2302141Z        [32m✓[39m should return current time in HH:mm format[32m 1[2mms[22m[39m
+2025-12-01T00:02:40.2303306Z        [32m✓[39m should return true when no timestamps exist[32m 0[2mms[22m[39m
+2025-12-01T00:02:40.2304611Z        [32m✓[39m should return true when there is content after last timestamp[32m 0[2mms[22m[39m
+2025-12-01T00:02:40.2306007Z        [32m✓[39m should return false when there is only whitespace after last timestamp[32m 0[2mms[22m[39m
+2025-12-01T00:02:40.2307401Z        [32m✓[39m should return false when timestamp is at the end of file[32m 0[2mms[22m[39m
+2025-12-01T00:02:40.2309223Z        [32m✓[39m should return false when timestamp is followed only by newline[32m 0[2mms[22m[39m
+2025-12-01T00:02:40.2310541Z        [32m✓[39m should handle multiple timestamps correctly[32m 1[2mms[22m[39m
+2025-12-01T00:02:40.2312050Z        [32m✓[39m should return true when last timestamp has content after it[32m 0[2mms[22m[39m
+2025-12-01T00:02:40.2313328Z        [32m✓[39m should append timestamp link to existing file[32m 3[2mms[22m[39m
+2025-12-01T00:02:40.2314410Z        [32m✓[39m should append timestamp link to empty file[32m 1[2mms[22m[39m
+2025-12-01T00:02:40.2315722Z        [32m✓[39m should create file and append timestamp link if file does not exist[32m 1[2mms[22m[39m
+2025-12-01T00:02:40.2317187Z        [32m✓[39m should add newline before timestamp if file content does not end with newline[32m 1[2mms[22m[39m
+2025-12-01T00:02:40.2318567Z        [32m✓[39m should not add extra newline if file already ends with newline[32m 1[2mms[22m[39m
+2025-12-01T00:02:40.2319911Z        [32m✓[39m should replace last timestamp when there is no content after it[32m 1[2mms[22m[39m
+2025-12-01T00:02:40.2321664Z        [32m✓[39m should replace last timestamp when there is only whitespace after it[32m 3[2mms[22m[39m
+2025-12-01T00:02:40.2323321Z [31m       [31m×[31m should replace last timestamp when it is followed only by newline[39m[32m 22[2mms[22m[39m
+2025-12-01T00:02:40.2324989Z [31m       [31m×[31m should append new timestamp when there is content after last timestamp[39m[32m 2[2mms[22m[39m
+2025-12-01T00:02:40.2326896Z [31m       [31m×[31m should replace the last timestamp when there are multiple timestamps and no content after the last one[39m[32m 1[2mms[22m[39m
+2025-12-01T00:02:40.2328882Z [31m       [31m×[31m should append new timestamp when there are multiple timestamps with content after the last one[39m[32m 1[2mms[22m[39m
+2025-12-01T00:02:40.2330398Z        [32m✓[39m should return false when no timestamps exist[32m 1[2mms[22m[39m
+2025-12-01T00:02:40.2361818Z        [32m✓[39m should return false when timestamp count changed[32m 0[2mms[22m[39m
+2025-12-01T00:02:40.2362991Z        [32m✓[39m should return false when last timestamp changed[32m 0[2mms[22m[39m
+2025-12-01T00:02:40.2364137Z        [32m✓[39m should return true when content is added after last timestamp[32m 0[2mms[22m[39m
+2025-12-01T00:02:40.2365515Z        [32m✓[39m should return true when content is added after last timestamp with existing content[32m 4[2mms[22m[39m
+2025-12-01T00:02:40.2366896Z        [32m✓[39m should return false when only whitespace is added after last timestamp[32m 0[2mms[22m[39m
+2025-12-01T00:02:40.2368539Z        [32m✓[39m should return false when content is added before last timestamp[32m 0[2mms[22m[39m
+2025-12-01T00:02:40.2369730Z        [32m✓[39m should add separator when content is added below last timestamp[32m 1[2mms[22m[39m
+2025-12-01T00:02:40.2370941Z        [32m✓[39m should not add separator when no content is added below last timestamp[32m 0[2mms[22m[39m
+2025-12-01T00:02:40.2372713Z        [32m✓[39m should not add separator when only whitespace is added below last timestamp[32m 0[2mms[22m[39m
+2025-12-01T00:02:40.2373952Z        [32m✓[39m should not add separator when timestamp count changed[32m 0[2mms[22m[39m
+2025-12-01T00:02:40.2375047Z        [32m✓[39m should not add separator when last timestamp changed[32m 0[2mms[22m[39m
+2025-12-01T00:02:40.2376141Z        [32m✓[39m should not add separator when already present at end[32m 0[2mms[22m[39m
+2025-12-01T00:02:40.2377451Z        [32m✓[39m should add separator when content is added after existing separator[32m 0[2mms[22m[39m
+2025-12-01T00:02:40.2378724Z        [32m✓[39m should add separator when content does not end with newline[32m 0[2mms[22m[39m
+2025-12-01T00:02:40.2379904Z        [32m✓[39m should add separator when content already ends with newline[32m 1[2mms[22m[39m
+2025-12-01T00:02:40.2485000Z  [32m✓[39m dist/test/commands/see.command.test.js [2m([22m[2m19 tests[22m[2m)[22m[32m 35[2mms[22m[39m
+2025-12-01T00:02:40.2804614Z  [31m❯[39m test/domain/note.service.test.ts [2m([22m[2m54 tests[22m[2m | [22m[31m4 failed[39m[2m)[22m[32m 94[2mms[22m[39m
+2025-12-01T00:02:40.2806351Z        [32m✓[39m should return file name in YYYY-MM-DD.md format[32m 9[2mms[22m[39m
+2025-12-01T00:02:40.2807591Z        [32m✓[39m should pad single digit month and day with zero[32m 1[2mms[22m[39m
+2025-12-01T00:02:40.2808824Z        [32m✓[39m should return full path to today's note[32m 3[2mms[22m[39m
+2025-12-01T00:02:40.2810290Z        [32m✓[39m should create note file with incomplete tasks if it does not exist and is today's note[32m 5[2mms[22m[39m
+2025-12-01T00:02:40.2811986Z        [32m✓[39m should create empty note file if it does not exist and is not today's note[32m 1[2mms[22m[39m
+2025-12-01T00:02:40.2813309Z        [32m✓[39m should not create note file if it already exists[32m 1[2mms[22m[39m
+2025-12-01T00:02:40.2814653Z        [32m✓[39m should generate note content with incomplete tasks from yesterday's note[32m 1[2mms[22m[39m
+2025-12-01T00:02:40.2816038Z        [32m✓[39m should preserve existing date links when extracting tasks[32m 1[2mms[22m[39m
+2025-12-01T00:02:40.2817592Z        [32m✓[39m should return empty string when yesterday's note has no incomplete tasks[32m 1[2mms[22m[39m
+2025-12-01T00:02:40.2842645Z        [32m✓[39m should return empty string when yesterday's note does not exist[32m 1[2mms[22m[39m
+2025-12-01T00:02:40.2844100Z        [32m✓[39m should extract incomplete tasks from markdown content[32m 1[2mms[22m[39m
+2025-12-01T00:02:40.2845267Z        [32m✓[39m should return empty array when no incomplete tasks[32m 0[2mms[22m[39m
+2025-12-01T00:02:40.2846328Z        [32m✓[39m should extract tasks grouped by date links[32m 1[2mms[22m[39m
+2025-12-01T00:02:40.2847342Z        [32m✓[39m should handle content without date links[32m 1[2mms[22m[39m
+2025-12-01T00:02:40.2848376Z        [32m✓[39m should return empty array when no incomplete tasks[32m 2[2mms[22m[39m
+2025-12-01T00:02:40.2849374Z        [32m✓[39m should ensure notes directory exists[32m 0[2mms[22m[39m
+2025-12-01T00:02:40.2850460Z        [32m✓[39m should move yesterday's note to organized directory structure[32m 1[2mms[22m[39m
+2025-12-01T00:02:40.2855734Z        [32m✓[39m should not move note if yesterday's note does not exist[32m 1[2mms[22m[39m
+2025-12-01T00:02:40.2856847Z        [32m✓[39m should create correct directory structure with padded month[32m 1[2mms[22m[39m
+2025-12-01T00:02:40.2858350Z        [32m✓[39m should return current time in HH:mm format[32m 0[2mms[22m[39m
+2025-12-01T00:02:40.2859255Z        [32m✓[39m should return true when no timestamps exist[32m 1[2mms[22m[39m
+2025-12-01T00:02:40.2860322Z        [32m✓[39m should return true when there is content after last timestamp[32m 0[2mms[22m[39m
+2025-12-01T00:02:40.2867436Z        [32m✓[39m should return false when there is only whitespace after last timestamp[32m 0[2mms[22m[39m
+2025-12-01T00:02:40.2868827Z        [32m✓[39m should return false when timestamp is at the end of file[32m 0[2mms[22m[39m
+2025-12-01T00:02:40.2870035Z        [32m✓[39m should return false when timestamp is followed only by newline[32m 0[2mms[22m[39m
+2025-12-01T00:02:40.2871130Z        [32m✓[39m should handle multiple timestamps correctly[32m 2[2mms[22m[39m
+2025-12-01T00:02:40.2872409Z        [32m✓[39m should return true when last timestamp has content after it[32m 0[2mms[22m[39m
+2025-12-01T00:02:40.2873499Z        [32m✓[39m should append timestamp link to existing file[32m 7[2mms[22m[39m
+2025-12-01T00:02:40.2874489Z        [32m✓[39m should append timestamp link to empty file[32m 1[2mms[22m[39m
+2025-12-01T00:02:40.2875599Z        [32m✓[39m should create file and append timestamp link if file does not exist[32m 1[2mms[22m[39m
+2025-12-01T00:02:40.2877210Z        [32m✓[39m should add newline before timestamp if file content does not end with newline[32m 2[2mms[22m[39m
+2025-12-01T00:02:40.2878519Z        [32m✓[39m should not add extra newline if file already ends with newline[32m 1[2mms[22m[39m
+2025-12-01T00:02:40.2879725Z        [32m✓[39m should replace last timestamp when there is no content after it[32m 1[2mms[22m[39m
+2025-12-01T00:02:40.2881013Z        [32m✓[39m should replace last timestamp when there is only whitespace after it[32m 6[2mms[22m[39m
+2025-12-01T00:02:40.2882722Z [31m       [31m×[31m should replace last timestamp when it is followed only by newline[39m[32m 18[2mms[22m[39m
+2025-12-01T00:02:40.2884251Z [31m       [31m×[31m should append new timestamp when there is content after last timestamp[39m[32m 2[2mms[22m[39m
+2025-12-01T00:02:40.2886016Z [31m       [31m×[31m should replace the last timestamp when there are multiple timestamps and no content after the last one[39m[32m 1[2mms[22m[39m
+2025-12-01T00:02:40.2887964Z [31m       [31m×[31m should append new timestamp when there are multiple timestamps with content after the last one[39m[32m 1[2mms[22m[39m
+2025-12-01T00:02:40.2889239Z        [32m✓[39m should return false when no timestamps exist[32m 0[2mms[22m[39m
+2025-12-01T00:02:40.2890233Z        [32m✓[39m should return false when timestamp count changed[32m 0[2mms[22m[39m
+2025-12-01T00:02:40.2891223Z        [32m✓[39m should return false when last timestamp changed[32m 0[2mms[22m[39m
+2025-12-01T00:02:40.2903921Z        [32m✓[39m should return true when content is added after last timestamp[32m 0[2mms[22m[39m
+2025-12-01T00:02:40.2905302Z        [32m✓[39m should return true when content is added after last timestamp with existing content[32m 0[2mms[22m[39m
+2025-12-01T00:02:40.2906631Z        [32m✓[39m should return false when only whitespace is added after last timestamp[32m 0[2mms[22m[39m
+2025-12-01T00:02:40.2907865Z        [32m✓[39m should return false when content is added before last timestamp[32m 0[2mms[22m[39m
+2025-12-01T00:02:40.2909040Z        [32m✓[39m should add separator when content is added below last timestamp[32m 0[2mms[22m[39m
+2025-12-01T00:02:40.2910240Z        [32m✓[39m should not add separator when no content is added below last timestamp[32m 0[2mms[22m[39m
+2025-12-01T00:02:40.2915533Z        [32m✓[39m should not add separator when only whitespace is added below last timestamp[32m 0[2mms[22m[39m
+2025-12-01T00:02:40.2916879Z        [32m✓[39m should not add separator when timestamp count changed[32m 0[2mms[22m[39m
+2025-12-01T00:02:40.2918206Z        [32m✓[39m should not add separator when last timestamp changed[32m 0[2mms[22m[39m
+2025-12-01T00:02:40.2919248Z        [32m✓[39m should not add separator when already present at end[32m 3[2mms[22m[39m
+2025-12-01T00:02:40.2920423Z        [32m✓[39m should add separator when content is added after existing separator[32m 0[2mms[22m[39m
+2025-12-01T00:02:40.2921823Z        [32m✓[39m should add separator when content does not end with newline[32m 0[2mms[22m[39m
+2025-12-01T00:02:40.2922967Z        [32m✓[39m should add separator when content already ends with newline[32m 1[2mms[22m[39m
+2025-12-01T00:02:40.7743654Z  [32m✓[39m test/commands/see.command.test.ts [2m([22m[2m19 tests[22m[2m)[22m[32m 39[2mms[22m[39m
+2025-12-01T00:02:41.1441957Z  [32m✓[39m dist/test/commands/do.command.test.js [2m([22m[2m15 tests[22m[2m)[22m[32m 42[2mms[22m[39m
+2025-12-01T00:02:41.4235893Z  [32m✓[39m test/commands/do.command.test.ts [2m([22m[2m15 tests[22m[2m)[22m[32m 29[2mms[22m[39m
+2025-12-01T00:02:41.6699394Z  [32m✓[39m test/components/MarkdownPreview.test.tsx [2m([22m[2m31 tests[22m[2m)[22m[33m 516[2mms[22m[39m
+2025-12-01T00:02:41.7020406Z  [32m✓[39m dist/test/components/MarkdownPreview.test.js [2m([22m[2m31 tests[22m[2m)[22m[33m 559[2mms[22m[39m
+2025-12-01T00:02:41.7700271Z  [32m✓[39m dist/test/e2e/manda-separator.test.js [2m([22m[2m8 tests[22m[2m)[22m[32m 87[2mms[22m[39m
+2025-12-01T00:02:41.9742506Z  [32m✓[39m test/e2e/manda-separator.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 61[2mms[22m[39m
+2025-12-01T00:02:42.2562693Z  [32m✓[39m dist/test/services/editor.service.test.js [2m([22m[2m12 tests[22m[2m)[22m[32m 25[2mms[22m[39m
+2025-12-01T00:02:42.9253989Z  [32m✓[39m dist/test/components/MarkdownPreview.integration.test.js [2m([22m[2m8 tests[22m[2m)[22m[33m 305[2mms[22m[39m
+2025-12-01T00:02:43.0230492Z  [32m✓[39m test/components/MarkdownPreview.integration.test.tsx [2m([22m[2m8 tests[22m[2m)[22m[33m 387[2mms[22m[39m
+2025-12-01T00:02:54.7247119Z  [31m❯[39m dist/test/e2e/see.test.js [2m([22m[2m5 tests[22m[2m | [22m[31m4 failed[39m[2m)[22m[33m 11518[2mms[22m[39m
+2025-12-01T00:02:54.7249082Z [31m   [31m×[31m running "manda see" should display today's note with TUI markdown rendering[39m[33m 2570[2mms[22m[39m
+2025-12-01T00:02:54.7250748Z [31m   [31m×[31m running "manda see" should display today's note with TUI markdown rendering[39m[33m 2315[2mms[22m[39m
+2025-12-01T00:02:54.7253307Z [31m   [31m×[31m running "manda see --yester" should display yesterday's note with TUI[39m[33m 2372[2mms[22m[39m
+2025-12-01T00:02:54.7274015Z [31m   [31m×[31m running "manda see" when note does not exist should create and display empty note[39m[33m 2223[2mms[22m[39m
+2025-12-01T00:02:54.7284975Z    [33m[2m✓[22m[39m running "manda see" without MANDA_DIR should fail gracefully [33m 2036[2mms[22m[39m
+2025-12-01T00:02:54.7602615Z  [31m❯[39m test/e2e/see.test.ts [2m([22m[2m5 tests[22m[2m | [22m[31m4 failed[39m[2m)[22m[33m 11437[2mms[22m[39m
+2025-12-01T00:02:54.7604198Z [31m   [31m×[31m running "manda see" should display today's note with TUI markdown rendering[39m[33m 2509[2mms[22m[39m
+2025-12-01T00:02:54.7605739Z [31m   [31m×[31m running "manda see" should display today's note with TUI markdown rendering[39m[33m 2201[2mms[22m[39m
+2025-12-01T00:02:54.7607184Z [31m   [31m×[31m running "manda see --yester" should display yesterday's note with TUI[39m[33m 2377[2mms[22m[39m
+2025-12-01T00:02:54.7608770Z [31m   [31m×[31m running "manda see" when note does not exist should create and display empty note[39m[33m 2295[2mms[22m[39m
+2025-12-01T00:02:54.7610071Z    [33m[2m✓[22m[39m running "manda see" without MANDA_DIR should fail gracefully [33m 2050[2mms[22m[39m
+2025-12-01T00:02:55.0348110Z  [32m✓[39m test/services/editor.service.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 17[2mms[22m[39m
+2025-12-01T00:02:55.3496886Z  [32m✓[39m dist/test/commands/manda.command.test.js [2m([22m[2m8 tests[22m[2m)[22m[32m 19[2mms[22m[39m
+2025-12-01T00:02:55.6489554Z  [32m✓[39m test/commands/manda.command.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 23[2mms[22m[39m
+2025-12-01T00:02:56.5947773Z  [32m✓[39m dist/test/components/TaskList.test.js [2m([22m[2m9 tests[22m[2m)[22m[32m 157[2mms[22m[39m
+2025-12-01T00:02:57.5669293Z  [32m✓[39m test/components/TaskList.test.tsx [2m([22m[2m9 tests[22m[2m)[22m[32m 161[2mms[22m[39m
+2025-12-01T00:02:57.9089951Z  [32m✓[39m dist/test/e2e/manda.test.js [2m([22m[2m7 tests[22m[2m)[22m[32m 105[2mms[22m[39m
+2025-12-01T00:02:58.3170688Z  [32m✓[39m test/e2e/manda.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 127[2mms[22m[39m
+2025-12-01T00:03:00.9107972Z Encountered two children with the same key, `    at recursivelyTraversePassiveMountEffects (/home/runner/work/manda-kasaayam/manda-kasaayam/node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/node_modules/react-reconciler/cjs/react-reconciler.development.js:12934:11)`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+2025-12-01T00:03:01.6528744Z  [32m✓[39m dist/test/e2e/manda-timestamp-replacement.test.js [2m([22m[2m9 tests[22m[2m)[22m[33m 19165[2mms[22m[39m
+2025-12-01T00:03:01.6535526Z      [33m[2m✓[22m[39m should create new note with timestamp when file does not exist [33m 2563[2mms[22m[39m
+2025-12-01T00:03:01.6543453Z      [33m[2m✓[22m[39m should append timestamp when note has content after last timestamp [33m 1972[2mms[22m[39m
+2025-12-01T00:03:01.6547448Z      [33m[2m✓[22m[39m should replace last timestamp when there is no content after it [33m 2055[2mms[22m[39m
+2025-12-01T00:03:01.6556359Z      [33m[2m✓[22m[39m should replace last timestamp when it is at the end of file without newline [33m 2265[2mms[22m[39m
+2025-12-01T00:03:01.6557910Z      [33m[2m✓[22m[39m should replace last timestamp when there is only whitespace after it [33m 2050[2mms[22m[39m
+2025-12-01T00:03:01.6559429Z      [33m[2m✓[22m[39m should append new timestamp when there is content after last timestamp [33m 2132[2mms[22m[39m
+2025-12-01T00:03:01.6560842Z      [33m[2m✓[22m[39m should handle multiple timestamps correctly [33m 2146[2mms[22m[39m
+2025-12-01T00:03:01.6562219Z      [33m[2m✓[22m[39m should handle empty note file [33m 1996[2mms[22m[39m
+2025-12-01T00:03:01.6563569Z      [33m[2m✓[22m[39m should preserve existing content structure when replacing timestamp [33m 1983[2mms[22m[39m
+2025-12-01T00:03:03.1878232Z Encountered two children with the same key, `    at recursivelyTraversePassiveMountEffects (/home/runner/work/manda-kasaayam/manda-kasaayam/node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/node_modules/react-reconciler/cjs/react-reconciler.development.js:12934:11)`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+2025-12-01T00:03:04.0008118Z Encountered two children with the same key, `    at recursivelyTraversePassiveMountEffects (/home/runner/work/manda-kasaayam/manda-kasaayam/node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/node_modules/react-reconciler/cjs/react-reconciler.development.js:12934:11)`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+2025-12-01T00:03:05.5761139Z Encountered two children with the same key, `    at recursivelyTraversePassiveMountEffects (/home/runner/work/manda-kasaayam/manda-kasaayam/node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/node_modules/react-reconciler/cjs/react-reconciler.development.js:12934:11)`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+2025-12-01T00:03:06.1183530Z Encountered two children with the same key, `    at recursivelyTraversePassiveMountEffects (/home/runner/work/manda-kasaayam/manda-kasaayam/node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/node_modules/react-reconciler/cjs/react-reconciler.development.js:12934:11)`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+2025-12-01T00:03:07.5892812Z  [31m❯[39m dist/test/e2e/do.test.js [2m([22m[2m4 tests[22m[2m | [22m[31m3 failed[39m[2m)[22m[33m 9025[2mms[22m[39m
+2025-12-01T00:03:07.5897996Z [31m   [31m×[31m running "manda do" should display incomplete tasks from today's note[39m[33m 2377[2mms[22m[39m
+2025-12-01T00:03:07.5903176Z [31m   [31m×[31m running "manda do" should display empty message when no tasks found[39m[33m 2266[2mms[22m[39m
+2025-12-01T00:03:07.5907835Z [31m   [31m×[31m running "manda do --yester" should display yesterday's tasks[39m[33m 2381[2mms[22m[39m
+2025-12-01T00:03:07.5912569Z    [33m[2m✓[22m[39m running "manda do" without MANDA_DIR should fail gracefully [33m 1998[2mms[22m[39m
+2025-12-01T00:03:07.8305156Z [90mstdout[2m | dist/test/services/git.service.test.js[2m > [22m[2mGitService[2m > [22m[2mgetCurrentTimestampCommitMessage should return formatted timestamp
+2025-12-01T00:03:07.8306662Z [22m[39mExpected: 2025-11-19 10:30:45
+2025-12-01T00:03:07.8307142Z Actual: 2025-11-19 10:30:45
+2025-12-01T00:03:07.8307401Z 
+2025-12-01T00:03:07.8364677Z  [31m❯[39m dist/test/services/git.service.test.js [2m([22m[2m5 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 27[2mms[22m[39m
+2025-12-01T00:03:07.8366597Z      [32m✓[39m should skip git operations if not in a git repository[32m 3[2mms[22m[39m
+2025-12-01T00:03:07.8369223Z      [32m✓[39m should skip commit if no changes to commit[32m 2[2mms[22m[39m
+2025-12-01T00:03:07.8370341Z      [32m✓[39m should commit and push when there are changes[32m 1[2mms[22m[39m
+2025-12-01T00:03:07.8371640Z      [32m✓[39m should handle git operation errors gracefully[32m 10[2mms[22m[39m
+2025-12-01T00:03:07.8373093Z [31m     [31m×[31m getCurrentTimestampCommitMessage should return formatted timestamp[39m[32m 9[2mms[22m[39m
+2025-12-01T00:03:08.2727929Z Encountered two children with the same key, `    at recursivelyTraversePassiveMountEffects (/home/runner/work/manda-kasaayam/manda-kasaayam/node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/node_modules/react-reconciler/cjs/react-reconciler.development.js:12934:11)`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+2025-12-01T00:03:08.5762824Z  [32m✓[39m dist/test/commands/hello.command.test.js [2m([22m[2m6 tests[22m[2m)[22m[32m 28[2mms[22m[39m
+2025-12-01T00:03:08.7891725Z  [32m✓[39m dist/test/services/file-system.service.test.js [2m([22m[2m8 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+2025-12-01T00:03:09.6192221Z  [32m✓[39m test/commands/hello.command.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 24[2mms[22m[39m
+2025-12-01T00:03:09.8630472Z [90mstdout[2m | test/services/git.service.test.ts[2m > [22m[2mGitService[2m > [22m[2mgetCurrentTimestampCommitMessage should return formatted timestamp
+2025-12-01T00:03:09.8634682Z [22m[39mExpected: 2025-11-19 10:30:45
+2025-12-01T00:03:09.8635210Z Actual: 2025-11-19 10:30:45
+2025-12-01T00:03:09.8635481Z 
+2025-12-01T00:03:09.8698312Z  [31m❯[39m test/services/git.service.test.ts [2m([22m[2m5 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 25[2mms[22m[39m
+2025-12-01T00:03:09.8700006Z      [32m✓[39m should skip git operations if not in a git repository[32m 3[2mms[22m[39m
+2025-12-01T00:03:09.8701027Z      [32m✓[39m should skip commit if no changes to commit[32m 2[2mms[22m[39m
+2025-12-01T00:03:09.8702151Z      [32m✓[39m should commit and push when there are changes[32m 1[2mms[22m[39m
+2025-12-01T00:03:09.8703156Z      [32m✓[39m should handle git operation errors gracefully[32m 7[2mms[22m[39m
+2025-12-01T00:03:09.8704506Z [31m     [31m×[31m getCurrentTimestampCommitMessage should return formatted timestamp[39m[32m 9[2mms[22m[39m
+2025-12-01T00:03:10.1118074Z  [32m✓[39m test/services/file-system.service.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+2025-12-01T00:03:10.1606895Z  [31m❯[39m test/e2e/do.test.ts [2m([22m[2m4 tests[22m[2m | [22m[31m3 failed[39m[2m)[22m[33m 8305[2mms[22m[39m
+2025-12-01T00:03:10.1635012Z [31m   [31m×[31m running "manda do" should display incomplete tasks from today's note[39m[33m 2162[2mms[22m[39m
+2025-12-01T00:03:10.1636918Z [31m   [31m×[31m running "manda do" should display empty message when no tasks found[39m[33m 2113[2mms[22m[39m
+2025-12-01T00:03:10.1638741Z [31m   [31m×[31m running "manda do --yester" should display yesterday's tasks[39m[33m 2150[2mms[22m[39m
+2025-12-01T00:03:10.1640526Z    [33m[2m✓[22m[39m running "manda do" without MANDA_DIR should fail gracefully [33m 1879[2mms[22m[39m
+2025-12-01T00:03:10.3163208Z  [32m✓[39m dist/test/e2e/note-moving.test.js [2m([22m[2m2 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+2025-12-01T00:03:10.3612145Z  [32m✓[39m test/e2e/note-moving.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+2025-12-01T00:03:10.5525599Z  [32m✓[39m dist/test/commands/base.command.test.js [2m([22m[2m5 tests[22m[2m)[22m[32m 22[2mms[22m[39m
+2025-12-01T00:03:10.5974804Z  [32m✓[39m test/commands/base.command.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 19[2mms[22m[39m
+2025-12-01T00:03:11.3071001Z  [32m✓[39m dist/test/components/Hello.test.js [2m([22m[2m2 tests[22m[2m)[22m[32m 31[2mms[22m[39m
+2025-12-01T00:03:12.0235892Z  [32m✓[39m test/components/Hello.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[32m 67[2mms[22m[39m
+2025-12-01T00:03:13.3456334Z  [32m✓[39m test/e2e/manda-timestamp-replacement.test.ts [2m([22m[2m9 tests[22m[2m)[22m[33m 18395[2mms[22m[39m
+2025-12-01T00:03:13.3461106Z      [33m[2m✓[22m[39m should create new note with timestamp when file does not exist [33m 2149[2mms[22m[39m
+2025-12-01T00:03:13.3462863Z      [33m[2m✓[22m[39m should append timestamp when note has content after last timestamp [33m 1901[2mms[22m[39m
+2025-12-01T00:03:13.3464402Z      [33m[2m✓[22m[39m should replace last timestamp when there is no content after it [33m 2071[2mms[22m[39m
+2025-12-01T00:03:13.3465936Z      [33m[2m✓[22m[39m should replace last timestamp when it is at the end of file without newline [33m 2135[2mms[22m[39m
+2025-12-01T00:03:13.3467527Z      [33m[2m✓[22m[39m should replace last timestamp when there is only whitespace after it [33m 2123[2mms[22m[39m
+2025-12-01T00:03:13.3469062Z      [33m[2m✓[22m[39m should append new timestamp when there is content after last timestamp [33m 2135[2mms[22m[39m
+2025-12-01T00:03:13.3470471Z      [33m[2m✓[22m[39m should handle multiple timestamps correctly [33m 2018[2mms[22m[39m
+2025-12-01T00:03:13.3471836Z      [33m[2m✓[22m[39m should handle empty note file [33m 1926[2mms[22m[39m
+2025-12-01T00:03:13.3473172Z      [33m[2m✓[22m[39m should preserve existing content structure when replacing timestamp [33m 1935[2mms[22m[39m
+2025-12-01T00:03:14.5153909Z  [32m✓[39m dist/test/e2e/hello.test.js [2m([22m[2m2 tests[22m[2m)[22m[33m 3689[2mms[22m[39m
+2025-12-01T00:03:14.5155150Z      [33m[2m✓[22m[39m running "manda hello" should display Hello, World! [33m 2057[2mms[22m[39m
+2025-12-01T00:03:14.5156491Z      [33m[2m✓[22m[39m running "manda hello --name Alice" should display Hello, Alice! [33m 1630[2mms[22m[39m
+2025-12-01T00:03:15.4299368Z  [32m✓[39m test/e2e/hello.test.ts [2m([22m[2m2 tests[22m[2m)[22m[33m 3158[2mms[22m[39m
+2025-12-01T00:03:15.4300107Z      [33m[2m✓[22m[39m running "manda hello" should display Hello, World! [33m 1823[2mms[22m[39m
+2025-12-01T00:03:15.4300869Z      [33m[2m✓[22m[39m running "manda hello --name Alice" should display Hello, Alice! [33m 1332[2mms[22m[39m
+2025-12-01T00:03:15.4339702Z 
+2025-12-01T00:03:15.4340481Z [31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 24 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+2025-12-01T00:03:15.4340880Z 
+2025-12-01T00:03:15.4345744Z [41m[1m FAIL [22m[49m test/domain/note.service.test.ts[2m > [22mNoteService[2m > [22mappendTimestampLink[2m > [22mshould replace last timestamp when it is followed only by newline
+2025-12-01T00:03:15.4352968Z [31m[1mAssertionError[22m: expected "vi.fn()" to be called with arguments: [ '/notes/2025-11-19.md', …(1) ][90m
+2025-12-01T00:03:15.4353610Z 
+2025-12-01T00:03:15.4353715Z Received: 
+2025-12-01T00:03:15.4353905Z 
+2025-12-01T00:03:15.4354108Z [1m  1st vi.fn() call:
+2025-12-01T00:03:15.4354345Z 
+2025-12-01T00:03:15.4354462Z [22m[2m  [[22m
+2025-12-01T00:03:15.4354749Z [2m    "/notes/2025-11-19.md",[22m
+2025-12-01T00:03:15.4355017Z [2m    "# Note[22m
+2025-12-01T00:03:15.4355252Z [32m- [20:00][90m
+2025-12-01T00:03:15.4355916Z [31m+ [14:30][90m
+2025-12-01T00:03:15.4356152Z [2m  ",[22m
+2025-12-01T00:03:15.4356341Z [2m  ][22m
+2025-12-01T00:03:15.4356517Z [31m[90m
+2025-12-01T00:03:15.4356614Z 
+2025-12-01T00:03:15.4356745Z Number of calls: [1m1[22m
+2025-12-01T00:03:15.4356967Z [31m[39m
+2025-12-01T00:03:15.4357365Z [36m [2m❯[22m test/domain/note.service.test.ts:[2m557:47[22m[39m
+2025-12-01T00:03:15.4460052Z     [90m555| [39m      [35mawait[39m service[33m.[39m[34mappendTimestampLink[39m([32m'/notes/2025-11-19.md'[39m)[33m;[39m
+2025-12-01T00:03:15.4461632Z     [90m556| [39m
+2025-12-01T00:03:15.4462885Z     [90m557| [39m      [34mexpect[39m(mockFileSystemService[33m.[39mwriteFile)[33m.[39m[34mtoHaveBeenCalledWith[39m(
+2025-12-01T00:03:15.4464996Z     [90m   | [39m                                              [31m^[39m
+2025-12-01T00:03:15.4465736Z     [90m558| [39m        [32m'/notes/2025-11-19.md'[39m[33m,[39m
+2025-12-01T00:03:15.4466484Z     [90m559| [39m        [32m'# Note\n[20:00]\n'[39m[33m,[39m
+2025-12-01T00:03:15.4466834Z 
+2025-12-01T00:03:15.4467228Z [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/24]⎯[22m[39m
+2025-12-01T00:03:15.4467539Z 
+2025-12-01T00:03:15.4472635Z [41m[1m FAIL [22m[49m test/domain/note.service.test.ts[2m > [22mNoteService[2m > [22mappendTimestampLink[2m > [22mshould append new timestamp when there is content after last timestamp
+2025-12-01T00:03:15.4474671Z [31m[1mAssertionError[22m: expected "vi.fn()" to be called with arguments: [ '/notes/2025-11-19.md', …(1) ][90m
+2025-12-01T00:03:15.4475311Z 
+2025-12-01T00:03:15.4475436Z Received: 
+2025-12-01T00:03:15.4475618Z 
+2025-12-01T00:03:15.4475842Z [1m  1st vi.fn() call:
+2025-12-01T00:03:15.4476084Z 
+2025-12-01T00:03:15.4477852Z [22m[2m  [[22m
+2025-12-01T00:03:15.4479239Z [2m    "/notes/2025-11-19.md",[22m
+2025-12-01T00:03:15.4479744Z [2m    "# Note[22m
+2025-12-01T00:03:15.4480116Z [2m  [10:30][22m
+2025-12-01T00:03:15.4480506Z [2m  Some content here[22m
+2025-12-01T00:03:15.4480928Z [32m- [20:00][90m
+2025-12-01T00:03:15.4481491Z [31m+ [14:30][90m
+2025-12-01T00:03:15.4481809Z [2m  ",[22m
+2025-12-01T00:03:15.4482101Z [2m  ][22m
+2025-12-01T00:03:15.4482284Z [31m[90m
+2025-12-01T00:03:15.4482382Z 
+2025-12-01T00:03:15.4482516Z Number of calls: [1m1[22m
+2025-12-01T00:03:15.4482740Z [31m[39m
+2025-12-01T00:03:15.4483428Z [36m [2m❯[22m test/domain/note.service.test.ts:[2m575:47[22m[39m
+2025-12-01T00:03:15.4484510Z     [90m573| [39m      [35mawait[39m service[33m.[39m[34mappendTimestampLink[39m([32m'/notes/2025-11-19.md'[39m)[33m;[39m
+2025-12-01T00:03:15.4485003Z     [90m574| [39m
+2025-12-01T00:03:15.4485822Z     [90m575| [39m      [34mexpect[39m(mockFileSystemService[33m.[39mwriteFile)[33m.[39m[34mtoHaveBeenCalledWith[39m(
+2025-12-01T00:03:15.4486398Z     [90m   | [39m                                              [31m^[39m
+2025-12-01T00:03:15.4486813Z     [90m576| [39m        [32m'/notes/2025-11-19.md'[39m[33m,[39m
+2025-12-01T00:03:15.4487460Z     [90m577| [39m        [32m'# Note\n[10:30]\nSome content here\n[20:00]\n'[39m[33m,[39m
+2025-12-01T00:03:15.4487908Z 
+2025-12-01T00:03:15.4488290Z [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/24]⎯[22m[39m
+2025-12-01T00:03:15.4488602Z 
+2025-12-01T00:03:15.4490349Z [41m[1m FAIL [22m[49m test/domain/note.service.test.ts[2m > [22mNoteService[2m > [22mappendTimestampLink[2m > [22mshould replace the last timestamp when there are multiple timestamps and no content after the last one
+2025-12-01T00:03:15.4492594Z [31m[1mAssertionError[22m: expected "vi.fn()" to be called with arguments: [ '/notes/2025-11-19.md', …(1) ][90m
+2025-12-01T00:03:15.4493256Z 
+2025-12-01T00:03:15.4493387Z Received: 
+2025-12-01T00:03:15.4493550Z 
+2025-12-01T00:03:15.4493763Z [1m  1st vi.fn() call:
+2025-12-01T00:03:15.4493983Z 
+2025-12-01T00:03:15.4494163Z [22m[2m  [[22m
+2025-12-01T00:03:15.4494607Z [2m    "/notes/2025-11-19.md",[22m
+2025-12-01T00:03:15.4495060Z [2m    "# Note[22m
+2025-12-01T00:03:15.4495436Z [2m  [09:00][22m
+2025-12-01T00:03:15.4496041Z [2m  Morning content[22m
+2025-12-01T00:03:15.4496477Z [32m- [20:00]",[90m
+2025-12-01T00:03:15.4496854Z [31m+ [14:30]",[90m
+2025-12-01T00:03:15.4497184Z [2m  ][22m
+2025-12-01T00:03:15.4497491Z [31m[90m
+2025-12-01T00:03:15.4497643Z 
+2025-12-01T00:03:15.4497861Z Number of calls: [1m1[22m
+2025-12-01T00:03:15.4498237Z [31m[39m
+2025-12-01T00:03:15.4498903Z [36m [2m❯[22m test/domain/note.service.test.ts:[2m593:47[22m[39m
+2025-12-01T00:03:15.4500145Z     [90m591| [39m      [35mawait[39m service[33m.[39m[34mappendTimestampLink[39m([32m'/notes/2025-11-19.md'[39m)[33m;[39m
+2025-12-01T00:03:15.4501000Z     [90m592| [39m
+2025-12-01T00:03:15.4502190Z     [90m593| [39m      [34mexpect[39m(mockFileSystemService[33m.[39mwriteFile)[33m.[39m[34mtoHaveBeenCalledWith[39m(
+2025-12-01T00:03:15.4503232Z     [90m   | [39m                                              [31m^[39m
+2025-12-01T00:03:15.4503941Z     [90m594| [39m        [32m'/notes/2025-11-19.md'[39m[33m,[39m
+2025-12-01T00:03:15.4504770Z     [90m595| [39m        [32m'# Note\n[09:00]\nMorning content\n[20:00]'[39m[33m,[39m
+2025-12-01T00:03:15.4505190Z 
+2025-12-01T00:03:15.4505554Z [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/24]⎯[22m[39m
+2025-12-01T00:03:15.4505867Z 
+2025-12-01T00:03:15.4507530Z [41m[1m FAIL [22m[49m test/domain/note.service.test.ts[2m > [22mNoteService[2m > [22mappendTimestampLink[2m > [22mshould append new timestamp when there are multiple timestamps with content after the last one
+2025-12-01T00:03:15.4509599Z [31m[1mAssertionError[22m: expected "vi.fn()" to be called with arguments: [ '/notes/2025-11-19.md', …(1) ][90m
+2025-12-01T00:03:15.4510256Z 
+2025-12-01T00:03:15.4510383Z Received: 
+2025-12-01T00:03:15.4510558Z 
+2025-12-01T00:03:15.4510770Z [1m  1st vi.fn() call:
+2025-12-01T00:03:15.4510986Z 
+2025-12-01T00:03:15.4511513Z [22m[33m@@ -3,8 +3,8 @@[90m
+2025-12-01T00:03:15.4511970Z [2m    "# Note[22m
+2025-12-01T00:03:15.4512349Z [2m  [09:00][22m
+2025-12-01T00:03:15.4512755Z [2m  Morning content[22m
+2025-12-01T00:03:15.4513171Z [2m  [10:30][22m
+2025-12-01T00:03:15.4513586Z [2m  Afternoon content[22m
+2025-12-01T00:03:15.4514019Z [32m- [20:00][90m
+2025-12-01T00:03:15.4514391Z [31m+ [14:30][90m
+2025-12-01T00:03:15.4514726Z [2m  ",[22m
+2025-12-01T00:03:15.4515016Z [2m  ][22m
+2025-12-01T00:03:15.4515308Z [31m[90m
+2025-12-01T00:03:15.4515461Z 
+2025-12-01T00:03:15.4515678Z Number of calls: [1m1[22m
+2025-12-01T00:03:15.4516041Z [31m[39m
+2025-12-01T00:03:15.4516691Z [36m [2m❯[22m test/domain/note.service.test.ts:[2m611:47[22m[39m
+2025-12-01T00:03:15.4518203Z     [90m609| [39m      [35mawait[39m service[33m.[39m[34mappendTimestampLink[39m([32m'/notes/2025-11-19.md'[39m)[33m;[39m
+2025-12-01T00:03:15.4519048Z     [90m610| [39m
+2025-12-01T00:03:15.4520052Z     [90m611| [39m      [34mexpect[39m(mockFileSystemService[33m.[39mwriteFile)[33m.[39m[34mtoHaveBeenCalledWith[39m(
+2025-12-01T00:03:15.4521125Z     [90m   | [39m                                              [31m^[39m
+2025-12-01T00:03:15.4522052Z     [90m612| [39m        [32m'/notes/2025-11-19.md'[39m[33m,[39m
+2025-12-01T00:03:15.4522927Z     [90m613| [39m        '# Note\n[09:00]\nMorning content\n[10:30]\nAfternoon content\…
+2025-12-01T00:03:15.4523370Z 
+2025-12-01T00:03:15.4523756Z [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/24]⎯[22m[39m
+2025-12-01T00:03:15.4524064Z 
+2025-12-01T00:03:15.4524977Z [41m[1m FAIL [22m[49m test/e2e/do.test.ts[2m > [22mrunning "manda do" should display incomplete tasks from today's note
+2025-12-01T00:03:15.4526470Z [31m[1mAssertionError[22m: expected '\n  ERROR Raw mode is not supported o…' to contain 'My Tasks'[39m
+2025-12-01T00:03:15.4527117Z 
+2025-12-01T00:03:15.4527333Z [32m- Expected[39m
+2025-12-01T00:03:15.4527729Z [31m+ Received[39m
+2025-12-01T00:03:15.4527930Z 
+2025-12-01T00:03:15.4528121Z [32m- My Tasks[39m
+2025-12-01T00:03:15.4528462Z [31m+[39m
+2025-12-01T00:03:15.4529486Z [31m+   ERROR Raw mode is not supported on the current process.stdin, which Ink uses[39m
+2025-12-01T00:03:15.4530359Z [31m+        as input stream by default.[39m
+2025-12-01T00:03:15.4531083Z [31m+        Read about how to prevent this error on[39m
+2025-12-01T00:03:15.4532286Z [31m+        https://github.com/vadimdemedes/ink/#israwmodesupported[39m
+2025-12-01T00:03:15.4532892Z [31m+[39m
+2025-12-01T00:03:15.4533448Z [31m+  - Read about how to prevent this error on[39m
+2025-12-01T00:03:15.4534347Z [31m+    https://github.com/vadimdemedes/ink/#israwmodesupported\t[39m
+2025-12-01T00:03:15.4535518Z [31m+  -handleSetRawM (node_modules/.pnpm/ink@6.5.0_@types+react@19.2.6_react@19.2.0/[39m
+2025-12-01T00:03:15.4536685Z [31m+   ode          node_modules/ink/src/components/App.tsx:151:11)[39m
+2025-12-01T00:03:15.4537815Z [31m+  -<anonymous (node_modules/.pnpm/ink@6.5.0_@types+react@19.2.6_react@19.2.0/nod[39m
+2025-12-01T00:03:15.4538834Z [31m+             e_modules/ink/src/hooks/use-input.ts:123:3)[39m
+2025-12-01T00:03:15.4539909Z [31m+  -Object.react_stack_bot (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2[39m
+2025-12-01T00:03:15.4541135Z [31m+   om_frame              .0/node_modules/react-reconciler/cjs/react-reconciler.d[39m
+2025-12-01T00:03:15.4542278Z [31m+                         evelopment.js:17681:20)[39m
+2025-12-01T00:03:15.4543336Z [31m+  -runWithFiberIn (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/node_[39m
+2025-12-01T00:03:15.4544552Z [31m+   EV            modules/react-reconciler/cjs/react-reconciler.development.js:25[39m
+2025-12-01T00:03:15.4545312Z [31m+                 05:30)[39m
+2025-12-01T00:03:15.4546275Z [31m+  -commitHookEffectLis (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/[39m
+2025-12-01T00:03:15.4547523Z [31m+   Mount              node_modules/react-reconciler/cjs/react-reconciler.develop[39m
+2025-12-01T00:03:15.4548368Z [31m+                      ment.js:10861:29)[39m
+2025-12-01T00:03:15.4549394Z [31m+  -commitHookPassiveMoun (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.[39m
+2025-12-01T00:03:15.4550609Z [31m+   Effects              0/node_modules/react-reconciler/cjs/react-reconciler.dev[39m
+2025-12-01T00:03:15.4551662Z [31m+                        elopment.js:10948:11)[39m
+2025-12-01T00:03:15.4552694Z [31m+  -commitPassiveMountO (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/[39m
+2025-12-01T00:03:15.4553953Z [31m+   Fiber              node_modules/react-reconciler/cjs/react-reconciler.develop[39m
+2025-12-01T00:03:15.4554881Z [31m+                      ment.js:12979:13)[39m
+2025-12-01T00:03:15.4555958Z [31m+  -recursivelyTraversePassiv (node_modules/.pnpm/react-reconciler@0.33.0_react@1[39m
+2025-12-01T00:03:15.4557453Z [31m+   MountEffects             9.2.0/node_modules/react-reconciler/cjs/react-reconc[39m
+2025-12-01T00:03:15.4558365Z [31m+                            iler.development.js:12934:11)[39m
+2025-12-01T00:03:15.4559387Z [31m+  -commitPassiveMountO (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/[39m
+2025-12-01T00:03:15.4592064Z [31m+   Fiber              node_modules/react-reconciler/cjs/react-reconciler.develop[39m
+2025-12-01T00:03:15.4593040Z [31m+                      ment.js:13213:11)[39m
+2025-12-01T00:03:15.4594166Z [31m+  -recursivelyTraversePassiv (node_modules/.pnpm/react-reconciler@0.33.0_react@1[39m
+2025-12-01T00:03:15.4595462Z [31m+   MountEffects             9.2.0/node_modules/react-reconciler/cjs/react-reconc[39m
+2025-12-01T00:03:15.4596418Z [31m+                            iler.development.js:12934:11)[39m
+2025-12-01T00:03:15.4596916Z [31m+[39m
+2025-12-01T00:03:15.4597224Z [31m+[39m
+2025-12-01T00:03:15.4597393Z 
+2025-12-01T00:03:15.4597836Z [36m [2m❯[22m test/e2e/do.test.ts:[2m44:20[22m[39m
+2025-12-01T00:03:15.4598447Z     [90m 42| [39m
+2025-12-01T00:03:15.4599193Z     [90m 43| [39m    // Assert: Check if the output contains the expected incomplete ta…
+2025-12-01T00:03:15.4600307Z     [90m 44| [39m    [34mexpect[39m(output)[33m.[39m[34mtoContain[39m([32m'My Tasks'[39m)[33m;[39m
+2025-12-01T00:03:15.4601577Z     [90m   | [39m                   [31m^[39m
+2025-12-01T00:03:15.4602562Z     [90m 45| [39m    [34mexpect[39m(output)[33m.[39m[34mtoContain[39m([32m'Buy milk'[39m)[33m;[39m
+2025-12-01T00:03:15.4603759Z     [90m 46| [39m    [34mexpect[39m(output)[33m.[39m[34mtoContain[39m([32m'Write report'[39m)[33m;[39m
+2025-12-01T00:03:15.4604324Z 
+2025-12-01T00:03:15.4604715Z [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/24]⎯[22m[39m
+2025-12-01T00:03:15.4605030Z 
+2025-12-01T00:03:15.4605941Z [41m[1m FAIL [22m[49m test/e2e/do.test.ts[2m > [22mrunning "manda do" should display empty message when no tasks found
+2025-12-01T00:03:15.4607580Z [31m[1mAssertionError[22m: expected '\n  ERROR Raw mode is not supported o…' to contain 'No tasks found in this note'[39m
+2025-12-01T00:03:15.4608293Z 
+2025-12-01T00:03:15.4608504Z [32m- Expected[39m
+2025-12-01T00:03:15.4608902Z [31m+ Received[39m
+2025-12-01T00:03:15.4609103Z 
+2025-12-01T00:03:15.4609413Z [32m- No tasks found in this note[39m
+2025-12-01T00:03:15.4609859Z [31m+[39m
+2025-12-01T00:03:15.4610681Z [31m+   ERROR Raw mode is not supported on the current process.stdin, which Ink uses[39m
+2025-12-01T00:03:15.4611739Z [31m+        as input stream by default.[39m
+2025-12-01T00:03:15.4612463Z [31m+        Read about how to prevent this error on[39m
+2025-12-01T00:03:15.4613349Z [31m+        https://github.com/vadimdemedes/ink/#israwmodesupported[39m
+2025-12-01T00:03:15.4613950Z [31m+[39m
+2025-12-01T00:03:15.4614503Z [31m+  - Read about how to prevent this error on[39m
+2025-12-01T00:03:15.4615390Z [31m+    https://github.com/vadimdemedes/ink/#israwmodesupported\t[39m
+2025-12-01T00:03:15.4616568Z [31m+  -handleSetRawM (node_modules/.pnpm/ink@6.5.0_@types+react@19.2.6_react@19.2.0/[39m
+2025-12-01T00:03:15.4617647Z [31m+   ode          node_modules/ink/src/components/App.tsx:151:11)[39m
+2025-12-01T00:03:15.4618781Z [31m+  -<anonymous (node_modules/.pnpm/ink@6.5.0_@types+react@19.2.6_react@19.2.0/nod[39m
+2025-12-01T00:03:15.4619801Z [31m+             e_modules/ink/src/hooks/use-input.ts:123:3)[39m
+2025-12-01T00:03:15.4620849Z [31m+  -Object.react_stack_bot (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2[39m
+2025-12-01T00:03:15.4622201Z [31m+   om_frame              .0/node_modules/react-reconciler/cjs/react-reconciler.d[39m
+2025-12-01T00:03:15.4623093Z [31m+                         evelopment.js:17681:20)[39m
+2025-12-01T00:03:15.4624156Z [31m+  -runWithFiberIn (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/node_[39m
+2025-12-01T00:03:15.4625399Z [31m+   EV            modules/react-reconciler/cjs/react-reconciler.development.js:25[39m
+2025-12-01T00:03:15.4626399Z [31m+                 05:30)[39m
+2025-12-01T00:03:15.4627371Z [31m+  -commitHookEffectLis (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/[39m
+2025-12-01T00:03:15.4628606Z [31m+   Mount              node_modules/react-reconciler/cjs/react-reconciler.develop[39m
+2025-12-01T00:03:15.4629489Z [31m+                      ment.js:10861:29)[39m
+2025-12-01T00:03:15.4630525Z [31m+  -commitHookPassiveMoun (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.[39m
+2025-12-01T00:03:15.4632405Z [31m+   Effects              0/node_modules/react-reconciler/cjs/react-reconciler.dev[39m
+2025-12-01T00:03:15.4633184Z [31m+                        elopment.js:10948:11)[39m
+2025-12-01T00:03:15.4634194Z [31m+  -commitPassiveMountO (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/[39m
+2025-12-01T00:03:15.4635372Z [31m+   Fiber              node_modules/react-reconciler/cjs/react-reconciler.develop[39m
+2025-12-01T00:03:15.4636210Z [31m+                      ment.js:12979:13)[39m
+2025-12-01T00:03:15.4637253Z [31m+  -recursivelyTraversePassiv (node_modules/.pnpm/react-reconciler@0.33.0_react@1[39m
+2025-12-01T00:03:15.4638448Z [31m+   MountEffects             9.2.0/node_modules/react-reconciler/cjs/react-reconc[39m
+2025-12-01T00:03:15.4639376Z [31m+                            iler.development.js:12934:11)[39m
+2025-12-01T00:03:15.4640626Z [31m+  -commitPassiveMountO (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/[39m
+2025-12-01T00:03:15.4642006Z [31m+   Fiber              node_modules/react-reconciler/cjs/react-reconciler.develop[39m
+2025-12-01T00:03:15.4642835Z [31m+                      ment.js:13213:11)[39m
+2025-12-01T00:03:15.4643840Z [31m+  -recursivelyTraversePassiv (node_modules/.pnpm/react-reconciler@0.33.0_react@1[39m
+2025-12-01T00:03:15.4645016Z [31m+   MountEffects             9.2.0/node_modules/react-reconciler/cjs/react-reconc[39m
+2025-12-01T00:03:15.4645778Z [31m+                            iler.development.js:12934:11)[39m
+2025-12-01T00:03:15.4646066Z [31m+[39m
+2025-12-01T00:03:15.4646255Z [31m+[39m
+2025-12-01T00:03:15.4646349Z 
+2025-12-01T00:03:15.4646742Z [36m [2m❯[22m test/e2e/do.test.ts:[2m77:20[22m[39m
+2025-12-01T00:03:15.4647287Z     [90m 75| [39m
+2025-12-01T00:03:15.4647949Z     [90m 76| [39m    [90m// Assert: Check if the output shows no tasks found[39m
+2025-12-01T00:03:15.4649137Z     [90m 77| [39m    [34mexpect[39m(output)[33m.[39m[34mtoContain[39m([32m'No tasks found in this note'[39m)[33m;[39m
+2025-12-01T00:03:15.4650021Z     [90m   | [39m                   [31m^[39m
+2025-12-01T00:03:15.4650561Z     [90m 78| [39m  } [35mfinally[39m {
+2025-12-01T00:03:15.4651421Z     [90m 79| [39m    [90m// Teardown: Clean up the temporary directory[39m
+2025-12-01T00:03:15.4651834Z 
+2025-12-01T00:03:15.4652069Z [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/24]⎯[22m[39m
+2025-12-01T00:03:15.4652251Z 
+2025-12-01T00:03:15.4652719Z [41m[1m FAIL [22m[49m test/e2e/do.test.ts[2m > [22mrunning "manda do --yester" should display yesterday's tasks
+2025-12-01T00:03:15.4653578Z [31m[1mAssertionError[22m: expected '\n  ERROR Raw mode is not supported o…' to contain 'Yesterday\'s Tasks'[39m
+2025-12-01T00:03:15.4653953Z 
+2025-12-01T00:03:15.4654068Z [32m- Expected[39m
+2025-12-01T00:03:15.4654303Z [31m+ Received[39m
+2025-12-01T00:03:15.4654416Z 
+2025-12-01T00:03:15.4654554Z [32m- Yesterday's Tasks[39m
+2025-12-01T00:03:15.4654787Z [31m+[39m
+2025-12-01T00:03:15.4655247Z [31m+   ERROR Raw mode is not supported on the current process.stdin, which Ink uses[39m
+2025-12-01T00:03:15.4655721Z [31m+        as input stream by default.[39m
+2025-12-01T00:03:15.4656119Z [31m+        Read about how to prevent this error on[39m
+2025-12-01T00:03:15.4656614Z [31m+        https://github.com/vadimdemedes/ink/#israwmodesupported[39m
+2025-12-01T00:03:15.4656952Z [31m+[39m
+2025-12-01T00:03:15.4657263Z [31m+  - Read about how to prevent this error on[39m
+2025-12-01T00:03:15.4657929Z [31m+    https://github.com/vadimdemedes/ink/#israwmodesupported\t[39m
+2025-12-01T00:03:15.4658564Z [31m+  -handleSetRawM (node_modules/.pnpm/ink@6.5.0_@types+react@19.2.6_react@19.2.0/[39m
+2025-12-01T00:03:15.4659146Z [31m+   ode          node_modules/ink/src/components/App.tsx:151:11)[39m
+2025-12-01T00:03:15.4659725Z [31m+  -<anonymous (node_modules/.pnpm/ink@6.5.0_@types+react@19.2.6_react@19.2.0/nod[39m
+2025-12-01T00:03:15.4660276Z [31m+             e_modules/ink/src/hooks/use-input.ts:123:3)[39m
+2025-12-01T00:03:15.4660868Z [31m+  -Object.react_stack_bot (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2[39m
+2025-12-01T00:03:15.4661850Z [31m+   om_frame              .0/node_modules/react-reconciler/cjs/react-reconciler.d[39m
+2025-12-01T00:03:15.4662619Z [31m+                         evelopment.js:17681:20)[39m
+2025-12-01T00:03:15.4663187Z [31m+  -runWithFiberIn (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/node_[39m
+2025-12-01T00:03:15.4663854Z [31m+   EV            modules/react-reconciler/cjs/react-reconciler.development.js:25[39m
+2025-12-01T00:03:15.4664305Z [31m+                 05:30)[39m
+2025-12-01T00:03:15.4664824Z [31m+  -commitHookEffectLis (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/[39m
+2025-12-01T00:03:15.4665473Z [31m+   Mount              node_modules/react-reconciler/cjs/react-reconciler.develop[39m
+2025-12-01T00:03:15.4666098Z [31m+                      ment.js:10861:29)[39m
+2025-12-01T00:03:15.4666661Z [31m+  -commitHookPassiveMoun (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.[39m
+2025-12-01T00:03:15.4667311Z [31m+   Effects              0/node_modules/react-reconciler/cjs/react-reconciler.dev[39m
+2025-12-01T00:03:15.4667949Z [31m+                        elopment.js:10948:11)[39m
+2025-12-01T00:03:15.4668984Z [31m+  -commitPassiveMountO (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/[39m
+2025-12-01T00:03:15.4670187Z [31m+   Fiber              node_modules/react-reconciler/cjs/react-reconciler.develop[39m
+2025-12-01T00:03:15.4671033Z [31m+                      ment.js:12979:13)[39m
+2025-12-01T00:03:15.4672210Z [31m+  -recursivelyTraversePassiv (node_modules/.pnpm/react-reconciler@0.33.0_react@1[39m
+2025-12-01T00:03:15.4673437Z [31m+   MountEffects             9.2.0/node_modules/react-reconciler/cjs/react-reconc[39m
+2025-12-01T00:03:15.4674366Z [31m+                            iler.development.js:12934:11)[39m
+2025-12-01T00:03:15.4675397Z [31m+  -commitPassiveMountO (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/[39m
+2025-12-01T00:03:15.4676588Z [31m+   Fiber              node_modules/react-reconciler/cjs/react-reconciler.develop[39m
+2025-12-01T00:03:15.4677419Z [31m+                      ment.js:13213:11)[39m
+2025-12-01T00:03:15.4678425Z [31m+  -recursivelyTraversePassiv (node_modules/.pnpm/react-reconciler@0.33.0_react@1[39m
+2025-12-01T00:03:15.4679204Z [31m+   MountEffects             9.2.0/node_modules/react-reconciler/cjs/react-reconc[39m
+2025-12-01T00:03:15.4679709Z [31m+                            iler.development.js:12934:11)[39m
+2025-12-01T00:03:15.4679992Z [31m+[39m
+2025-12-01T00:03:15.4680173Z [31m+[39m
+2025-12-01T00:03:15.4680264Z 
+2025-12-01T00:03:15.4680499Z [36m [2m❯[22m test/e2e/do.test.ts:[2m106:20[22m[39m
+2025-12-01T00:03:15.4680800Z     [90m104| [39m
+2025-12-01T00:03:15.4681214Z     [90m105| [39m    // Assert: Check if the output contains yesterday's incomplete tas…
+2025-12-01T00:03:15.4682129Z     [90m106| [39m    [34mexpect[39m(output)[33m.[39m[34mtoContain[39m([32m"Yesterday's Tasks"[39m)[33m;[39m
+2025-12-01T00:03:15.4682619Z     [90m   | [39m                   [31m^[39m
+2025-12-01T00:03:15.4683147Z     [90m107| [39m    [34mexpect[39m(output)[33m.[39m[34mtoContain[39m([32m'Review code'[39m)[33m;[39m
+2025-12-01T00:03:15.4683823Z     [90m108| [39m    [34mexpect[39m(output)[33m.[39m[34mtoContain[39m([32m'Plan meeting'[39m)[33m;[39m
+2025-12-01T00:03:15.4684142Z 
+2025-12-01T00:03:15.4684350Z [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/24]⎯[22m[39m
+2025-12-01T00:03:15.4684696Z 
+2025-12-01T00:03:15.4685232Z [41m[1m FAIL [22m[49m test/e2e/see.test.ts[2m > [22mrunning "manda see" should display today's note with TUI markdown rendering
+2025-12-01T00:03:15.4685897Z [31m[1mAssertionError[22m: expected undefined to be defined[39m
+2025-12-01T00:03:15.4686356Z [36m [2m❯[22m test/e2e/see.test.ts:[2m67:25[22m[39m
+2025-12-01T00:03:15.4686845Z     [90m 65| [39m    // The important thing is that it doesn't crash due to syntax erro…
+2025-12-01T00:03:15.4687648Z     [90m 66| [39m    [35mconst[39m errorOutput [33m=[39m (error [35mas[39m any)[33m.[39mstdout [33m||[39m (error [35mas[39m any)[33m.[39mstderr[33m;[39m
+2025-12-01T00:03:15.4688366Z     [90m 67| [39m    [34mexpect[39m(errorOutput)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+2025-12-01T00:03:15.4688806Z     [90m   | [39m                        [31m^[39m
+2025-12-01T00:03:15.4689126Z     [90m 68| [39m  } [35mfinally[39m {
+2025-12-01T00:03:15.4689536Z     [90m 69| [39m    [90m// Teardown: Clean up the temporary directory[39m
+2025-12-01T00:03:15.4689773Z 
+2025-12-01T00:03:15.4689979Z [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/24]⎯[22m[39m
+2025-12-01T00:03:15.4690151Z 
+2025-12-01T00:03:15.4690685Z [41m[1m FAIL [22m[49m test/e2e/see.test.ts[2m > [22mrunning "manda see" should display today's note with TUI markdown rendering
+2025-12-01T00:03:15.4691590Z [31m[1mAssertionError[22m: expected undefined to be defined[39m
+2025-12-01T00:03:15.4692080Z [36m [2m❯[22m test/e2e/see.test.ts:[2m121:25[22m[39m
+2025-12-01T00:03:15.4692570Z     [90m119| [39m    // The important thing is that it doesn't crash due to syntax erro…
+2025-12-01T00:03:15.4693373Z     [90m120| [39m    [35mconst[39m errorOutput [33m=[39m (error [35mas[39m any)[33m.[39mstdout [33m||[39m (error [35mas[39m any)[33m.[39mstderr[33m;[39m
+2025-12-01T00:03:15.4694122Z     [90m121| [39m    [34mexpect[39m(errorOutput)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+2025-12-01T00:03:15.4694577Z     [90m   | [39m                        [31m^[39m
+2025-12-01T00:03:15.4694887Z     [90m122| [39m  } [35mfinally[39m {
+2025-12-01T00:03:15.4695303Z     [90m123| [39m    [90m// Teardown: Clean up the temporary directory[39m
+2025-12-01T00:03:15.4695540Z 
+2025-12-01T00:03:15.4695754Z [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/24]⎯[22m[39m
+2025-12-01T00:03:15.4695924Z 
+2025-12-01T00:03:15.4696436Z [41m[1m FAIL [22m[49m test/e2e/see.test.ts[2m > [22mrunning "manda see --yester" should display yesterday's note with TUI
+2025-12-01T00:03:15.4697833Z [31m[1mAssertionError[22m: expected '\n  ERROR Raw mode is not supported o…' to contain 'scroll'[39m
+2025-12-01T00:03:15.4698438Z 
+2025-12-01T00:03:15.4698645Z [32m- Expected[39m
+2025-12-01T00:03:15.4699022Z [31m+ Received[39m
+2025-12-01T00:03:15.4699220Z 
+2025-12-01T00:03:15.4699400Z [32m- scroll[39m
+2025-12-01T00:03:15.4699731Z [31m+[39m
+2025-12-01T00:03:15.4700536Z [31m+   ERROR Raw mode is not supported on the current process.stdin, which Ink uses[39m
+2025-12-01T00:03:15.4701546Z [31m+        as input stream by default.[39m
+2025-12-01T00:03:15.4702264Z [31m+        Read about how to prevent this error on[39m
+2025-12-01T00:03:15.4703143Z [31m+        https://github.com/vadimdemedes/ink/#israwmodesupported[39m
+2025-12-01T00:03:15.4703744Z [31m+[39m
+2025-12-01T00:03:15.4704285Z [31m+  - Read about how to prevent this error on[39m
+2025-12-01T00:03:15.4705170Z [31m+    https://github.com/vadimdemedes/ink/#israwmodesupported\t[39m
+2025-12-01T00:03:15.4706302Z [31m+  -handleSetRawM (node_modules/.pnpm/ink@6.5.0_@types+react@19.2.6_react@19.2.0/[39m
+2025-12-01T00:03:15.4707338Z [31m+   ode          node_modules/ink/src/components/App.tsx:151:11)[39m
+2025-12-01T00:03:15.4708398Z [31m+  -<anonymous (node_modules/.pnpm/ink@6.5.0_@types+react@19.2.6_react@19.2.0/nod[39m
+2025-12-01T00:03:15.4709354Z [31m+             e_modules/ink/src/hooks/use-input.ts:123:3)[39m
+2025-12-01T00:03:15.4710392Z [31m+  -Object.react_stack_bot (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2[39m
+2025-12-01T00:03:15.4711537Z [31m+   om_frame              .0/node_modules/react-reconciler/cjs/react-reconciler.d[39m
+2025-12-01T00:03:15.4712064Z [31m+                         evelopment.js:17681:20)[39m
+2025-12-01T00:03:15.4712637Z [31m+  -runWithFiberIn (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/node_[39m
+2025-12-01T00:03:15.4713313Z [31m+   EV            modules/react-reconciler/cjs/react-reconciler.development.js:25[39m
+2025-12-01T00:03:15.4713741Z [31m+                 05:30)[39m
+2025-12-01T00:03:15.4714270Z [31m+  -commitHookEffectLis (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/[39m
+2025-12-01T00:03:15.4714922Z [31m+   Mount              node_modules/react-reconciler/cjs/react-reconciler.develop[39m
+2025-12-01T00:03:15.4715383Z [31m+                      ment.js:10861:29)[39m
+2025-12-01T00:03:15.4716220Z [31m+  -commitHookPassiveMoun (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.[39m
+2025-12-01T00:03:15.4717487Z [31m+   Effects              0/node_modules/react-reconciler/cjs/react-reconciler.dev[39m
+2025-12-01T00:03:15.4718420Z [31m+                        elopment.js:10948:11)[39m
+2025-12-01T00:03:15.4719513Z [31m+  -commitPassiveMountO (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/[39m
+2025-12-01T00:03:15.4721033Z [31m+   Fiber              node_modules/react-reconciler/cjs/react-reconciler.develop[39m
+2025-12-01T00:03:15.4722175Z [31m+                      ment.js:12979:13)[39m
+2025-12-01T00:03:15.4723272Z [31m+  -recursivelyTraversePassiv (node_modules/.pnpm/react-reconciler@0.33.0_react@1[39m
+2025-12-01T00:03:15.4724535Z [31m+   MountEffects             9.2.0/node_modules/react-reconciler/cjs/react-reconc[39m
+2025-12-01T00:03:15.4725472Z [31m+                            iler.development.js:12934:11)[39m
+2025-12-01T00:03:15.4726559Z [31m+  -commitPassiveMountO (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/[39m
+2025-12-01T00:03:15.4727838Z [31m+   Fiber              node_modules/react-reconciler/cjs/react-reconciler.develop[39m
+2025-12-01T00:03:15.4728719Z [31m+                      ment.js:13213:11)[39m
+2025-12-01T00:03:15.4729792Z [31m+  -recursivelyTraversePassiv (node_modules/.pnpm/react-reconciler@0.33.0_react@1[39m
+2025-12-01T00:03:15.4731067Z [31m+   MountEffects             9.2.0/node_modules/react-reconciler/cjs/react-reconc[39m
+2025-12-01T00:03:15.4732232Z [31m+                            iler.development.js:12934:11)[39m
+2025-12-01T00:03:15.4732745Z [31m+[39m
+2025-12-01T00:03:15.4733050Z [31m+[39m
+2025-12-01T00:03:15.4733214Z 
+2025-12-01T00:03:15.4733655Z [36m [2m❯[22m test/e2e/see.test.ts:[2m164:18[22m[39m
+2025-12-01T00:03:15.4734766Z     [90m162| [39m  [34mexpect[39m(output[33m.[39mlength)[33m.[39m[34mtoBeGreaterThan[39m([34m0[39m)[33m;[39m
+2025-12-01T00:03:15.4735828Z     [90m163| [39m  [90m// Should contain keyboard navigation hints[39m
+2025-12-01T00:03:15.4736919Z     [90m164| [39m  [34mexpect[39m(output)[33m.[39m[34mtoContain[39m([32m'scroll'[39m)[33m;[39m
+2025-12-01T00:03:15.4737735Z     [90m   | [39m                 [31m^[39m
+2025-12-01T00:03:15.4738617Z     [90m165| [39m  [34mexpect[39m(output)[33m.[39m[34mtoContain[39m([32m'exit'[39m)[33m;[39m
+2025-12-01T00:03:15.4739305Z     [90m166| [39m
+2025-12-01T00:03:15.4739496Z 
+2025-12-01T00:03:15.4739900Z [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/24]⎯[22m[39m
+2025-12-01T00:03:15.4740221Z 
+2025-12-01T00:03:15.4741445Z [41m[1m FAIL [22m[49m test/e2e/see.test.ts[2m > [22mrunning "manda see" when note does not exist should create and display empty note
+2025-12-01T00:03:15.4742731Z [31m[1mAssertionError[22m: expected undefined to be defined[39m
+2025-12-01T00:03:15.4743586Z [36m [2m❯[22m test/e2e/see.test.ts:[2m195:25[22m[39m
+2025-12-01T00:03:15.4744514Z     [90m193| [39m    [90m// Even if there's an error, process should handle it gracefully[39m
+2025-12-01T00:03:15.4746040Z     [90m194| [39m    [35mconst[39m errorOutput [33m=[39m (error [35mas[39m any)[33m.[39mstdout [33m||[39m (error [35mas[39m any)[33m.[39mstderr[33m;[39m
+2025-12-01T00:03:15.4747680Z     [90m195| [39m    [34mexpect[39m(errorOutput)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+2025-12-01T00:03:15.4748496Z     [90m   | [39m                        [31m^[39m
+2025-12-01T00:03:15.4749082Z     [90m196| [39m  } [35mfinally[39m {
+2025-12-01T00:03:15.4749837Z     [90m197| [39m    [90m// Teardown: Clean up the temporary directory[39m
+2025-12-01T00:03:15.4750282Z 
+2025-12-01T00:03:15.4750668Z [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/24]⎯[22m[39m
+2025-12-01T00:03:15.4750989Z 
+2025-12-01T00:03:15.4752458Z [41m[1m FAIL [22m[49m test/services/git.service.test.ts[2m > [22mGitService[2m > [22mgetCurrentTimestampCommitMessage should return formatted timestamp
+2025-12-01T00:03:15.4754234Z [31m[1mAssertionError[22m: expected '2025-11-19 10:30:45' to be '2025-11-19 16:00:45' // Object.is equality[39m
+2025-12-01T00:03:15.4754856Z 
+2025-12-01T00:03:15.4755242Z Expected: [32m"2025-11-19 1[7m6:0[27m0:45"[39m
+2025-12-01T00:03:15.4755971Z Received: [31m"2025-11-19 1[7m0:3[27m0:45"[39m
+2025-12-01T00:03:15.4756291Z 
+2025-12-01T00:03:15.4756808Z [36m [2m❯[22m test/services/git.service.test.ts:[2m97:21[22m[39m
+2025-12-01T00:03:15.4758013Z     [90m 95| [39m    console[33m.[39m[34mlog[39m([32m'Actual:'[39m[33m,[39m message)[33m;[39m
+2025-12-01T00:03:15.4758702Z     [90m 96| [39m
+2025-12-01T00:03:15.4759434Z     [90m 97| [39m    expect(message).toBe('2025-11-19 16:00:45'); // Updated to match n…
+2025-12-01T00:03:15.4760163Z     [90m   | [39m                    [31m^[39m
+2025-12-01T00:03:15.4760622Z     [90m 98| [39m
+2025-12-01T00:03:15.4761104Z     [90m 99| [39m    [90m// Restore timers[39m
+2025-12-01T00:03:15.4761626Z 
+2025-12-01T00:03:15.4762006Z [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/24]⎯[22m[39m
+2025-12-01T00:03:15.4762340Z 
+2025-12-01T00:03:15.4763887Z [41m[1m FAIL [22m[49m dist/test/domain/note.service.test.js[2m > [22mNoteService[2m > [22mappendTimestampLink[2m > [22mshould replace last timestamp when it is followed only by newline
+2025-12-01T00:03:15.4765913Z [31m[1mAssertionError[22m: expected "vi.fn()" to be called with arguments: [ '/notes/2025-11-19.md', …(1) ][90m
+2025-12-01T00:03:15.4766563Z 
+2025-12-01T00:03:15.4766683Z Received: 
+2025-12-01T00:03:15.4766853Z 
+2025-12-01T00:03:15.4767078Z [1m  1st vi.fn() call:
+2025-12-01T00:03:15.4767294Z 
+2025-12-01T00:03:15.4767480Z [22m[2m  [[22m
+2025-12-01T00:03:15.4767931Z [2m    "/notes/2025-11-19.md",[22m
+2025-12-01T00:03:15.4768415Z [2m    "# Note[22m
+2025-12-01T00:03:15.4768786Z [32m- [20:00][90m
+2025-12-01T00:03:15.4769130Z [31m+ [14:30][90m
+2025-12-01T00:03:15.4769463Z [2m  ",[22m
+2025-12-01T00:03:15.4769771Z [2m  ][22m
+2025-12-01T00:03:15.4770080Z [31m[90m
+2025-12-01T00:03:15.4770239Z 
+2025-12-01T00:03:15.4770468Z Number of calls: [1m1[22m
+2025-12-01T00:03:15.4770836Z [31m[39m
+2025-12-01T00:03:15.4771717Z [36m [2m❯[22m dist/test/domain/note.service.test.js:[2m400:53[22m[39m
+2025-12-01T00:03:15.4773080Z     [90m398| [39m            vi.mocked(mockFileSystemService.writeFile).mockResolvedVal…
+2025-12-01T00:03:15.4774455Z     [90m399| [39m            [35mawait[39m service[33m.[39m[34mappendTimestampLink[39m([32m'/notes/2025-11-19.md'[39m)[33m;[39m
+2025-12-01T00:03:15.4775747Z     [90m400| [39m            expect(mockFileSystemService.writeFile).toHaveBeenCalledWi…
+2025-12-01T00:03:15.4776674Z     [90m   | [39m                                                    [31m^[39m
+2025-12-01T00:03:15.4777280Z     [90m401| [39m        })[33m;[39m
+2025-12-01T00:03:15.4778118Z     [90m402| [39m        test('should append new timestamp when there is content after …
+2025-12-01T00:03:15.4778630Z 
+2025-12-01T00:03:15.4779021Z [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/24]⎯[22m[39m
+2025-12-01T00:03:15.4779328Z 
+2025-12-01T00:03:15.4780921Z [41m[1m FAIL [22m[49m dist/test/domain/note.service.test.js[2m > [22mNoteService[2m > [22mappendTimestampLink[2m > [22mshould append new timestamp when there is content after last timestamp
+2025-12-01T00:03:15.4783157Z [31m[1mAssertionError[22m: expected "vi.fn()" to be called with arguments: [ '/notes/2025-11-19.md', …(1) ][90m
+2025-12-01T00:03:15.4783805Z 
+2025-12-01T00:03:15.4783887Z Received: 
+2025-12-01T00:03:15.4783989Z 
+2025-12-01T00:03:15.4784307Z [1m  1st vi.fn() call:
+2025-12-01T00:03:15.4784442Z 
+2025-12-01T00:03:15.4784575Z [22m[2m  [[22m
+2025-12-01T00:03:15.4785058Z [2m    "/notes/2025-11-19.md",[22m
+2025-12-01T00:03:15.4785412Z [2m    "# Note[22m
+2025-12-01T00:03:15.4785634Z [2m  [10:30][22m
+2025-12-01T00:03:15.4785954Z [2m  Some content here[22m
+2025-12-01T00:03:15.4786394Z [32m- [20:00][90m
+2025-12-01T00:03:15.4786762Z [31m+ [14:30][90m
+2025-12-01T00:03:15.4787097Z [2m  ",[22m
+2025-12-01T00:03:15.4787424Z [2m  ][22m
+2025-12-01T00:03:15.4787739Z [31m[90m
+2025-12-01T00:03:15.4787904Z 
+2025-12-01T00:03:15.4788127Z Number of calls: [1m1[22m
+2025-12-01T00:03:15.4788534Z [31m[39m
+2025-12-01T00:03:15.4789266Z [36m [2m❯[22m dist/test/domain/note.service.test.js:[2m409:53[22m[39m
+2025-12-01T00:03:15.4790303Z     [90m407| [39m            vi.mocked(mockFileSystemService.writeFile).mockResolvedVal…
+2025-12-01T00:03:15.4791864Z     [90m408| [39m            [35mawait[39m service[33m.[39m[34mappendTimestampLink[39m([32m'/notes/2025-11-19.md'[39m)[33m;[39m
+2025-12-01T00:03:15.4793221Z     [90m409| [39m            expect(mockFileSystemService.writeFile).toHaveBeenCalledWi…
+2025-12-01T00:03:15.4794123Z     [90m   | [39m                                                    [31m^[39m
+2025-12-01T00:03:15.4794729Z     [90m410| [39m        })[33m;[39m
+2025-12-01T00:03:15.4795558Z     [90m411| [39m        test('should replace the last timestamp when there are multipl…
+2025-12-01T00:03:15.4796052Z 
+2025-12-01T00:03:15.4796433Z [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/24]⎯[22m[39m
+2025-12-01T00:03:15.4796740Z 
+2025-12-01T00:03:15.4798583Z [41m[1m FAIL [22m[49m dist/test/domain/note.service.test.js[2m > [22mNoteService[2m > [22mappendTimestampLink[2m > [22mshould replace the last timestamp when there are multiple timestamps and no content after the last one
+2025-12-01T00:03:15.4800738Z [31m[1mAssertionError[22m: expected "vi.fn()" to be called with arguments: [ '/notes/2025-11-19.md', …(1) ][90m
+2025-12-01T00:03:15.4801575Z 
+2025-12-01T00:03:15.4801698Z Received: 
+2025-12-01T00:03:15.4801864Z 
+2025-12-01T00:03:15.4802074Z [1m  1st vi.fn() call:
+2025-12-01T00:03:15.4802284Z 
+2025-12-01T00:03:15.4802468Z [22m[2m  [[22m
+2025-12-01T00:03:15.4802913Z [2m    "/notes/2025-11-19.md",[22m
+2025-12-01T00:03:15.4803359Z [2m    "# Note[22m
+2025-12-01T00:03:15.4803741Z [2m  [09:00][22m
+2025-12-01T00:03:15.4804125Z [2m  Morning content[22m
+2025-12-01T00:03:15.4804536Z [32m- [20:00]",[90m
+2025-12-01T00:03:15.4804910Z [31m+ [14:30]",[90m
+2025-12-01T00:03:15.4805243Z [2m  ][22m
+2025-12-01T00:03:15.4805547Z [31m[90m
+2025-12-01T00:03:15.4805917Z 
+2025-12-01T00:03:15.4806138Z Number of calls: [1m1[22m
+2025-12-01T00:03:15.4806512Z [31m[39m
+2025-12-01T00:03:15.4807219Z [36m [2m❯[22m dist/test/domain/note.service.test.js:[2m418:53[22m[39m
+2025-12-01T00:03:15.4808194Z     [90m416| [39m            vi.mocked(mockFileSystemService.writeFile).mockResolvedVal…
+2025-12-01T00:03:15.4809520Z     [90m417| [39m            [35mawait[39m service[33m.[39m[34mappendTimestampLink[39m([32m'/notes/2025-11-19.md'[39m)[33m;[39m
+2025-12-01T00:03:15.4810736Z     [90m418| [39m            expect(mockFileSystemService.writeFile).toHaveBeenCalledWi…
+2025-12-01T00:03:15.4811782Z     [90m   | [39m                                                    [31m^[39m
+2025-12-01T00:03:15.4812361Z     [90m419| [39m        })[33m;[39m
+2025-12-01T00:03:15.4813140Z     [90m420| [39m        test('should append new timestamp when there are multiple time…
+2025-12-01T00:03:15.4813643Z 
+2025-12-01T00:03:15.4814027Z [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/24]⎯[22m[39m
+2025-12-01T00:03:15.4814362Z 
+2025-12-01T00:03:15.4816134Z [41m[1m FAIL [22m[49m dist/test/domain/note.service.test.js[2m > [22mNoteService[2m > [22mappendTimestampLink[2m > [22mshould append new timestamp when there are multiple timestamps with content after the last one
+2025-12-01T00:03:15.4818569Z [31m[1mAssertionError[22m: expected "vi.fn()" to be called with arguments: [ '/notes/2025-11-19.md', …(1) ][90m
+2025-12-01T00:03:15.4819246Z 
+2025-12-01T00:03:15.4819375Z Received: 
+2025-12-01T00:03:15.4819549Z 
+2025-12-01T00:03:15.4819776Z [1m  1st vi.fn() call:
+2025-12-01T00:03:15.4820001Z 
+2025-12-01T00:03:15.4820271Z [22m[33m@@ -3,8 +3,8 @@[90m
+2025-12-01T00:03:15.4820695Z [2m    "# Note[22m
+2025-12-01T00:03:15.4821067Z [2m  [09:00][22m
+2025-12-01T00:03:15.4821621Z [2m  Morning content[22m
+2025-12-01T00:03:15.4822015Z [2m  [10:30][22m
+2025-12-01T00:03:15.4822408Z [2m  Afternoon content[22m
+2025-12-01T00:03:15.4822818Z [32m- [20:00][90m
+2025-12-01T00:03:15.4823186Z [31m+ [14:30][90m
+2025-12-01T00:03:15.4823529Z [2m  ",[22m
+2025-12-01T00:03:15.4823861Z [2m  ][22m
+2025-12-01T00:03:15.4824172Z [31m[90m
+2025-12-01T00:03:15.4824332Z 
+2025-12-01T00:03:15.4824548Z Number of calls: [1m1[22m
+2025-12-01T00:03:15.4824923Z [31m[39m
+2025-12-01T00:03:15.4825637Z [36m [2m❯[22m dist/test/domain/note.service.test.js:[2m427:53[22m[39m
+2025-12-01T00:03:15.4826660Z     [90m425| [39m            vi.mocked(mockFileSystemService.writeFile).mockResolvedVal…
+2025-12-01T00:03:15.4828018Z     [90m426| [39m            [35mawait[39m service[33m.[39m[34mappendTimestampLink[39m([32m'/notes/2025-11-19.md'[39m)[33m;[39m
+2025-12-01T00:03:15.4829260Z     [90m427| [39m            expect(mockFileSystemService.writeFile).toHaveBeenCalledWi…
+2025-12-01T00:03:15.4830150Z     [90m   | [39m                                                    [31m^[39m
+2025-12-01T00:03:15.4830740Z     [90m428| [39m        })[33m;[39m
+2025-12-01T00:03:15.4831444Z     [90m429| [39m    })[33m;[39m
+2025-12-01T00:03:15.4831732Z 
+2025-12-01T00:03:15.4832118Z [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/24]⎯[22m[39m
+2025-12-01T00:03:15.4832435Z 
+2025-12-01T00:03:15.4833381Z [41m[1m FAIL [22m[49m dist/test/e2e/do.test.js[2m > [22mrunning "manda do" should display incomplete tasks from today's note
+2025-12-01T00:03:15.4834941Z [31m[1mAssertionError[22m: expected '\n  ERROR Raw mode is not supported o…' to contain 'My Tasks'[39m
+2025-12-01T00:03:15.4835570Z 
+2025-12-01T00:03:15.4835777Z [32m- Expected[39m
+2025-12-01T00:03:15.4836193Z [31m+ Received[39m
+2025-12-01T00:03:15.4836394Z 
+2025-12-01T00:03:15.4836650Z [32m- My Tasks[39m
+2025-12-01T00:03:15.4836991Z [31m+[39m
+2025-12-01T00:03:15.4837831Z [31m+   ERROR Raw mode is not supported on the current process.stdin, which Ink uses[39m
+2025-12-01T00:03:15.4838696Z [31m+        as input stream by default.[39m
+2025-12-01T00:03:15.4839389Z [31m+        Read about how to prevent this error on[39m
+2025-12-01T00:03:15.4840334Z [31m+        https://github.com/vadimdemedes/ink/#israwmodesupported[39m
+2025-12-01T00:03:15.4841218Z [31m+[39m
+2025-12-01T00:03:15.4841969Z [31m+  - Read about how to prevent this error on[39m
+2025-12-01T00:03:15.4842878Z [31m+    https://github.com/vadimdemedes/ink/#israwmodesupported\t[39m
+2025-12-01T00:03:15.4844068Z [31m+  -handleSetRawM (node_modules/.pnpm/ink@6.5.0_@types+react@19.2.6_react@19.2.0/[39m
+2025-12-01T00:03:15.4845133Z [31m+   ode          node_modules/ink/src/components/App.tsx:151:11)[39m
+2025-12-01T00:03:15.4846242Z [31m+  -<anonymous (node_modules/.pnpm/ink@6.5.0_@types+react@19.2.6_react@19.2.0/nod[39m
+2025-12-01T00:03:15.4847252Z [31m+             e_modules/ink/src/hooks/use-input.ts:123:3)[39m
+2025-12-01T00:03:15.4848336Z [31m+  -Object.react_stack_bot (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2[39m
+2025-12-01T00:03:15.4849539Z [31m+   om_frame              .0/node_modules/react-reconciler/cjs/react-reconciler.d[39m
+2025-12-01T00:03:15.4850434Z [31m+                         evelopment.js:17681:20)[39m
+2025-12-01T00:03:15.4851714Z [31m+  -runWithFiberIn (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/node_[39m
+2025-12-01T00:03:15.4853051Z [31m+   EV            modules/react-reconciler/cjs/react-reconciler.development.js:25[39m
+2025-12-01T00:03:15.4853900Z [31m+                 05:30)[39m
+2025-12-01T00:03:15.4855090Z [31m+  -commitHookEffectLis (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/[39m
+2025-12-01T00:03:15.4856329Z [31m+   Mount              node_modules/react-reconciler/cjs/react-reconciler.develop[39m
+2025-12-01T00:03:15.4857215Z [31m+                      ment.js:10861:29)[39m
+2025-12-01T00:03:15.4858276Z [31m+  -commitHookPassiveMoun (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.[39m
+2025-12-01T00:03:15.4859551Z [31m+   Effects              0/node_modules/react-reconciler/cjs/react-reconciler.dev[39m
+2025-12-01T00:03:15.4860469Z [31m+                        elopment.js:10948:11)[39m
+2025-12-01T00:03:15.4861720Z [31m+  -commitPassiveMountO (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/[39m
+2025-12-01T00:03:15.4862983Z [31m+   Fiber              node_modules/react-reconciler/cjs/react-reconciler.develop[39m
+2025-12-01T00:03:15.4863839Z [31m+                      ment.js:12979:13)[39m
+2025-12-01T00:03:15.4864898Z [31m+  -recursivelyTraversePassiv (node_modules/.pnpm/react-reconciler@0.33.0_react@1[39m
+2025-12-01T00:03:15.4866163Z [31m+   MountEffects             9.2.0/node_modules/react-reconciler/cjs/react-reconc[39m
+2025-12-01T00:03:15.4867125Z [31m+                            iler.development.js:12934:11)[39m
+2025-12-01T00:03:15.4868219Z [31m+  -commitPassiveMountO (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/[39m
+2025-12-01T00:03:15.4869453Z [31m+   Fiber              node_modules/react-reconciler/cjs/react-reconciler.develop[39m
+2025-12-01T00:03:15.4870322Z [31m+                      ment.js:13213:11)[39m
+2025-12-01T00:03:15.4871580Z [31m+  -recursivelyTraversePassiv (node_modules/.pnpm/react-reconciler@0.33.0_react@1[39m
+2025-12-01T00:03:15.4872886Z [31m+   MountEffects             9.2.0/node_modules/react-reconciler/cjs/react-reconc[39m
+2025-12-01T00:03:15.4873840Z [31m+                            iler.development.js:12934:11)[39m
+2025-12-01T00:03:15.4874349Z [31m+[39m
+2025-12-01T00:03:15.4874668Z [31m+[39m
+2025-12-01T00:03:15.4874843Z 
+2025-12-01T00:03:15.4875304Z [36m [2m❯[22m dist/test/e2e/do.test.js:[2m37:24[22m[39m
+2025-12-01T00:03:15.4875945Z     [90m 35| [39m        })[33m;[39m
+2025-12-01T00:03:15.4876772Z     [90m 36| [39m        // Assert: Check if the output contains the expected incomplet…
+2025-12-01T00:03:15.4877928Z     [90m 37| [39m        [34mexpect[39m(output)[33m.[39m[34mtoContain[39m([32m'My Tasks'[39m)[33m;[39m
+2025-12-01T00:03:15.4878798Z     [90m   | [39m                       [31m^[39m
+2025-12-01T00:03:15.4879768Z     [90m 38| [39m        [34mexpect[39m(output)[33m.[39m[34mtoContain[39m([32m'Buy milk'[39m)[33m;[39m
+2025-12-01T00:03:15.4881486Z     [90m 39| [39m        [34mexpect[39m(output)[33m.[39m[34mtoContain[39m([32m'Write report'[39m)[33m;[39m
+2025-12-01T00:03:15.4882100Z 
+2025-12-01T00:03:15.4882511Z [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/24]⎯[22m[39m
+2025-12-01T00:03:15.4882837Z 
+2025-12-01T00:03:15.4883810Z [41m[1m FAIL [22m[49m dist/test/e2e/do.test.js[2m > [22mrunning "manda do" should display empty message when no tasks found
+2025-12-01T00:03:15.4885509Z [31m[1mAssertionError[22m: expected '\n  ERROR Raw mode is not supported o…' to contain 'No tasks found in this note'[39m
+2025-12-01T00:03:15.4886231Z 
+2025-12-01T00:03:15.4886442Z [32m- Expected[39m
+2025-12-01T00:03:15.4886837Z [31m+ Received[39m
+2025-12-01T00:03:15.4887033Z 
+2025-12-01T00:03:15.4887338Z [32m- No tasks found in this note[39m
+2025-12-01T00:03:15.4887800Z [31m+[39m
+2025-12-01T00:03:15.4888651Z [31m+   ERROR Raw mode is not supported on the current process.stdin, which Ink uses[39m
+2025-12-01T00:03:15.4889559Z [31m+        as input stream by default.[39m
+2025-12-01T00:03:15.4890285Z [31m+        Read about how to prevent this error on[39m
+2025-12-01T00:03:15.4891201Z [31m+        https://github.com/vadimdemedes/ink/#israwmodesupported[39m
+2025-12-01T00:03:15.4892080Z [31m+[39m
+2025-12-01T00:03:15.4892646Z [31m+  - Read about how to prevent this error on[39m
+2025-12-01T00:03:15.4893760Z [31m+    https://github.com/vadimdemedes/ink/#israwmodesupported\t[39m
+2025-12-01T00:03:15.4894960Z [31m+  -handleSetRawM (node_modules/.pnpm/ink@6.5.0_@types+react@19.2.6_react@19.2.0/[39m
+2025-12-01T00:03:15.4896050Z [31m+   ode          node_modules/ink/src/components/App.tsx:151:11)[39m
+2025-12-01T00:03:15.4897163Z [31m+  -<anonymous (node_modules/.pnpm/ink@6.5.0_@types+react@19.2.6_react@19.2.0/nod[39m
+2025-12-01T00:03:15.4898180Z [31m+             e_modules/ink/src/hooks/use-input.ts:123:3)[39m
+2025-12-01T00:03:15.4899271Z [31m+  -Object.react_stack_bot (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2[39m
+2025-12-01T00:03:15.4900474Z [31m+   om_frame              .0/node_modules/react-reconciler/cjs/react-reconciler.d[39m
+2025-12-01T00:03:15.4901544Z [31m+                         evelopment.js:17681:20)[39m
+2025-12-01T00:03:15.4902597Z [31m+  -runWithFiberIn (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/node_[39m
+2025-12-01T00:03:15.4903825Z [31m+   EV            modules/react-reconciler/cjs/react-reconciler.development.js:25[39m
+2025-12-01T00:03:15.4904627Z [31m+                 05:30)[39m
+2025-12-01T00:03:15.4905615Z [31m+  -commitHookEffectLis (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/[39m
+2025-12-01T00:03:15.4906850Z [31m+   Mount              node_modules/react-reconciler/cjs/react-reconciler.develop[39m
+2025-12-01T00:03:15.4907718Z [31m+                      ment.js:10861:29)[39m
+2025-12-01T00:03:15.4908751Z [31m+  -commitHookPassiveMoun (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.[39m
+2025-12-01T00:03:15.4909977Z [31m+   Effects              0/node_modules/react-reconciler/cjs/react-reconciler.dev[39m
+2025-12-01T00:03:15.4910881Z [31m+                        elopment.js:10948:11)[39m
+2025-12-01T00:03:15.4912134Z [31m+  -commitPassiveMountO (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/[39m
+2025-12-01T00:03:15.4913378Z [31m+   Fiber              node_modules/react-reconciler/cjs/react-reconciler.develop[39m
+2025-12-01T00:03:15.4914254Z [31m+                      ment.js:12979:13)[39m
+2025-12-01T00:03:15.4915297Z [31m+  -recursivelyTraversePassiv (node_modules/.pnpm/react-reconciler@0.33.0_react@1[39m
+2025-12-01T00:03:15.4916538Z [31m+   MountEffects             9.2.0/node_modules/react-reconciler/cjs/react-reconc[39m
+2025-12-01T00:03:15.4917483Z [31m+                            iler.development.js:12934:11)[39m
+2025-12-01T00:03:15.4918547Z [31m+  -commitPassiveMountO (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/[39m
+2025-12-01T00:03:15.4919801Z [31m+   Fiber              node_modules/react-reconciler/cjs/react-reconciler.develop[39m
+2025-12-01T00:03:15.4920890Z [31m+                      ment.js:13213:11)[39m
+2025-12-01T00:03:15.4922149Z [31m+  -recursivelyTraversePassiv (node_modules/.pnpm/react-reconciler@0.33.0_react@1[39m
+2025-12-01T00:03:15.4923406Z [31m+   MountEffects             9.2.0/node_modules/react-reconciler/cjs/react-reconc[39m
+2025-12-01T00:03:15.4924358Z [31m+                            iler.development.js:12934:11)[39m
+2025-12-01T00:03:15.4924846Z [31m+[39m
+2025-12-01T00:03:15.4925144Z [31m+[39m
+2025-12-01T00:03:15.4925297Z 
+2025-12-01T00:03:15.4925737Z [36m [2m❯[22m dist/test/e2e/do.test.js:[2m68:24[22m[39m
+2025-12-01T00:03:15.4926371Z     [90m 66| [39m        })[33m;[39m
+2025-12-01T00:03:15.4927167Z     [90m 67| [39m        [90m// Assert: Check if the output shows no tasks found[39m
+2025-12-01T00:03:15.4928419Z     [90m 68| [39m        [34mexpect[39m(output)[33m.[39m[34mtoContain[39m([32m'No tasks found in this note'[39m)[33m;[39m
+2025-12-01T00:03:15.4929383Z     [90m   | [39m                       [31m^[39m
+2025-12-01T00:03:15.4929883Z     [90m 69| [39m    }
+2025-12-01T00:03:15.4930365Z     [90m 70| [39m    [35mfinally[39m {
+2025-12-01T00:03:15.4930667Z 
+2025-12-01T00:03:15.4931067Z [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/24]⎯[22m[39m
+2025-12-01T00:03:15.4931560Z 
+2025-12-01T00:03:15.4932696Z [41m[1m FAIL [22m[49m dist/test/e2e/do.test.js[2m > [22mrunning "manda do --yester" should display yesterday's tasks
+2025-12-01T00:03:15.4934342Z [31m[1mAssertionError[22m: expected '\n  ERROR Raw mode is not supported o…' to contain 'Yesterday\'s Tasks'[39m
+2025-12-01T00:03:15.4935040Z 
+2025-12-01T00:03:15.4935255Z [32m- Expected[39m
+2025-12-01T00:03:15.4935663Z [31m+ Received[39m
+2025-12-01T00:03:15.4935868Z 
+2025-12-01T00:03:15.4936104Z [32m- Yesterday's Tasks[39m
+2025-12-01T00:03:15.4936503Z [31m+[39m
+2025-12-01T00:03:15.4937421Z [31m+   ERROR Raw mode is not supported on the current process.stdin, which Ink uses[39m
+2025-12-01T00:03:15.4938008Z [31m+        as input stream by default.[39m
+2025-12-01T00:03:15.4938414Z [31m+        Read about how to prevent this error on[39m
+2025-12-01T00:03:15.4939111Z [31m+        https://github.com/vadimdemedes/ink/#israwmodesupported[39m
+2025-12-01T00:03:15.4939722Z [31m+[39m
+2025-12-01T00:03:15.4940272Z [31m+  - Read about how to prevent this error on[39m
+2025-12-01T00:03:15.4941201Z [31m+    https://github.com/vadimdemedes/ink/#israwmodesupported\t[39m
+2025-12-01T00:03:15.4942574Z [31m+  -handleSetRawM (node_modules/.pnpm/ink@6.5.0_@types+react@19.2.6_react@19.2.0/[39m
+2025-12-01T00:03:15.4943658Z [31m+   ode          node_modules/ink/src/components/App.tsx:151:11)[39m
+2025-12-01T00:03:15.4944689Z [31m+  -<anonymous (node_modules/.pnpm/ink@6.5.0_@types+react@19.2.6_react@19.2.0/nod[39m
+2025-12-01T00:03:15.4945649Z [31m+             e_modules/ink/src/hooks/use-input.ts:123:3)[39m
+2025-12-01T00:03:15.4946658Z [31m+  -Object.react_stack_bot (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2[39m
+2025-12-01T00:03:15.4947828Z [31m+   om_frame              .0/node_modules/react-reconciler/cjs/react-reconciler.d[39m
+2025-12-01T00:03:15.4948700Z [31m+                         evelopment.js:17681:20)[39m
+2025-12-01T00:03:15.4949711Z [31m+  -runWithFiberIn (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/node_[39m
+2025-12-01T00:03:15.4950903Z [31m+   EV            modules/react-reconciler/cjs/react-reconciler.development.js:25[39m
+2025-12-01T00:03:15.4951646Z [31m+                 05:30)[39m
+2025-12-01T00:03:15.4952195Z [31m+  -commitHookEffectLis (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/[39m
+2025-12-01T00:03:15.4952857Z [31m+   Mount              node_modules/react-reconciler/cjs/react-reconciler.develop[39m
+2025-12-01T00:03:15.4953330Z [31m+                      ment.js:10861:29)[39m
+2025-12-01T00:03:15.4953887Z [31m+  -commitHookPassiveMoun (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.[39m
+2025-12-01T00:03:15.4954529Z [31m+   Effects              0/node_modules/react-reconciler/cjs/react-reconciler.dev[39m
+2025-12-01T00:03:15.4955200Z [31m+                        elopment.js:10948:11)[39m
+2025-12-01T00:03:15.4955761Z [31m+  -commitPassiveMountO (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/[39m
+2025-12-01T00:03:15.4956401Z [31m+   Fiber              node_modules/react-reconciler/cjs/react-reconciler.develop[39m
+2025-12-01T00:03:15.4956867Z [31m+                      ment.js:12979:13)[39m
+2025-12-01T00:03:15.4957407Z [31m+  -recursivelyTraversePassiv (node_modules/.pnpm/react-reconciler@0.33.0_react@1[39m
+2025-12-01T00:03:15.4958054Z [31m+   MountEffects             9.2.0/node_modules/react-reconciler/cjs/react-reconc[39m
+2025-12-01T00:03:15.4958558Z [31m+                            iler.development.js:12934:11)[39m
+2025-12-01T00:03:15.4959123Z [31m+  -commitPassiveMountO (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/[39m
+2025-12-01T00:03:15.4959766Z [31m+   Fiber              node_modules/react-reconciler/cjs/react-reconciler.develop[39m
+2025-12-01T00:03:15.4960227Z [31m+                      ment.js:13213:11)[39m
+2025-12-01T00:03:15.4960765Z [31m+  -recursivelyTraversePassiv (node_modules/.pnpm/react-reconciler@0.33.0_react@1[39m
+2025-12-01T00:03:15.4961641Z [31m+   MountEffects             9.2.0/node_modules/react-reconciler/cjs/react-reconc[39m
+2025-12-01T00:03:15.4962286Z [31m+                            iler.development.js:12934:11)[39m
+2025-12-01T00:03:15.4962571Z [31m+[39m
+2025-12-01T00:03:15.4962749Z [31m+[39m
+2025-12-01T00:03:15.4962839Z 
+2025-12-01T00:03:15.4963102Z [36m [2m❯[22m dist/test/e2e/do.test.js:[2m92:24[22m[39m
+2025-12-01T00:03:15.4963455Z     [90m 90| [39m        })[33m;[39m
+2025-12-01T00:03:15.4963911Z     [90m 91| [39m        // Assert: Check if the output contains yesterday's incomplete…
+2025-12-01T00:03:15.4964550Z     [90m 92| [39m        [34mexpect[39m(output)[33m.[39m[34mtoContain[39m([32m"Yesterday's Tasks"[39m)[33m;[39m
+2025-12-01T00:03:15.4965042Z     [90m   | [39m                       [31m^[39m
+2025-12-01T00:03:15.4965573Z     [90m 93| [39m        [34mexpect[39m(output)[33m.[39m[34mtoContain[39m([32m'Review code'[39m)[33m;[39m
+2025-12-01T00:03:15.4966233Z     [90m 94| [39m        [34mexpect[39m(output)[33m.[39m[34mtoContain[39m([32m'Plan meeting'[39m)[33m;[39m
+2025-12-01T00:03:15.4966535Z 
+2025-12-01T00:03:15.4966757Z [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/24]⎯[22m[39m
+2025-12-01T00:03:15.4966938Z 
+2025-12-01T00:03:15.4967498Z [41m[1m FAIL [22m[49m dist/test/e2e/see.test.js[2m > [22mrunning "manda see" should display today's note with TUI markdown rendering
+2025-12-01T00:03:15.4968193Z [31m[1mAssertionError[22m: expected undefined to be defined[39m
+2025-12-01T00:03:15.4968668Z [36m [2m❯[22m dist/test/e2e/see.test.js:[2m62:29[22m[39m
+2025-12-01T00:03:15.4969157Z     [90m 60| [39m        // The important thing is that it doesn't crash due to syntax …
+2025-12-01T00:03:15.4969842Z     [90m 61| [39m        [35mconst[39m errorOutput [33m=[39m error[33m.[39mstdout [33m||[39m error[33m.[39mstderr[33m;[39m
+2025-12-01T00:03:15.4970507Z     [90m 62| [39m        [34mexpect[39m(errorOutput)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+2025-12-01T00:03:15.4970957Z     [90m   | [39m                            [31m^[39m
+2025-12-01T00:03:15.4971416Z     [90m 63| [39m    }
+2025-12-01T00:03:15.4971724Z     [90m 64| [39m    [35mfinally[39m {
+2025-12-01T00:03:15.4971896Z 
+2025-12-01T00:03:15.4972106Z [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/24]⎯[22m[39m
+2025-12-01T00:03:15.4972279Z 
+2025-12-01T00:03:15.4972833Z [41m[1m FAIL [22m[49m dist/test/e2e/see.test.js[2m > [22mrunning "manda see" should display today's note with TUI markdown rendering
+2025-12-01T00:03:15.4973510Z [31m[1mAssertionError[22m: expected undefined to be defined[39m
+2025-12-01T00:03:15.4973992Z [36m [2m❯[22m dist/test/e2e/see.test.js:[2m115:29[22m[39m
+2025-12-01T00:03:15.4974483Z     [90m113| [39m        // The important thing is that it doesn't crash due to syntax …
+2025-12-01T00:03:15.4975324Z     [90m114| [39m        [35mconst[39m errorOutput [33m=[39m error[33m.[39mstdout [33m||[39m error[33m.[39mstderr[33m;[39m
+2025-12-01T00:03:15.4975998Z     [90m115| [39m        [34mexpect[39m(errorOutput)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+2025-12-01T00:03:15.4976458Z     [90m   | [39m                            [31m^[39m
+2025-12-01T00:03:15.4976730Z     [90m116| [39m    }
+2025-12-01T00:03:15.4976994Z     [90m117| [39m    [35mfinally[39m {
+2025-12-01T00:03:15.4977156Z 
+2025-12-01T00:03:15.4977365Z [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/24]⎯[22m[39m
+2025-12-01T00:03:15.4977540Z 
+2025-12-01T00:03:15.4978069Z [41m[1m FAIL [22m[49m dist/test/e2e/see.test.js[2m > [22mrunning "manda see --yester" should display yesterday's note with TUI
+2025-12-01T00:03:15.4978905Z [31m[1mAssertionError[22m: expected '\n  ERROR Raw mode is not supported o…' to contain 'scroll'[39m
+2025-12-01T00:03:15.4979249Z 
+2025-12-01T00:03:15.4979372Z [32m- Expected[39m
+2025-12-01T00:03:15.4979592Z [31m+ Received[39m
+2025-12-01T00:03:15.4979707Z 
+2025-12-01T00:03:15.4979811Z [32m- scroll[39m
+2025-12-01T00:03:15.4980003Z [31m+[39m
+2025-12-01T00:03:15.4980451Z [31m+   ERROR Raw mode is not supported on the current process.stdin, which Ink uses[39m
+2025-12-01T00:03:15.4981052Z [31m+        as input stream by default.[39m
+2025-12-01T00:03:15.4981659Z [31m+        Read about how to prevent this error on[39m
+2025-12-01T00:03:15.4982155Z [31m+        https://github.com/vadimdemedes/ink/#israwmodesupported[39m
+2025-12-01T00:03:15.4982490Z [31m+[39m
+2025-12-01T00:03:15.4982792Z [31m+  - Read about how to prevent this error on[39m
+2025-12-01T00:03:15.4983282Z [31m+    https://github.com/vadimdemedes/ink/#israwmodesupported\t[39m
+2025-12-01T00:03:15.4983923Z [31m+  -handleSetRawM (node_modules/.pnpm/ink@6.5.0_@types+react@19.2.6_react@19.2.0/[39m
+2025-12-01T00:03:15.4984499Z [31m+   ode          node_modules/ink/src/components/App.tsx:151:11)[39m
+2025-12-01T00:03:15.4985092Z [31m+  -<anonymous (node_modules/.pnpm/ink@6.5.0_@types+react@19.2.6_react@19.2.0/nod[39m
+2025-12-01T00:03:15.4985628Z [31m+             e_modules/ink/src/hooks/use-input.ts:123:3)[39m
+2025-12-01T00:03:15.4986198Z [31m+  -Object.react_stack_bot (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2[39m
+2025-12-01T00:03:15.4986830Z [31m+   om_frame              .0/node_modules/react-reconciler/cjs/react-reconciler.d[39m
+2025-12-01T00:03:15.4987311Z [31m+                         evelopment.js:17681:20)[39m
+2025-12-01T00:03:15.4987851Z [31m+  -runWithFiberIn (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/node_[39m
+2025-12-01T00:03:15.4989062Z [31m+   EV            modules/react-reconciler/cjs/react-reconciler.development.js:25[39m
+2025-12-01T00:03:15.4989892Z [31m+                 05:30)[39m
+2025-12-01T00:03:15.4990845Z [31m+  -commitHookEffectLis (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/[39m
+2025-12-01T00:03:15.4992266Z [31m+   Mount              node_modules/react-reconciler/cjs/react-reconciler.develop[39m
+2025-12-01T00:03:15.4992969Z [31m+                      ment.js:10861:29)[39m
+2025-12-01T00:03:15.4993523Z [31m+  -commitHookPassiveMoun (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.[39m
+2025-12-01T00:03:15.4994178Z [31m+   Effects              0/node_modules/react-reconciler/cjs/react-reconciler.dev[39m
+2025-12-01T00:03:15.4994659Z [31m+                        elopment.js:10948:11)[39m
+2025-12-01T00:03:15.4995217Z [31m+  -commitPassiveMountO (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/[39m
+2025-12-01T00:03:15.4995869Z [31m+   Fiber              node_modules/react-reconciler/cjs/react-reconciler.develop[39m
+2025-12-01T00:03:15.4996323Z [31m+                      ment.js:12979:13)[39m
+2025-12-01T00:03:15.4996881Z [31m+  -recursivelyTraversePassiv (node_modules/.pnpm/react-reconciler@0.33.0_react@1[39m
+2025-12-01T00:03:15.4997559Z [31m+   MountEffects             9.2.0/node_modules/react-reconciler/cjs/react-reconc[39m
+2025-12-01T00:03:15.4998250Z [31m+                            iler.development.js:12934:11)[39m
+2025-12-01T00:03:15.4998828Z [31m+  -commitPassiveMountO (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/[39m
+2025-12-01T00:03:15.4999491Z [31m+   Fiber              node_modules/react-reconciler/cjs/react-reconciler.develop[39m
+2025-12-01T00:03:15.4999971Z [31m+                      ment.js:13213:11)[39m
+2025-12-01T00:03:15.5001031Z [31m+  -recursivelyTraversePassiv (node_modules/.pnpm/react-reconciler@0.33.0_react@1[39m
+2025-12-01T00:03:15.5002356Z [31m+   MountEffects             9.2.0/node_modules/react-reconciler/cjs/react-reconc[39m
+2025-12-01T00:03:15.5002884Z [31m+                            iler.development.js:12934:11)[39m
+2025-12-01T00:03:15.5003170Z [31m+[39m
+2025-12-01T00:03:15.5003342Z [31m+[39m
+2025-12-01T00:03:15.5003438Z 
+2025-12-01T00:03:15.5003696Z [36m [2m❯[22m dist/test/e2e/see.test.js:[2m151:20[22m[39m
+2025-12-01T00:03:15.5004348Z     [90m149| [39m    [34mexpect[39m(output[33m.[39mlength)[33m.[39m[34mtoBeGreaterThan[39m([34m0[39m)[33m;[39m
+2025-12-01T00:03:15.5004935Z     [90m150| [39m    [90m// Should contain keyboard navigation hints[39m
+2025-12-01T00:03:15.5005666Z     [90m151| [39m    [34mexpect[39m(output)[33m.[39m[34mtoContain[39m([32m'scroll'[39m)[33m;[39m
+2025-12-01T00:03:15.5006131Z     [90m   | [39m                   [31m^[39m
+2025-12-01T00:03:15.5006623Z     [90m152| [39m    [34mexpect[39m(output)[33m.[39m[34mtoContain[39m([32m'exit'[39m)[33m;[39m
+2025-12-01T00:03:15.5007158Z     [90m153| [39m    [90m// Teardown: Clean up the temporary directory[39m
+2025-12-01T00:03:15.5007401Z 
+2025-12-01T00:03:15.5007608Z [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22/24]⎯[22m[39m
+2025-12-01T00:03:15.5007780Z 
+2025-12-01T00:03:15.5008362Z [41m[1m FAIL [22m[49m dist/test/e2e/see.test.js[2m > [22mrunning "manda see" when note does not exist should create and display empty note
+2025-12-01T00:03:15.5009056Z [31m[1mAssertionError[22m: expected undefined to be defined[39m
+2025-12-01T00:03:15.5009547Z [36m [2m❯[22m dist/test/e2e/see.test.js:[2m177:29[22m[39m
+2025-12-01T00:03:15.5010051Z     [90m175| [39m        // Even if there's an error, process should handle it graceful…
+2025-12-01T00:03:15.5011129Z     [90m176| [39m        [35mconst[39m errorOutput [33m=[39m error[33m.[39mstdout [33m||[39m error[33m.[39mstderr[33m;[39m
+2025-12-01T00:03:15.5012540Z     [90m177| [39m        [34mexpect[39m(errorOutput)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+2025-12-01T00:03:15.5013356Z     [90m   | [39m                            [31m^[39m
+2025-12-01T00:03:15.5013831Z     [90m178| [39m    }
+2025-12-01T00:03:15.5014289Z     [90m179| [39m    [35mfinally[39m {
+2025-12-01T00:03:15.5014571Z 
+2025-12-01T00:03:15.5014927Z [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[23/24]⎯[22m[39m
+2025-12-01T00:03:15.5015229Z 
+2025-12-01T00:03:15.5016512Z [41m[1m FAIL [22m[49m dist/test/services/git.service.test.js[2m > [22mGitService[2m > [22mgetCurrentTimestampCommitMessage should return formatted timestamp
+2025-12-01T00:03:15.5018291Z [31m[1mAssertionError[22m: expected '2025-11-19 10:30:45' to be '2025-11-19 16:00:45' // Object.is equality[39m
+2025-12-01T00:03:15.5018895Z 
+2025-12-01T00:03:15.5019275Z Expected: [32m"2025-11-19 1[7m6:0[27m0:45"[39m
+2025-12-01T00:03:15.5019934Z Received: [31m"2025-11-19 1[7m0:3[27m0:45"[39m
+2025-12-01T00:03:15.5020250Z 
+2025-12-01T00:03:15.5020781Z [36m [2m❯[22m dist/test/services/git.service.test.js:[2m77:25[22m[39m
+2025-12-01T00:03:15.5021994Z     [90m 75| [39m        console[33m.[39m[34mlog[39m([32m'Expected: 2025-11-19 10:30:45'[39m)[33m;[39m
+2025-12-01T00:03:15.5023105Z     [90m 76| [39m        console[33m.[39m[34mlog[39m([32m'Actual:'[39m[33m,[39m message)[33m;[39m
+2025-12-01T00:03:15.5024144Z     [90m 77| [39m        expect(message).toBe('2025-11-19 16:00:45'); // Updated to mat…
+2025-12-01T00:03:15.5025100Z     [90m   | [39m                        [31m^[39m
+2025-12-01T00:03:15.5025693Z     [90m 78| [39m        [90m// Restore timers[39m
+2025-12-01T00:03:15.5026399Z     [90m 79| [39m        vi[33m.[39m[34museRealTimers[39m()[33m;[39m
+2025-12-01T00:03:15.5026773Z 
+2025-12-01T00:03:15.5027139Z [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[24/24]⎯[22m[39m
+2025-12-01T00:03:15.5027451Z 
+2025-12-01T00:03:15.5027484Z 
+2025-12-01T00:03:15.5028165Z [2m Test Files [22m [1m[31m8 failed[39m[22m[2m | [22m[1m[32m32 passed[39m[22m[90m (40)[39m
+2025-12-01T00:03:15.5029331Z [2m      Tests [22m [1m[31m24 failed[39m[22m[2m | [22m[1m[32m414 passed[39m[22m[90m (438)[39m
+2025-12-01T00:03:15.5030093Z [2m   Start at [22m 00:02:39
+2025-12-01T00:03:15.5031221Z [2m   Duration [22m 35.82s[2m (transform 1.48s, setup 0ms, collect 8.64s, tests 87.86s, environment 8ms, prepare 618ms)[22m
+2025-12-01T00:03:15.5032116Z 
+2025-12-01T00:03:15.5032126Z 
+2025-12-01T00:03:15.5057016Z ##[error]AssertionError: expected "vi.fn()" to be called with arguments: [ '/notes/2025-11-19.md', …(1) ]
+
+Received: 
+
+  1st vi.fn() call:
+
+  [
+    "/notes/2025-11-19.md",
+    "# Note
+- [20:00]
++ [14:30]
+  ",
+  ]
+
+
+Number of calls: 1
+
+ ❯ test/domain/note.service.test.ts:557:47
+
+
+2025-12-01T00:03:15.5064474Z 
+2025-12-01T00:03:15.5066850Z ##[error]AssertionError: expected "vi.fn()" to be called with arguments: [ '/notes/2025-11-19.md', …(1) ]
+
+Received: 
+
+  1st vi.fn() call:
+
+  [
+    "/notes/2025-11-19.md",
+    "# Note
+  [10:30]
+  Some content here
+- [20:00]
++ [14:30]
+  ",
+  ]
+
+
+Number of calls: 1
+
+ ❯ test/domain/note.service.test.ts:575:47
+
+
+2025-12-01T00:03:15.5067999Z 
+2025-12-01T00:03:15.5069812Z ##[error]AssertionError: expected "vi.fn()" to be called with arguments: [ '/notes/2025-11-19.md', …(1) ]
+
+Received: 
+
+  1st vi.fn() call:
+
+  [
+    "/notes/2025-11-19.md",
+    "# Note
+  [09:00]
+  Morning content
+- [20:00]",
++ [14:30]",
+  ]
+
+
+Number of calls: 1
+
+ ❯ test/domain/note.service.test.ts:593:47
+
+
+2025-12-01T00:03:15.5070895Z 
+2025-12-01T00:03:15.5073451Z ##[error]AssertionError: expected "vi.fn()" to be called with arguments: [ '/notes/2025-11-19.md', …(1) ]
+
+Received: 
+
+  1st vi.fn() call:
+
+@@ -3,8 +3,8 @@
+    "# Note
+  [09:00]
+  Morning content
+  [10:30]
+  Afternoon content
+- [20:00]
++ [14:30]
+  ",
+  ]
+
+
+Number of calls: 1
+
+ ❯ test/domain/note.service.test.ts:611:47
+
+
+2025-12-01T00:03:15.5074607Z 
+2025-12-01T00:03:15.5088571Z ##[error]AssertionError: expected '\n  ERROR Raw mode is not supported o…' to contain 'My Tasks'
+
+- Expected
++ Received
+
+- My Tasks
++
++   ERROR Raw mode is not supported on the current process.stdin, which Ink uses
++        as input stream by default.
++        Read about how to prevent this error on
++        https://github.com/vadimdemedes/ink/#israwmodesupported
++
++  - Read about how to prevent this error on
++    https://github.com/vadimdemedes/ink/#israwmodesupported\t
++  -handleSetRawM (node_modules/.pnpm/ink@6.5.0_@types+react@19.2.6_react@19.2.0/
++   ode          node_modules/ink/src/components/App.tsx:151:11)
++  -<anonymous (node_modules/.pnpm/ink@6.5.0_@types+react@19.2.6_react@19.2.0/nod
++             e_modules/ink/src/hooks/use-input.ts:123:3)
++  -Object.react_stack_bot (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2
++   om_frame              .0/node_modules/react-reconciler/cjs/react-reconciler.d
++                         evelopment.js:17681:20)
++  -runWithFiberIn (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/node_
++   EV            modules/react-reconciler/cjs/react-reconciler.development.js:25
++                 05:30)
++  -commitHookEffectLis (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/
++   Mount              node_modules/react-reconciler/cjs/react-reconciler.develop
++                      ment.js:10861:29)
++  -commitHookPassiveMoun (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.
++   Effects              0/node_modules/react-reconciler/cjs/react-reconciler.dev
++                        elopment.js:10948:11)
++  -commitPassiveMountO (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/
++   Fiber              node_modules/react-reconciler/cjs/react-reconciler.develop
++                      ment.js:12979:13)
++  -recursivelyTraversePassiv (node_modules/.pnpm/react-reconciler@0.33.0_react@1
++   MountEffects             9.2.0/node_modules/react-reconciler/cjs/react-reconc
++                            iler.development.js:12934:11)
++  -commitPassiveMountO (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/
++   Fiber              node_modules/react-reconciler/cjs/react-reconciler.develop
++                      ment.js:13213:11)
++  -recursivelyTraversePassiv (node_modules/.pnpm/react-reconciler@0.33.0_react@1
++   MountEffects             9.2.0/node_modules/react-reconciler/cjs/react-reconc
++                            iler.development.js:12934:11)
++
++
+
+ ❯ test/e2e/do.test.ts:44:20
+
+
+2025-12-01T00:03:15.5097138Z 
+2025-12-01T00:03:15.5111552Z ##[error]AssertionError: expected '\n  ERROR Raw mode is not supported o…' to contain 'No tasks found in this note'
+
+- Expected
++ Received
+
+- No tasks found in this note
++
++   ERROR Raw mode is not supported on the current process.stdin, which Ink uses
++        as input stream by default.
++        Read about how to prevent this error on
++        https://github.com/vadimdemedes/ink/#israwmodesupported
++
++  - Read about how to prevent this error on
++    https://github.com/vadimdemedes/ink/#israwmodesupported\t
++  -handleSetRawM (node_modules/.pnpm/ink@6.5.0_@types+react@19.2.6_react@19.2.0/
++   ode          node_modules/ink/src/components/App.tsx:151:11)
++  -<anonymous (node_modules/.pnpm/ink@6.5.0_@types+react@19.2.6_react@19.2.0/nod
++             e_modules/ink/src/hooks/use-input.ts:123:3)
++  -Object.react_stack_bot (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2
++   om_frame              .0/node_modules/react-reconciler/cjs/react-reconciler.d
++                         evelopment.js:17681:20)
++  -runWithFiberIn (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/node_
++   EV            modules/react-reconciler/cjs/react-reconciler.development.js:25
++                 05:30)
++  -commitHookEffectLis (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/
++   Mount              node_modules/react-reconciler/cjs/react-reconciler.develop
++                      ment.js:10861:29)
++  -commitHookPassiveMoun (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.
++   Effects              0/node_modules/react-reconciler/cjs/react-reconciler.dev
++                        elopment.js:10948:11)
++  -commitPassiveMountO (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/
++   Fiber              node_modules/react-reconciler/cjs/react-reconciler.develop
++                      ment.js:12979:13)
++  -recursivelyTraversePassiv (node_modules/.pnpm/react-reconciler@0.33.0_react@1
++   MountEffects             9.2.0/node_modules/react-reconciler/cjs/react-reconc
++                            iler.development.js:12934:11)
++  -commitPassiveMountO (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/
++   Fiber              node_modules/react-reconciler/cjs/react-reconciler.develop
++                      ment.js:13213:11)
++  -recursivelyTraversePassiv (node_modules/.pnpm/react-reconciler@0.33.0_react@1
++   MountEffects             9.2.0/node_modules/react-reconciler/cjs/react-reconc
++                            iler.development.js:12934:11)
++
++
+
+ ❯ test/e2e/do.test.ts:77:20
+
+
+2025-12-01T00:03:15.5118588Z 
+2025-12-01T00:03:15.5132780Z ##[error]AssertionError: expected '\n  ERROR Raw mode is not supported o…' to contain 'Yesterday\'s Tasks'
+
+- Expected
++ Received
+
+- Yesterday's Tasks
++
++   ERROR Raw mode is not supported on the current process.stdin, which Ink uses
++        as input stream by default.
++        Read about how to prevent this error on
++        https://github.com/vadimdemedes/ink/#israwmodesupported
++
++  - Read about how to prevent this error on
++    https://github.com/vadimdemedes/ink/#israwmodesupported\t
++  -handleSetRawM (node_modules/.pnpm/ink@6.5.0_@types+react@19.2.6_react@19.2.0/
++   ode          node_modules/ink/src/components/App.tsx:151:11)
++  -<anonymous (node_modules/.pnpm/ink@6.5.0_@types+react@19.2.6_react@19.2.0/nod
++             e_modules/ink/src/hooks/use-input.ts:123:3)
++  -Object.react_stack_bot (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2
++   om_frame              .0/node_modules/react-reconciler/cjs/react-reconciler.d
++                         evelopment.js:17681:20)
++  -runWithFiberIn (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/node_
++   EV            modules/react-reconciler/cjs/react-reconciler.development.js:25
++                 05:30)
++  -commitHookEffectLis (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/
++   Mount              node_modules/react-reconciler/cjs/react-reconciler.develop
++                      ment.js:10861:29)
++  -commitHookPassiveMoun (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.
++   Effects              0/node_modules/react-reconciler/cjs/react-reconciler.dev
++                        elopment.js:10948:11)
++  -commitPassiveMountO (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/
++   Fiber              node_modules/react-reconciler/cjs/react-reconciler.develop
++                      ment.js:12979:13)
++  -recursivelyTraversePassiv (node_modules/.pnpm/react-reconciler@0.33.0_react@1
++   MountEffects             9.2.0/node_modules/react-reconciler/cjs/react-reconc
++                            iler.development.js:12934:11)
++  -commitPassiveMountO (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/
++   Fiber              node_modules/react-reconciler/cjs/react-reconciler.develop
++                      ment.js:13213:11)
++  -recursivelyTraversePassiv (node_modules/.pnpm/react-reconciler@0.33.0_react@1
++   MountEffects             9.2.0/node_modules/react-reconciler/cjs/react-reconc
++                            iler.development.js:12934:11)
++
++
+
+ ❯ test/e2e/do.test.ts:106:20
+
+
+2025-12-01T00:03:15.5139822Z 
+2025-12-01T00:03:15.5140712Z ##[error]AssertionError: expected undefined to be defined
+ ❯ test/e2e/see.test.ts:67:25
+
+
+2025-12-01T00:03:15.5141690Z 
+2025-12-01T00:03:15.5142608Z ##[error]AssertionError: expected undefined to be defined
+ ❯ test/e2e/see.test.ts:121:25
+
+
+2025-12-01T00:03:15.5143423Z 
+2025-12-01T00:03:15.5157106Z ##[error]AssertionError: expected '\n  ERROR Raw mode is not supported o…' to contain 'scroll'
+
+- Expected
++ Received
+
+- scroll
++
++   ERROR Raw mode is not supported on the current process.stdin, which Ink uses
++        as input stream by default.
++        Read about how to prevent this error on
++        https://github.com/vadimdemedes/ink/#israwmodesupported
++
++  - Read about how to prevent this error on
++    https://github.com/vadimdemedes/ink/#israwmodesupported\t
++  -handleSetRawM (node_modules/.pnpm/ink@6.5.0_@types+react@19.2.6_react@19.2.0/
++   ode          node_modules/ink/src/components/App.tsx:151:11)
++  -<anonymous (node_modules/.pnpm/ink@6.5.0_@types+react@19.2.6_react@19.2.0/nod
++             e_modules/ink/src/hooks/use-input.ts:123:3)
++  -Object.react_stack_bot (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2
++   om_frame              .0/node_modules/react-reconciler/cjs/react-reconciler.d
++                         evelopment.js:17681:20)
++  -runWithFiberIn (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/node_
++   EV            modules/react-reconciler/cjs/react-reconciler.development.js:25
++                 05:30)
++  -commitHookEffectLis (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/
++   Mount              node_modules/react-reconciler/cjs/react-reconciler.develop
++                      ment.js:10861:29)
++  -commitHookPassiveMoun (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.
++   Effects              0/node_modules/react-reconciler/cjs/react-reconciler.dev
++                        elopment.js:10948:11)
++  -commitPassiveMountO (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/
++   Fiber              node_modules/react-reconciler/cjs/react-reconciler.develop
++                      ment.js:12979:13)
++  -recursivelyTraversePassiv (node_modules/.pnpm/react-reconciler@0.33.0_react@1
++   MountEffects             9.2.0/node_modules/react-reconciler/cjs/react-reconc
++                            iler.development.js:12934:11)
++  -commitPassiveMountO (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/
++   Fiber              node_modules/react-reconciler/cjs/react-reconciler.develop
++                      ment.js:13213:11)
++  -recursivelyTraversePassiv (node_modules/.pnpm/react-reconciler@0.33.0_react@1
++   MountEffects             9.2.0/node_modules/react-reconciler/cjs/react-reconc
++                            iler.development.js:12934:11)
++
++
+
+ ❯ test/e2e/see.test.ts:164:18
+
+
+2025-12-01T00:03:15.5164357Z 
+2025-12-01T00:03:15.5165262Z ##[error]AssertionError: expected undefined to be defined
+ ❯ test/e2e/see.test.ts:195:25
+
+
+2025-12-01T00:03:15.5165986Z 
+2025-12-01T00:03:15.5167319Z ##[error]AssertionError: expected '2025-11-19 10:30:45' to be '2025-11-19 16:00:45' // Object.is equality
+
+Expected: "2025-11-19 16:00:45"
+Received: "2025-11-19 10:30:45"
+
+ ❯ test/services/git.service.test.ts:97:21
+
+
+2025-12-01T00:03:15.5168285Z 
+2025-12-01T00:03:15.5169882Z ##[error]AssertionError: expected "vi.fn()" to be called with arguments: [ '/notes/2025-11-19.md', …(1) ]
+
+Received: 
+
+  1st vi.fn() call:
+
+  [
+    "/notes/2025-11-19.md",
+    "# Note
+- [20:00]
++ [14:30]
+  ",
+  ]
+
+
+Number of calls: 1
+
+ ❯ dist/test/domain/note.service.test.js:400:53
+
+
+2025-12-01T00:03:15.5170906Z 
+2025-12-01T00:03:15.5172984Z ##[error]AssertionError: expected "vi.fn()" to be called with arguments: [ '/notes/2025-11-19.md', …(1) ]
+
+Received: 
+
+  1st vi.fn() call:
+
+  [
+    "/notes/2025-11-19.md",
+    "# Note
+  [10:30]
+  Some content here
+- [20:00]
++ [14:30]
+  ",
+  ]
+
+
+Number of calls: 1
+
+ ❯ dist/test/domain/note.service.test.js:409:53
+
+
+2025-12-01T00:03:15.5174125Z 
+2025-12-01T00:03:15.5175866Z ##[error]AssertionError: expected "vi.fn()" to be called with arguments: [ '/notes/2025-11-19.md', …(1) ]
+
+Received: 
+
+  1st vi.fn() call:
+
+  [
+    "/notes/2025-11-19.md",
+    "# Note
+  [09:00]
+  Morning content
+- [20:00]",
++ [14:30]",
+  ]
+
+
+Number of calls: 1
+
+ ❯ dist/test/domain/note.service.test.js:418:53
+
+
+2025-12-01T00:03:15.5176962Z 
+2025-12-01T00:03:15.5178720Z ##[error]AssertionError: expected "vi.fn()" to be called with arguments: [ '/notes/2025-11-19.md', …(1) ]
+
+Received: 
+
+  1st vi.fn() call:
+
+@@ -3,8 +3,8 @@
+    "# Note
+  [09:00]
+  Morning content
+  [10:30]
+  Afternoon content
+- [20:00]
++ [14:30]
+  ",
+  ]
+
+
+Number of calls: 1
+
+ ❯ dist/test/domain/note.service.test.js:427:53
+
+
+2025-12-01T00:03:15.5179825Z 
+2025-12-01T00:03:15.5193651Z ##[error]AssertionError: expected '\n  ERROR Raw mode is not supported o…' to contain 'My Tasks'
+
+- Expected
++ Received
+
+- My Tasks
++
++   ERROR Raw mode is not supported on the current process.stdin, which Ink uses
++        as input stream by default.
++        Read about how to prevent this error on
++        https://github.com/vadimdemedes/ink/#israwmodesupported
++
++  - Read about how to prevent this error on
++    https://github.com/vadimdemedes/ink/#israwmodesupported\t
++  -handleSetRawM (node_modules/.pnpm/ink@6.5.0_@types+react@19.2.6_react@19.2.0/
++   ode          node_modules/ink/src/components/App.tsx:151:11)
++  -<anonymous (node_modules/.pnpm/ink@6.5.0_@types+react@19.2.6_react@19.2.0/nod
++             e_modules/ink/src/hooks/use-input.ts:123:3)
++  -Object.react_stack_bot (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2
++   om_frame              .0/node_modules/react-reconciler/cjs/react-reconciler.d
++                         evelopment.js:17681:20)
++  -runWithFiberIn (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/node_
++   EV            modules/react-reconciler/cjs/react-reconciler.development.js:25
++                 05:30)
++  -commitHookEffectLis (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/
++   Mount              node_modules/react-reconciler/cjs/react-reconciler.develop
++                      ment.js:10861:29)
++  -commitHookPassiveMoun (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.
++   Effects              0/node_modules/react-reconciler/cjs/react-reconciler.dev
++                        elopment.js:10948:11)
++  -commitPassiveMountO (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/
++   Fiber              node_modules/react-reconciler/cjs/react-reconciler.develop
++                      ment.js:12979:13)
++  -recursivelyTraversePassiv (node_modules/.pnpm/react-reconciler@0.33.0_react@1
++   MountEffects             9.2.0/node_modules/react-reconciler/cjs/react-reconc
++                            iler.development.js:12934:11)
++  -commitPassiveMountO (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/
++   Fiber              node_modules/react-reconciler/cjs/react-reconciler.develop
++                      ment.js:13213:11)
++  -recursivelyTraversePassiv (node_modules/.pnpm/react-reconciler@0.33.0_react@1
++   MountEffects             9.2.0/node_modules/react-reconciler/cjs/react-reconc
++                            iler.development.js:12934:11)
++
++
+
+ ❯ dist/test/e2e/do.test.js:37:24
+
+
+2025-12-01T00:03:15.5200703Z 
+2025-12-01T00:03:15.5216784Z ##[error]AssertionError: expected '\n  ERROR Raw mode is not supported o…' to contain 'No tasks found in this note'
+
+- Expected
++ Received
+
+- No tasks found in this note
++
++   ERROR Raw mode is not supported on the current process.stdin, which Ink uses
++        as input stream by default.
++        Read about how to prevent this error on
++        https://github.com/vadimdemedes/ink/#israwmodesupported
++
++  - Read about how to prevent this error on
++    https://github.com/vadimdemedes/ink/#israwmodesupported\t
++  -handleSetRawM (node_modules/.pnpm/ink@6.5.0_@types+react@19.2.6_react@19.2.0/
++   ode          node_modules/ink/src/components/App.tsx:151:11)
++  -<anonymous (node_modules/.pnpm/ink@6.5.0_@types+react@19.2.6_react@19.2.0/nod
++             e_modules/ink/src/hooks/use-input.ts:123:3)
++  -Object.react_stack_bot (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2
++   om_frame              .0/node_modules/react-reconciler/cjs/react-reconciler.d
++                         evelopment.js:17681:20)
++  -runWithFiberIn (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/node_
++   EV            modules/react-reconciler/cjs/react-reconciler.development.js:25
++                 05:30)
++  -commitHookEffectLis (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/
++   Mount              node_modules/react-reconciler/cjs/react-reconciler.develop
++                      ment.js:10861:29)
++  -commitHookPassiveMoun (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.
++   Effects              0/node_modules/react-reconciler/cjs/react-reconciler.dev
++                        elopment.js:10948:11)
++  -commitPassiveMountO (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/
++   Fiber              node_modules/react-reconciler/cjs/react-reconciler.develop
++                      ment.js:12979:13)
++  -recursivelyTraversePassiv (node_modules/.pnpm/react-reconciler@0.33.0_react@1
++   MountEffects             9.2.0/node_modules/react-reconciler/cjs/react-reconc
++                            iler.development.js:12934:11)
++  -commitPassiveMountO (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/
++   Fiber              node_modules/react-reconciler/cjs/react-reconciler.develop
++                      ment.js:13213:11)
++  -recursivelyTraversePassiv (node_modules/.pnpm/react-reconciler@0.33.0_react@1
++   MountEffects             9.2.0/node_modules/react-reconciler/cjs/react-reconc
++                            iler.development.js:12934:11)
++
++
+
+ ❯ dist/test/e2e/do.test.js:68:24
+
+
+2025-12-01T00:03:15.5224083Z 
+2025-12-01T00:03:15.5238220Z ##[error]AssertionError: expected '\n  ERROR Raw mode is not supported o…' to contain 'Yesterday\'s Tasks'
+
+- Expected
++ Received
+
+- Yesterday's Tasks
++
++   ERROR Raw mode is not supported on the current process.stdin, which Ink uses
++        as input stream by default.
++        Read about how to prevent this error on
++        https://github.com/vadimdemedes/ink/#israwmodesupported
++
++  - Read about how to prevent this error on
++    https://github.com/vadimdemedes/ink/#israwmodesupported\t
++  -handleSetRawM (node_modules/.pnpm/ink@6.5.0_@types+react@19.2.6_react@19.2.0/
++   ode          node_modules/ink/src/components/App.tsx:151:11)
++  -<anonymous (node_modules/.pnpm/ink@6.5.0_@types+react@19.2.6_react@19.2.0/nod
++             e_modules/ink/src/hooks/use-input.ts:123:3)
++  -Object.react_stack_bot (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2
++   om_frame              .0/node_modules/react-reconciler/cjs/react-reconciler.d
++                         evelopment.js:17681:20)
++  -runWithFiberIn (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/node_
++   EV            modules/react-reconciler/cjs/react-reconciler.development.js:25
++                 05:30)
++  -commitHookEffectLis (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/
++   Mount              node_modules/react-reconciler/cjs/react-reconciler.develop
++                      ment.js:10861:29)
++  -commitHookPassiveMoun (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.
++   Effects              0/node_modules/react-reconciler/cjs/react-reconciler.dev
++                        elopment.js:10948:11)
++  -commitPassiveMountO (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/
++   Fiber              node_modules/react-reconciler/cjs/react-reconciler.develop
++                      ment.js:12979:13)
++  -recursivelyTraversePassiv (node_modules/.pnpm/react-reconciler@0.33.0_react@1
++   MountEffects             9.2.0/node_modules/react-reconciler/cjs/react-reconc
++                            iler.development.js:12934:11)
++  -commitPassiveMountO (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/
++   Fiber              node_modules/react-reconciler/cjs/react-reconciler.develop
++                      ment.js:13213:11)
++  -recursivelyTraversePassiv (node_modules/.pnpm/react-reconciler@0.33.0_react@1
++   MountEffects             9.2.0/node_modules/react-reconciler/cjs/react-reconc
++                            iler.development.js:12934:11)
++
++
+
+ ❯ dist/test/e2e/do.test.js:92:24
+
+
+2025-12-01T00:03:15.5245481Z 
+2025-12-01T00:03:15.5246446Z ##[error]AssertionError: expected undefined to be defined
+ ❯ dist/test/e2e/see.test.js:62:29
+
+
+2025-12-01T00:03:15.5247198Z 
+2025-12-01T00:03:15.5248041Z ##[error]AssertionError: expected undefined to be defined
+ ❯ dist/test/e2e/see.test.js:115:29
+
+
+2025-12-01T00:03:15.5248756Z 
+2025-12-01T00:03:15.5262713Z ##[error]AssertionError: expected '\n  ERROR Raw mode is not supported o…' to contain 'scroll'
+
+- Expected
++ Received
+
+- scroll
++
++   ERROR Raw mode is not supported on the current process.stdin, which Ink uses
++        as input stream by default.
++        Read about how to prevent this error on
++        https://github.com/vadimdemedes/ink/#israwmodesupported
++
++  - Read about how to prevent this error on
++    https://github.com/vadimdemedes/ink/#israwmodesupported\t
++  -handleSetRawM (node_modules/.pnpm/ink@6.5.0_@types+react@19.2.6_react@19.2.0/
++   ode          node_modules/ink/src/components/App.tsx:151:11)
++  -<anonymous (node_modules/.pnpm/ink@6.5.0_@types+react@19.2.6_react@19.2.0/nod
++             e_modules/ink/src/hooks/use-input.ts:123:3)
++  -Object.react_stack_bot (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2
++   om_frame              .0/node_modules/react-reconciler/cjs/react-reconciler.d
++                         evelopment.js:17681:20)
++  -runWithFiberIn (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/node_
++   EV            modules/react-reconciler/cjs/react-reconciler.development.js:25
++                 05:30)
++  -commitHookEffectLis (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/
++   Mount              node_modules/react-reconciler/cjs/react-reconciler.develop
++                      ment.js:10861:29)
++  -commitHookPassiveMoun (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.
++   Effects              0/node_modules/react-reconciler/cjs/react-reconciler.dev
++                        elopment.js:10948:11)
++  -commitPassiveMountO (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/
++   Fiber              node_modules/react-reconciler/cjs/react-reconciler.develop
++                      ment.js:12979:13)
++  -recursivelyTraversePassiv (node_modules/.pnpm/react-reconciler@0.33.0_react@1
++   MountEffects             9.2.0/node_modules/react-reconciler/cjs/react-reconc
++                            iler.development.js:12934:11)
++  -commitPassiveMountO (node_modules/.pnpm/react-reconciler@0.33.0_react@19.2.0/
++   Fiber              node_modules/react-reconciler/cjs/react-reconciler.develop
++                      ment.js:13213:11)
++  -recursivelyTraversePassiv (node_modules/.pnpm/react-reconciler@0.33.0_react@1
++   MountEffects             9.2.0/node_modules/react-reconciler/cjs/react-reconc
++                            iler.development.js:12934:11)
++
++
+
+ ❯ dist/test/e2e/see.test.js:151:20
+
+
+2025-12-01T00:03:15.5269807Z 
+2025-12-01T00:03:15.5271403Z ##[error]AssertionError: expected undefined to be defined
+ ❯ dist/test/e2e/see.test.js:177:29
+
+
+2025-12-01T00:03:15.5272720Z 
+2025-12-01T00:03:15.5274997Z ##[error]AssertionError: expected '2025-11-19 10:30:45' to be '2025-11-19 16:00:45' // Object.is equality
+
+Expected: "2025-11-19 16:00:45"
+Received: "2025-11-19 10:30:45"
+
+ ❯ dist/test/services/git.service.test.js:77:25
+
+
+2025-12-01T00:03:15.5276384Z  ELIFECYCLE  Test failed. See above for more details.
+2025-12-01T00:03:15.5278887Z ##[error]Process completed with exit code 1.
+2025-12-01T00:03:15.5337400Z Post job cleanup.
+2025-12-01T00:03:15.6196341Z Pruning is unnecessary.
+2025-12-01T00:03:15.6322373Z Post job cleanup.
+2025-12-01T00:03:15.7268637Z [command]/usr/bin/git version
+2025-12-01T00:03:15.7305020Z git version 2.51.2
+2025-12-01T00:03:15.7350414Z Temporarily overriding HOME='/home/runner/work/_temp/9d31c032-db6c-44d0-a37c-67ec522f625d' before making global git config changes
+2025-12-01T00:03:15.7352186Z Adding repository directory to the temporary git global config as a safe directory
+2025-12-01T00:03:15.7363959Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/manda-kasaayam/manda-kasaayam
+2025-12-01T00:03:15.7399062Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2025-12-01T00:03:15.7433378Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2025-12-01T00:03:15.7659146Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2025-12-01T00:03:15.7679418Z http.https://github.com/.extraheader
+2025-12-01T00:03:15.7692648Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2025-12-01T00:03:15.7723803Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2025-12-01T00:03:15.7942094Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2025-12-01T00:03:15.7972578Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2025-12-01T00:03:15.8290152Z Cleaning up orphan processes
