@@ -481,22 +481,6 @@ preview_markdown_interactive() {
     local filename="$(basename "$current_file")"
     local date="${filename%.md}"
     
-    # Clear screen and show header
-    clear
-    echo "═══════════════════════════════════════════════════════════════════════════════"
-    echo "  Viewing: $date"
-    echo "  Navigation: [h] previous  [l] next  [q] quit"
-    if [ $current_index -gt 0 ]; then
-      local prev_file="$(basename "${all_files[$((current_index - 1))]}")"
-      echo "  ← ${prev_file%.md}"
-    fi
-    if [ $current_index -lt $((${#all_files[@]} - 1)) ]; then
-      local next_file="$(basename "${all_files[$((current_index + 1))]}")"
-      echo "  → ${next_file%.md}"
-    fi
-    echo "═══════════════════════════════════════════════════════════════════════════════"
-    echo ""
-    
     # Create a temporary file for preprocessed markdown
     local temp_file=$(mktemp)
     
@@ -507,21 +491,49 @@ preview_markdown_interactive() {
       -e 's/\[\[([^]]+)\]\]/_\1_/g' \
       "$current_file" > "$temp_file"
     
-    # Display the content
-    if command -v bat &>/dev/null; then
-      bat --paging=never --style=plain --language=markdown --theme="TwoDark" "$temp_file"
-    elif command -v glow &>/dev/null; then
-      glow "$temp_file"
-    elif command -v mdcat &>/dev/null; then
-      mdcat "$temp_file"
-    else
-      cat "$temp_file"
-    fi
+    # Create a temporary file with header and content
+    local display_file=$(mktemp)
+    {
+      echo "═══════════════════════════════════════════════════════════════════════════════"
+      echo "  Viewing: $date"
+      echo "  Navigation: [h] previous  [l] next  [j/k] scroll  [q] quit"
+      if [ $current_index -gt 0 ]; then
+        local prev_file="$(basename "${all_files[$((current_index - 1))]}")"
+        echo "  ← ${prev_file%.md}"
+      fi
+      if [ $current_index -lt $((${#all_files[@]} - 1)) ]; then
+        local next_file="$(basename "${all_files[$((current_index + 1))]}")"
+        echo "  → ${next_file%.md}"
+      fi
+      echo "═══════════════════════════════════════════════════════════════════════════════"
+      echo ""
+      
+      # Add formatted content
+      if command -v bat &>/dev/null; then
+        bat --paging=never --style=plain --language=markdown --theme="TwoDark" "$temp_file"
+      elif command -v glow &>/dev/null; then
+        glow "$temp_file"
+      elif command -v mdcat &>/dev/null; then
+        mdcat "$temp_file"
+      else
+        cat "$temp_file"
+      fi
+      
+      echo ""
+      echo "═══════════════════════════════════════════════════════════════════════════════"
+    } > "$display_file"
     
     rm -f "$temp_file"
     
-    echo ""
-    echo "═══════════════════════════════════════════════════════════════════════════════"
+    # Use less with custom key bindings for navigation
+    # -R: handle ANSI colors, -X: don't clear screen on exit, -F: quit if one screen
+    # -K: exit on Ctrl+C, --no-init: don't initialize/deinitialize terminal
+    LESS="-R -X -K" less "$display_file"
+    local less_exit=$?
+    
+    rm -f "$display_file"
+    
+    # After exiting less, prompt for navigation command
     echo -n "Command [h/l/q]: "
     
     # Read single character
@@ -550,8 +562,7 @@ preview_markdown_interactive() {
         return 0
         ;;
       *)
-        echo "Invalid command. Use h (previous), l (next), or q (quit)."
-        sleep 1
+        # If user just presses enter or any other key, stay on same note
         ;;
     esac
   done
@@ -565,7 +576,7 @@ manda — open today's note; on new-day create new and commit+push previous note
 Usage:
   manda [notes_dir]            Open today's note file in \$EDITOR
   manda do [notes_dir]         Interactive task list view (toggle/delete tasks)
-  manda see [notes_dir]        Preview notes with navigation (h/l to browse)
+  manda see [notes_dir]        Preview notes with navigation (h/l to browse, j/k to scroll)
   manda see yester [notes_dir] Preview previous note with navigation
   manda <file.md>              Add timestamps to headers in specified file
   manda -h, --help             Show this help message
@@ -585,8 +596,8 @@ Examples:
   manda                        Open today's note with default settings
   manda ~/my-notes             Open today's note in ~/my-notes
   manda do                     View and manage tasks interactively
-  manda see                    Preview today's note (h/l to navigate, q to quit)
-  manda see yester             Preview previous note (h/l to navigate, q to quit)
+  manda see                    Preview today's note (j/k to scroll, h/l to navigate, q to quit)
+  manda see yester             Preview previous note (j/k to scroll, h/l to navigate, q to quit)
   manda 2025-11-07.md          Add timestamps to specified file
   
 First run: Create a git-backed notes directory and initialize it with git, or
