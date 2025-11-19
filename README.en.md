@@ -17,9 +17,43 @@ It creates a new markdown file for you every day. When you start a new day, it s
 
 ## Installation
 
-1.  Clone the repo.
-2.  `chmod +x install.sh && ./install.sh`
-3.  `source ~/.zshrc` (or whatever your shell's rc file is).
+### Quick Install (Recommended)
+
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/manda-kasaayam.git
+cd manda-kasaayam
+
+# Install dependencies
+pnpm install
+
+# Build the project
+pnpm build
+
+# Install globally
+npm link
+```
+
+After installation, the `manda` command will be available system-wide.
+
+### Alternative: Run Without Installing
+
+```bash
+# Using pnpm
+pnpm start
+
+# Using tsx directly
+pnpm tsx src/main.ts
+```
+
+### Verify Installation
+
+```bash
+manda --version
+manda --help
+```
+
+For detailed installation instructions and troubleshooting, see [INSTALL.md](./INSTALL.md).
 
 ## Usage
 
