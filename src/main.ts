@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
 import { HelloCommand } from './commands/hello.command.js';
+import { MandaCommand } from './commands/manda.command.js';
 
 const program = new Command();
 
@@ -8,6 +9,13 @@ program
   .name('manda')
   .description('A Terminal User Interface (TUI) application')
   .version('1.0.0');
+
+program
+  .description('Open or create today\'s note')
+  .action(async () => {
+    const mandaCommand = new MandaCommand();
+    await mandaCommand.execute();
+  });
 
 program
   .command('manda')
