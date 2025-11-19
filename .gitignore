@@ -1,3 +1,5 @@
 dump
 
 bin
+node_modules/
+dist/
