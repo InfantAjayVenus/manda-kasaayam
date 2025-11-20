@@ -77,8 +77,9 @@ export class SeeCommand extends BaseCommand {
         }
       }),
       {
-        exitOnCtrlC: true
-      }
+        exitOnCtrlC: true,
+        experimentalAlternateScreenBuffer: true
+      } as any
     );
 
     await waitUntilExit();

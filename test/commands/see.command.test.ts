@@ -132,12 +132,13 @@ describe('SeeCommand', () => {
         })
       }),
       expect.objectContaining({
-        exitOnCtrlC: true
+        exitOnCtrlC: true,
+        experimentalAlternateScreenBuffer: true
       })
     );
   });
 
-  test('should render yesterday\'s note with correct title', async () => {
+   test('should render yesterday\'s note with correct title', async () => {
     process.env.MANDA_DIR = '/test/notes';
 
     const command = new SeeCommand(mockNoteService, mockFileSystemService);
@@ -156,43 +157,8 @@ describe('SeeCommand', () => {
         })
       }),
       expect.objectContaining({
-        exitOnCtrlC: true
-      })
-    );
-
-    getYesterdayPathSpy.mockRestore();
-  });
-
-  test('should wait for TUI rendering to complete', async () => {
-    process.env.MANDA_DIR = '/test/notes';
-
-    const command = new SeeCommand(mockNoteService, mockFileSystemService);
-    await command.execute();
-
-    // Test passes if execute completes without throwing
-    expect(true).toBe(true);
-  });
-
-  test('should render yesterday\'s note with correct title', async () => {
-    process.env.MANDA_DIR = '/test/notes';
-
-    const command = new SeeCommand(mockNoteService, mockFileSystemService);
-    const getYesterdayPathSpy = vi.spyOn(command as any, 'getYesterdayNotePath')
-      .mockReturnValue('/test/notes/2025-11-18.md');
-
-    await command.execute({ yester: true });
-
-    // Should render with yesterday's date as title
-    expect(render).toHaveBeenCalledWith(
-      expect.objectContaining({
-        props: expect.objectContaining({
-          content: '# Test Note\n\nSome content here.',
-          title: '2025-11-18',
-          onExit: expect.any(Function)
-        })
-      }),
-      expect.objectContaining({
-        exitOnCtrlC: true
+        exitOnCtrlC: true,
+        experimentalAlternateScreenBuffer: true
       })
     );
 
