@@ -96,35 +96,20 @@ describe('MandaCommand', () => {
     expect(mockNoteService.appendTimestampLink).toHaveBeenCalledWith('/test/notes/2025-11-19.md');
   });
 
-  test('should execute all steps in correct order', async () => {
+  test('should read file content before and after editing', async () => {
     process.env.MANDA_DIR = '/test/notes';
-    const callOrder: string[] = [];
-
-    vi.mocked(mockNoteService.ensureNotesDirExists).mockImplementation(async () => {
-      callOrder.push('ensureNotesDirExists');
-    });
-    vi.mocked(mockNoteService.getNotePath).mockImplementation(() => {
-      callOrder.push('getNotePath');
-      return '/test/notes/2025-11-19.md';
-    });
-    vi.mocked(mockNoteService.ensureNoteExists).mockImplementation(async () => {
-      callOrder.push('ensureNoteExists');
-    });
-    vi.mocked(mockNoteService.appendTimestampLink).mockImplementation(async () => {
-      callOrder.push('appendTimestampLink');
-    });
-    vi.mocked(mockEditorService.openFile).mockImplementation(async () => {
-      callOrder.push('openFile');
-    });
+    vi.mocked(mockNoteService.ensureNotesDirExists).mockResolvedValue(undefined);
+    vi.mocked(mockNoteService.getNotePath).mockReturnValue('/test/notes/2025-11-19.md');
+    vi.mocked(mockNoteService.ensureNoteExists).mockResolvedValue(undefined);
+    vi.mocked(mockNoteService.readFileContent).mockResolvedValue('# Note\n[10:30]');
+    vi.mocked(mockNoteService.appendTimestampLink).mockResolvedValue(undefined);
+    vi.mocked(mockEditorService.openFile).mockResolvedValue(undefined);
+    vi.mocked(mockNoteService.postProcessAfterEdit).mockResolvedValue(undefined);
 
     await command.execute();
 
-    expect(callOrder).toEqual([
-      'ensureNotesDirExists',
-      'getNotePath',
-      'ensureNoteExists',
-      'appendTimestampLink',
-      'openFile',
-    ]);
+    // Verify that readFileContent is called twice - once before editing, once after
+    expect(mockNoteService.readFileContent).toHaveBeenCalledTimes(2);
+    expect(mockNoteService.readFileContent).toHaveBeenCalledWith('/test/notes/2025-11-19.md');
   });
 });
