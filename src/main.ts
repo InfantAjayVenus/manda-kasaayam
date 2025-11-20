@@ -3,6 +3,7 @@ import { Command } from 'commander';
 import { HelloCommand } from './commands/hello.command.js';
 import { MandaCommand } from './commands/manda.command.js';
 import { SeeCommand } from './commands/see.command.js';
+import { DoCommand } from './commands/do.command.js';
 
 const program = new Command();
 
@@ -38,6 +39,17 @@ program
   .action(async (options) => {
     const seeCommand = new SeeCommand();
     await seeCommand.execute(options);
+  });
+
+// Do command: interactive task management
+program
+  .command('do')
+  .description('Interactive task management for notes')
+  .option('--yester', 'Manage tasks from yesterday\'s note instead')
+  .option('--date <date>', 'Manage tasks for specific date (YYYY-MM-DD format)')
+  .action(async (options) => {
+    const doCommand = new DoCommand();
+    await doCommand.execute(options);
   });
 
 program.parse();

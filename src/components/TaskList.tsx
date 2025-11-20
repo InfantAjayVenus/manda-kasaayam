@@ -1,0 +1,128 @@
+import React, { useState, useCallback } from "react";
+import { Box, Text, useInput, useApp } from "ink";
+
+export interface Task {
+  id: string;
+  text: string;
+  completed: boolean;
+  header?: string;
+}
+
+interface TaskListProps {
+  tasks: Task[];
+  title?: string;
+  notePath?: string;
+  onExit?: () => void;
+  onTaskToggle?: (taskId: string) => void;
+}
+
+const TaskList: React.FC<TaskListProps> = ({
+  tasks,
+  title,
+  notePath,
+  onExit,
+  onTaskToggle,
+}) => {
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const { exit } = useApp();
+
+  // Handle keyboard input
+  useInput((input, key) => {
+    if (input === "q" || key.escape || (key.ctrl && input === "c")) {
+      if (onExit) {
+        onExit();
+      } else {
+        exit();
+      }
+      return;
+    }
+
+    if (key.upArrow || input === "k") {
+      setSelectedIndex((prev) => Math.max(0, prev - 1));
+    } else if (key.downArrow || input === "j") {
+      setSelectedIndex((prev) => Math.min(tasks.length - 1, prev + 1));
+    } else if (key.return || input === " ") {
+      // Toggle the selected task
+      if (onTaskToggle && tasks[selectedIndex]) {
+        onTaskToggle(tasks[selectedIndex].id);
+      }
+    } else if (input === "g") {
+      setSelectedIndex(0);
+    } else if (input === "G") {
+      setSelectedIndex(Math.max(0, tasks.length - 1));
+    }
+  });
+
+  const renderTask = useCallback((task: Task, index: number) => {
+    const isSelected = index === selectedIndex;
+    const checkbox = task.completed ? "✓" : " ";
+    const statusColor = task.completed ? "green" : "red";
+
+    return (
+      <Box key={task.id} marginBottom={1}>
+        <Text color={isSelected ? "cyan" : "white"}>
+          {isSelected ? "→ " : "  "}
+        </Text>
+        <Text color={statusColor}>
+          [{checkbox}]
+        </Text>
+        <Text color={task.completed ? "gray" : "white"} dimColor={task.completed}>
+          {" "}
+          {task.text}
+        </Text>
+        {task.header && (
+          <Text color="blue" dimColor>
+            {" "}
+            ({task.header})
+          </Text>
+        )}
+      </Box>
+    );
+  }, [selectedIndex]);
+
+  const completedCount = tasks.filter(task => task.completed).length;
+  const totalCount = tasks.length;
+
+  return (
+    <Box flexDirection="column" height="100%">
+      {title && (
+        <Box marginBottom={1}>
+          <Text color="blue" bold underline>
+            {title}
+            {notePath && (
+              <Text color="gray" dimColor>
+                {" "}
+                - Tasks from {notePath.split('/').pop()}
+              </Text>
+            )}
+          </Text>
+        </Box>
+      )}
+
+      <Box marginBottom={1}>
+        <Text color="yellow">
+          Progress: {completedCount}/{totalCount} tasks completed
+        </Text>
+      </Box>
+
+      <Box flexDirection="column" flexGrow={1}>
+        {tasks.length === 0 ? (
+          <Text color="gray" dimColor>
+            No tasks found in this note.
+          </Text>
+        ) : (
+          tasks.map((task, index) => renderTask(task, index))
+        )}
+      </Box>
+
+      <Box marginTop={1}>
+        <Text color="gray" dimColor>
+          {tasks.length > 0 && `↑↓/j/k: navigate | Space/Enter: toggle | `}
+          g/G: top/bottom | q/ESC: exit
+        </Text>
+      </Box>
+    </Box>
+  );
+};
+
+export default TaskList;
