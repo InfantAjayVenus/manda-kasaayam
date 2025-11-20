@@ -35,6 +35,21 @@ export class NoteService {
     return `${hours}:${minutes}`;
   }
 
+  private hasContentAfterLastTimestamp(content: string): boolean {
+    const timestampRegex = /\[\d{2}:\d{2}\]/g;
+    const matches = content.match(timestampRegex);
+    
+    if (!matches) {
+      return true; // No timestamps found, so there's "content" after last timestamp
+    }
+    
+    const lastTimestampIndex = content.lastIndexOf(matches[matches.length - 1]);
+    const contentAfterLastTimestamp = content.substring(lastTimestampIndex + matches[matches.length - 1].length);
+    
+    // Check if there's any non-whitespace content after the last timestamp
+    return contentAfterLastTimestamp.trim().length > 0;
+  }
+
   async appendTimestampLink(notePath: string): Promise<void> {
     const timestamp = this.getCurrentTimeString();
     const timestampLink = `[${timestamp}]`;
@@ -46,12 +61,35 @@ export class NoteService {
       content = await this.fileSystemService.readFile(notePath);
     }
     
-    // Add timestamp link to the end of the file
-    // If file is empty or doesn't end with newline, add one first
-    if (content && !content.endsWith('\n')) {
-      content += '\n';
+    if (!content) {
+      // Empty file, just add timestamp
+      content = timestampLink + '\n';
+    } else if (this.hasContentAfterLastTimestamp(content)) {
+      // Add timestamp link to the end of the file
+      // If file doesn't end with newline, add one first
+      if (!content.endsWith('\n')) {
+        content += '\n';
+      }
+      content += timestampLink + '\n';
+    } else {
+      // Replace the last timestamp
+      const timestampRegex = /\[\d{2}:\d{2}\]/g;
+      const matches = content.match(timestampRegex);
+      
+      if (matches && matches.length > 0) {
+        const lastTimestamp = matches[matches.length - 1];
+        const lastTimestampIndex = content.lastIndexOf(lastTimestamp);
+        
+        // Replace the last timestamp with the new one
+        content = content.substring(0, lastTimestampIndex) + timestampLink + content.substring(lastTimestampIndex + lastTimestamp.length);
+      } else {
+        // No timestamps found, just append
+        if (!content.endsWith('\n')) {
+          content += '\n';
+        }
+        content += timestampLink + '\n';
+      }
     }
-    content += timestampLink + '\n';
     
     await this.fileSystemService.writeFile(notePath, content);
   }

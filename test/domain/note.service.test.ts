@@ -87,8 +87,65 @@ describe('NoteService', () => {
       // Should match HH:mm format
       expect(timeString).toMatch(/^\d{2}:\d{2}$/);
     });
+  });
 
+  describe('hasContentAfterLastTimestamp', () => {
+    test('should return true when no timestamps exist', () => {
+      const content = '# Note without timestamps\nSome content here';
+      
+      // Access private method through type assertion
+      const hasContent = (service as any).hasContentAfterLastTimestamp(content);
+      
+      expect(hasContent).toBe(true);
+    });
 
+    test('should return true when there is content after last timestamp', () => {
+      const content = '# Note\n[10:30]\nSome content after timestamp';
+      
+      const hasContent = (service as any).hasContentAfterLastTimestamp(content);
+      
+      expect(hasContent).toBe(true);
+    });
+
+    test('should return false when there is only whitespace after last timestamp', () => {
+      const content = '# Note\n[10:30]\n   \n  ';
+      
+      const hasContent = (service as any).hasContentAfterLastTimestamp(content);
+      
+      expect(hasContent).toBe(false);
+    });
+
+    test('should return false when timestamp is at the end of file', () => {
+      const content = '# Note\n[10:30]';
+      
+      const hasContent = (service as any).hasContentAfterLastTimestamp(content);
+      
+      expect(hasContent).toBe(false);
+    });
+
+    test('should return false when timestamp is followed only by newline', () => {
+      const content = '# Note\n[10:30]\n';
+      
+      const hasContent = (service as any).hasContentAfterLastTimestamp(content);
+      
+      expect(hasContent).toBe(false);
+    });
+
+    test('should handle multiple timestamps correctly', () => {
+      const content = '# Note\n[09:00]\nMorning content\n[10:30]';
+      
+      const hasContent = (service as any).hasContentAfterLastTimestamp(content);
+      
+      expect(hasContent).toBe(false);
+    });
+
+    test('should return true when last timestamp has content after it', () => {
+      const content = '# Note\n[09:00]\nMorning content\n[10:30]\nAfternoon content';
+      
+      const hasContent = (service as any).hasContentAfterLastTimestamp(content);
+      
+      expect(hasContent).toBe(true);
+    });
   });
 
   describe('appendTimestampLink', () => {
@@ -165,6 +222,102 @@ describe('NoteService', () => {
       expect(mockFileSystemService.writeFile).toHaveBeenCalledWith(
         '/notes/2025-11-19.md',
         expect.stringMatching(/^# Note ending with newline\s+\[\d{2}:\d{2}\]\n$/)
+      );
+    });
+
+    test('should replace last timestamp when there is no content after it', async () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date('2025-11-19T14:30:00Z'));
+      
+      vi.mocked(mockFileSystemService.fileExists).mockResolvedValue(true);
+      vi.mocked(mockFileSystemService.readFile).mockResolvedValue('# Note\n[10:30]');
+      vi.mocked(mockFileSystemService.writeFile).mockResolvedValue(undefined);
+
+      await service.appendTimestampLink('/notes/2025-11-19.md');
+
+      expect(mockFileSystemService.writeFile).toHaveBeenCalledWith(
+        '/notes/2025-11-19.md',
+        '# Note\n[20:00]'
+      );
+    });
+
+    test('should replace last timestamp when there is only whitespace after it', async () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date('2025-11-19T14:30:00Z'));
+      
+      vi.mocked(mockFileSystemService.fileExists).mockResolvedValue(true);
+      vi.mocked(mockFileSystemService.readFile).mockResolvedValue('# Note\n[10:30]\n   \n  ');
+      vi.mocked(mockFileSystemService.writeFile).mockResolvedValue(undefined);
+
+      await service.appendTimestampLink('/notes/2025-11-19.md');
+
+      expect(mockFileSystemService.writeFile).toHaveBeenCalledWith(
+        '/notes/2025-11-19.md',
+        '# Note\n[20:00]\n   \n  '
+      );
+    });
+
+    test('should replace last timestamp when it is followed only by newline', async () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date('2025-11-19T14:30:00Z'));
+      
+      vi.mocked(mockFileSystemService.fileExists).mockResolvedValue(true);
+      vi.mocked(mockFileSystemService.readFile).mockResolvedValue('# Note\n[10:30]\n');
+      vi.mocked(mockFileSystemService.writeFile).mockResolvedValue(undefined);
+
+      await service.appendTimestampLink('/notes/2025-11-19.md');
+
+      expect(mockFileSystemService.writeFile).toHaveBeenCalledWith(
+        '/notes/2025-11-19.md',
+        '# Note\n[20:00]\n'
+      );
+    });
+
+    test('should append new timestamp when there is content after last timestamp', async () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date('2025-11-19T14:30:00Z'));
+      
+      vi.mocked(mockFileSystemService.fileExists).mockResolvedValue(true);
+      vi.mocked(mockFileSystemService.readFile).mockResolvedValue('# Note\n[10:30]\nSome content here');
+      vi.mocked(mockFileSystemService.writeFile).mockResolvedValue(undefined);
+
+      await service.appendTimestampLink('/notes/2025-11-19.md');
+
+      expect(mockFileSystemService.writeFile).toHaveBeenCalledWith(
+        '/notes/2025-11-19.md',
+        '# Note\n[10:30]\nSome content here\n[20:00]\n'
+      );
+    });
+
+    test('should replace the last timestamp when there are multiple timestamps and no content after the last one', async () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date('2025-11-19T14:30:00Z'));
+      
+      vi.mocked(mockFileSystemService.fileExists).mockResolvedValue(true);
+      vi.mocked(mockFileSystemService.readFile).mockResolvedValue('# Note\n[09:00]\nMorning content\n[10:30]');
+      vi.mocked(mockFileSystemService.writeFile).mockResolvedValue(undefined);
+
+      await service.appendTimestampLink('/notes/2025-11-19.md');
+
+      expect(mockFileSystemService.writeFile).toHaveBeenCalledWith(
+        '/notes/2025-11-19.md',
+        '# Note\n[09:00]\nMorning content\n[20:00]'
+      );
+    });
+
+    test('should append new timestamp when there are multiple timestamps with content after the last one', async () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date('2025-11-19T14:30:00Z'));
+      
+      vi.mocked(mockFileSystemService.fileExists).mockResolvedValue(true);
+      vi.mocked(mockFileSystemService.readFile).mockResolvedValue('# Note\n[09:00]\nMorning content\n[10:30]\nAfternoon content');
+      vi.mocked(mockFileSystemService.writeFile).mockResolvedValue(undefined);
+
+      await service.appendTimestampLink('/notes/2025-11-19.md');
+
+      expect(mockFileSystemService.writeFile).toHaveBeenCalledWith(
+        '/notes/2025-11-19.md',
+        '# Note\n[09:00]\nMorning content\n[10:30]\nAfternoon content\n[20:00]\n'
       );
     });
   });
