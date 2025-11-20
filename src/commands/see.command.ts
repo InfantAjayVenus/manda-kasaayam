@@ -45,6 +45,20 @@ export class SeeCommand extends BaseCommand {
       await this.displayNoteWithNavigation(date);
     };
 
+    const navigatePrevious = async () => {
+      const previousDate = await this.findPreviousValidNote(currentDate);
+      if (previousDate) {
+        await navigateToDate(previousDate);
+      }
+    };
+
+    const navigateNext = async () => {
+      const nextDate = this.getNextDate(currentDate);
+      if (this.isDateBeforeOrEqualToday(nextDate)) {
+        await navigateToDate(nextDate);
+      }
+    };
+
     const notePath = this.getNotePathForDate(currentDate);
     const title = this.formatDateForTitle(currentDate);
 
@@ -60,7 +74,7 @@ export class SeeCommand extends BaseCommand {
     }
 
     // Display the content using TUI markdown preview with navigation
-    await this.displayMarkdownWithTUINavigation(content, title, currentDate, navigateToDate);
+    await this.displayMarkdownWithTUINavigation(content, title, currentDate, navigatePrevious, navigateNext);
   }
 
   private getYesterdayDate(): Date {
@@ -99,6 +113,72 @@ export class SeeCommand extends BaseCommand {
     return this.getNotePathForDate(yesterday);
   }
 
+  private getNextDate(date: Date): Date {
+    const nextDate = new Date(date);
+    nextDate.setDate(nextDate.getDate() + 1);
+    return nextDate;
+  }
+
+  private isDateBeforeOrEqualToday(date: Date): boolean {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    date.setHours(0, 0, 0, 0);
+    return date <= today;
+  }
+
+  private async findOldestNote(): Promise<Date | null> {
+    const notesDir = process.env.MANDA_DIR!;
+    try {
+      const files = await this.fileSystemService.listDirectory(notesDir);
+      const noteFiles = files.filter((file: string) => file.endsWith('.md'));
+
+      if (noteFiles.length === 0) {
+        return null;
+      }
+
+      // Extract dates from filenames and find the oldest
+      const dates = noteFiles
+        .map((file: string) => file.replace('.md', ''))
+        .filter((dateStr: string) => /^\d{4}-\d{2}-\d{2}$/.test(dateStr))
+        .map((dateStr: string) => new Date(dateStr + 'T00:00:00'))
+        .filter((date: Date) => !isNaN(date.getTime()))
+        .sort((a: Date, b: Date) => a.getTime() - b.getTime());
+
+      return dates.length > 0 ? dates[0] : null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  private async findPreviousValidNote(currentDate: Date): Promise<Date | null> {
+    const oldestNote = await this.findOldestNote();
+    if (!oldestNote) {
+      return null;
+    }
+
+    let checkDate = new Date(currentDate);
+    checkDate.setDate(checkDate.getDate() - 1);
+
+    // Don't go before the oldest note
+    if (checkDate < oldestNote) {
+      return null;
+    }
+
+    const notesDir = process.env.MANDA_DIR!;
+
+    // Look backwards for an existing note
+    while (checkDate >= oldestNote) {
+      const notePath = this.getNotePathForDate(checkDate);
+      const exists = await this.fileSystemService.fileExists(notePath);
+      if (exists) {
+        return checkDate;
+      }
+      checkDate.setDate(checkDate.getDate() - 1);
+    }
+
+    return null;
+  }
+
   private async displayMarkdownWithTUI(content: string, notePath: string): Promise<void> {
     const fileName = notePath.split('/').pop() || 'Note';
     const title = fileName.replace('.md', '');
@@ -128,7 +208,8 @@ export class SeeCommand extends BaseCommand {
     content: string,
     title: string,
     currentDate: Date,
-    navigateToDate: (date: Date) => Promise<void>
+    navigatePrevious: () => Promise<void>,
+    navigateNext: () => Promise<void>
   ): Promise<void> {
     // Create and render TUI component with navigation
     const { waitUntilExit } = render(
@@ -142,16 +223,8 @@ export class SeeCommand extends BaseCommand {
             process.exit(0);
           }
         },
-        onNavigatePrevious: () => {
-          const previousDate = new Date(currentDate);
-          previousDate.setDate(previousDate.getDate() - 1);
-          navigateToDate(previousDate);
-        },
-        onNavigateNext: () => {
-          const nextDate = new Date(currentDate);
-          nextDate.setDate(nextDate.getDate() + 1);
-          navigateToDate(nextDate);
-        }
+        onNavigatePrevious: navigatePrevious,
+        onNavigateNext: navigateNext
       }),
       {
         exitOnCtrlC: true,

@@ -29,4 +29,8 @@ export class FileSystemService {
       await this.createDirectory(dirPath);
     }
   }
+
+  async listDirectory(dirPath: string): Promise<string[]> {
+    return await fs.readdir(dirPath);
+  }
 }

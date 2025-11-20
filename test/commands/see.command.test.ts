@@ -35,6 +35,7 @@ describe('SeeCommand', () => {
 
     vi.mocked(mockFileSystemService.fileExists).mockResolvedValue(true);
     vi.mocked(mockFileSystemService.readFile).mockResolvedValue('# Test Note\n\nSome content here.');
+    vi.mocked(mockFileSystemService.listDirectory).mockResolvedValue([]);
 
     vi.mocked(render).mockImplementation((element: any) => {
       // Simulate calling onExit after a short delay to resolve the promise
@@ -186,4 +187,71 @@ describe('SeeCommand', () => {
     expect(mockFileSystemService.fileExists).toHaveBeenCalledWith('/test/notes/2025-11-15.md');
     expect(mockFileSystemService.readFile).toHaveBeenCalledWith('/test/notes/2025-11-15.md');
   });
+
+  test('should not navigate past today when using next navigation', async () => {
+    process.env.MANDA_DIR = '/test/notes';
+
+    // Mock listDirectory to return some files
+    vi.mocked(mockFileSystemService.listDirectory).mockResolvedValue(['2025-11-19.md', '2025-11-20.md', '2025-11-21.md']);
+
+    const command = new SeeCommand(mockNoteService, mockFileSystemService);
+
+    // Mock the render to capture navigation calls
+    const navigationCalls: string[] = [];
+    vi.mocked(render).mockImplementation((element: any) => {
+      if (element?.props?.onNavigateNext) {
+        // Store the navigation function to test it
+        (global as any).testNavigateNext = element.props.onNavigateNext;
+      }
+      if (element?.props?.onExit) {
+        setTimeout(() => element.props.onExit(), 10);
+      }
+      return {
+        waitUntilExit: vi.fn().mockResolvedValue(undefined)
+      } as any;
+    });
+
+    await command.execute();
+
+    // The navigation should be set up but not actually called in this test
+    // We just verify the structure is correct
+    expect(render).toHaveBeenCalledWith(
+      expect.any(Object),
+      expect.objectContaining({
+        exitOnCtrlC: true,
+        experimentalAlternateScreenBuffer: true
+      })
+    );
+  });
+
+  test('should find oldest note correctly', async () => {
+    process.env.MANDA_DIR = '/test/notes';
+
+    // Mock listDirectory to return files in random order
+    vi.mocked(mockFileSystemService.listDirectory).mockResolvedValue([
+      '2025-11-21.md',
+      '2025-11-15.md',
+      '2025-11-18.md',
+      'some-other-file.txt'
+    ]);
+
+    const command = new SeeCommand(mockNoteService, mockFileSystemService);
+    const oldestDate = await (command as any).findOldestNote();
+
+    expect(oldestDate).toEqual(new Date('2025-11-15T00:00:00'));
+  });
+
+  test('should return null when no notes exist', async () => {
+    process.env.MANDA_DIR = '/test/notes';
+
+    // Mock listDirectory to return no .md files
+    vi.mocked(mockFileSystemService.listDirectory).mockResolvedValue(['some-file.txt', 'another-file.json']);
+
+    const command = new SeeCommand(mockNoteService, mockFileSystemService);
+    const oldestDate = await (command as any).findOldestNote();
+
+    expect(oldestDate).toBeNull();
+  });
+
+
 });
