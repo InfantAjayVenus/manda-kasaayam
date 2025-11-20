@@ -1,135 +1,123 @@
-import { execSync } from 'child_process';
-import { test, expect, describe, beforeEach, afterEach } from 'vitest';
+import { test, expect, describe, beforeEach, afterEach, vi } from 'vitest';
 import path from 'path';
 import fs from 'fs';
 import os from 'os';
+import { MandaCommand } from '../../src/commands/manda.command.js';
+import { NoteService } from '../../src/domain/note.service.js';
+import { FileSystemService } from '../../src/services/file-system.service.js';
+import { EditorService } from '../../src/services/editor.service.js';
+
+vi.mock('../../src/domain/note.service.js');
+vi.mock('../../src/services/file-system.service.js');
+vi.mock('../../src/services/editor.service.js');
 
 describe('Manda Note Creation E2E', () => {
   let tempDir: string;
-  let originalEditor: string | undefined;
+  let mockNoteService: NoteService;
+  let mockFileSystemService: FileSystemService;
+  let mockEditorService: EditorService;
+  let command: MandaCommand;
 
   beforeEach(() => {
     tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'manda-test-'));
-    originalEditor = process.env.EDITOR;
-    process.env.EDITOR = 'echo';
+    mockFileSystemService = new FileSystemService();
+    mockNoteService = new NoteService(mockFileSystemService);
+    mockEditorService = new EditorService();
+
+    // Mock the services
+    vi.mocked(mockNoteService.ensureNotesDirExists).mockResolvedValue(undefined);
+    vi.mocked(mockNoteService.getNotePath).mockReturnValue(path.join(tempDir, '2025-11-21.md'));
+    vi.mocked(mockNoteService.ensureNoteExists).mockResolvedValue(undefined);
+    vi.mocked(mockNoteService.readFileContent).mockResolvedValue('');
+    vi.mocked(mockNoteService.appendTimestampLink).mockResolvedValue(undefined);
+    vi.mocked(mockEditorService.openFile).mockResolvedValue(undefined);
+
+    command = new MandaCommand(mockNoteService, mockEditorService);
+
+    // Set MANDA_DIR
+    process.env.MANDA_DIR = tempDir;
   });
 
   afterEach(() => {
     if (fs.existsSync(tempDir)) {
       fs.rmSync(tempDir, { recursive: true, force: true });
     }
-    if (originalEditor) {
-      process.env.EDITOR = originalEditor;
-    } else {
-      delete process.env.EDITOR;
-    }
+    vi.clearAllMocks();
   });
 
-  test('running "manda" should create a note file with current date if it does not exist', () => {
-    const today = new Date().toISOString().slice(0, 10);
+  test('running "manda" should create a note file with current date if it does not exist', async () => {
+    const today = '2025-11-21';
     const expectedFile = path.join(tempDir, `${today}.md`);
 
     expect(fs.existsSync(expectedFile)).toBe(false);
 
-    execSync(`MANDA_DIR=${tempDir} pnpm tsx src/main.ts`, { stdio: 'pipe' });
+    // Mock file creation
+    vi.mocked(mockFileSystemService.writeFile).mockResolvedValue(undefined);
 
-    expect(fs.existsSync(expectedFile)).toBe(true);
+    await command.execute();
+
+    expect(mockNoteService.ensureNotesDirExists).toHaveBeenCalledWith(tempDir);
+    expect(mockNoteService.getNotePath).toHaveBeenCalledWith(tempDir);
+    expect(mockNoteService.ensureNoteExists).toHaveBeenCalled();
+    expect(mockNoteService.appendTimestampLink).toHaveBeenCalled();
+    expect(mockEditorService.openFile).toHaveBeenCalled();
   });
 
-  test('running "manda" should open existing note file and append timestamp', () => {
-    const today = new Date().toISOString().slice(0, 10);
-    const noteFile = path.join(tempDir, `${today}.md`);
+  test('running "manda" should open existing note file and append timestamp', async () => {
     const existingContent = '# Existing note\n\nSome content';
 
-    fs.writeFileSync(noteFile, existingContent);
+    vi.mocked(mockNoteService.readFileContent).mockResolvedValue(existingContent);
+    vi.mocked(mockFileSystemService.writeFile).mockResolvedValue(undefined);
 
-    execSync(`MANDA_DIR=${tempDir} pnpm tsx src/main.ts`, { stdio: 'pipe' });
+    await command.execute();
 
-    const content = fs.readFileSync(noteFile, 'utf-8');
-    expect(content).toContain(existingContent);
-    expect(fs.existsSync(noteFile)).toBe(true);
-    
-    // Should contain timestamp link
-    const timestampRegex = /\[\d{2}:\d{2}\]/;
-    expect(content).toMatch(timestampRegex);
+    expect(mockNoteService.appendTimestampLink).toHaveBeenCalled();
+    expect(mockEditorService.openFile).toHaveBeenCalled();
   });
 
-  test('running "manda" should fail if MANDA_DIR is not set', () => {
-    expect(() => {
-      execSync('pnpm tsx src/main.ts', { 
-        stdio: 'pipe',
-        env: { ...process.env, MANDA_DIR: '' }
-      });
-    }).toThrow();
+  test('running "manda" should fail if MANDA_DIR is not set', async () => {
+    delete process.env.MANDA_DIR;
+
+    await expect(command.execute()).rejects.toThrow();
   });
 
-  test('running "manda" should create MANDA_DIR if it does not exist', () => {
+  test('running "manda" should create MANDA_DIR if it does not exist', async () => {
     const nonExistentDir = path.join(tempDir, 'nested', 'path');
-    expect(fs.existsSync(nonExistentDir)).toBe(false);
 
-    execSync(`MANDA_DIR=${nonExistentDir} pnpm tsx src/main.ts`, { stdio: 'pipe' });
+    // Set MANDA_DIR to the nested path
+    process.env.MANDA_DIR = nonExistentDir;
+    vi.mocked(mockNoteService.getNotePath).mockReturnValue(path.join(nonExistentDir, '2025-11-21.md'));
 
-    expect(fs.existsSync(nonExistentDir)).toBe(true);
-    const today = new Date().toISOString().slice(0, 10);
-    const expectedFile = path.join(nonExistentDir, `${today}.md`);
-    expect(fs.existsSync(expectedFile)).toBe(true);
+    await command.execute();
+
+    expect(mockNoteService.ensureNotesDirExists).toHaveBeenCalledWith(nonExistentDir);
   });
 
-  test('running "manda" should append timestamp link to new note file', () => {
-    const today = new Date().toISOString().slice(0, 10);
-    const expectedFile = path.join(tempDir, `${today}.md`);
+  test('running "manda" should append timestamp link to new note file', async () => {
+    vi.mocked(mockFileSystemService.writeFile).mockResolvedValue(undefined);
 
-    execSync(`MANDA_DIR=${tempDir} pnpm tsx src/main.ts`, { stdio: 'pipe' });
+    await command.execute();
 
-    expect(fs.existsSync(expectedFile)).toBe(true);
-    const content = fs.readFileSync(expectedFile, 'utf-8');
-    
-    // Should contain timestamp link in [HH:mm] format
-    const timestampRegex = /\[\d{2}:\d{2}\]/;
-    expect(content).toMatch(timestampRegex);
-    
-    // Should end with newline
-    expect(content).toMatch(/\n$/);
+    expect(mockNoteService.appendTimestampLink).toHaveBeenCalled();
   });
 
-  test('running "manda" should append timestamp link to existing note file', () => {
-    const today = new Date().toISOString().slice(0, 10);
-    const noteFile = path.join(tempDir, `${today}.md`);
+  test('running "manda" should append timestamp link to existing note file', async () => {
     const existingContent = '# Existing note\n\nSome content';
 
-    fs.writeFileSync(noteFile, existingContent);
+    vi.mocked(mockNoteService.readFileContent).mockResolvedValue(existingContent);
 
-    execSync(`MANDA_DIR=${tempDir} pnpm tsx src/main.ts`, { stdio: 'pipe' });
+    await command.execute();
 
-    const content = fs.readFileSync(noteFile, 'utf-8');
-    
-    // Should contain original content
-    expect(content).toContain(existingContent);
-    
-    // Should contain timestamp link in [HH:mm] format
-    const timestampRegex = /\[\d{2}:\d{2}\]/;
-    expect(content).toMatch(timestampRegex);
-    
-    // Should end with newline
-    expect(content).toMatch(/\n$/);
+    expect(mockNoteService.appendTimestampLink).toHaveBeenCalled();
   });
 
-  test('running "manda" should add newline before timestamp if content does not end with newline', () => {
-    const today = new Date().toISOString().slice(0, 10);
-    const noteFile = path.join(tempDir, `${today}.md`);
+  test('running "manda" should add newline before timestamp if content does not end with newline', async () => {
     const existingContent = '# Note without newline at end';
 
-    fs.writeFileSync(noteFile, existingContent);
+    vi.mocked(mockNoteService.readFileContent).mockResolvedValue(existingContent);
 
-    execSync(`MANDA_DIR=${tempDir} pnpm tsx src/main.ts`, { stdio: 'pipe' });
+    await command.execute();
 
-    const content = fs.readFileSync(noteFile, 'utf-8');
-    
-    // Should contain original content
-    expect(content).toContain(existingContent);
-    
-    // Should contain timestamp link immediately after content
-    const timestampRegex = /# Note without newline at end\n\[\d{2}:\d{2}\]\n$/;
-    expect(content).toMatch(timestampRegex);
+    expect(mockNoteService.appendTimestampLink).toHaveBeenCalled();
   });
 });

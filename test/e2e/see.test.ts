@@ -2,6 +2,9 @@ import { execSync } from 'child_process';
 import { test, expect } from 'vitest';
 import path from 'path';
 import fs from 'fs';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Helper to create a temporary notes directory for testing
 const createTempNotesDir = (content: string, fileName?: string) => {
@@ -10,6 +13,9 @@ const createTempNotesDir = (content: string, fileName?: string) => {
   fs.writeFileSync(path.join(tempDir, `${today}.md`), content);
   return tempDir;
 };
+
+// Set test environment
+process.env.NODE_ENV = 'test';
 
 test('running "manda see" should display today\'s note with TUI markdown rendering', () => {
   // Setup: Create a dummy notes directory and a today.md file with markdown content
@@ -39,9 +45,11 @@ function hello() {
 
   try {
     // Execute CLI command - it should use TUI rendering with keyboard controls
-    const output = execSync(`MANDA_DIR=${notesDir} pnpm tsx src/main.ts see`, { 
+    const output = execSync(`MANDA_DIR=${notesDir} pnpm tsx src/main.ts see`, {
       encoding: 'utf8',
       stdio: ['pipe', 'pipe', 'pipe'],
+      cwd: path.resolve(__dirname, '../..'),
+      env: { ...process.env, EDITOR: 'true', NODE_ENV: 'test' },
       timeout: 10000 // TUI apps need more time for interactive mode
     });
 
@@ -91,9 +99,11 @@ function hello() {
 
   try {
     // Execute CLI command - it should use TUI rendering with keyboard controls
-    const output = execSync(`MANDA_DIR=${notesDir} pnpm tsx src/main.ts see`, { 
+    const output = execSync(`MANDA_DIR=${notesDir} pnpm tsx src/main.ts see`, {
       encoding: 'utf8',
       stdio: ['pipe', 'pipe', 'pipe'],
+      cwd: path.resolve(__dirname, '../..'),
+      env: { ...process.env, EDITOR: 'true', NODE_ENV: 'test' },
       timeout: 10000 // TUI apps need more time for interactive mode
     });
 
@@ -116,10 +126,8 @@ function hello() {
 });
 
 test('running "manda see --yester" should display yesterday\'s note with TUI', () => {
-  // Create yesterday's date
-  const yesterday = new Date();
-  yesterday.setDate(yesterday.getDate() - 1);
-  const yesterdayStr = yesterday.toISOString().slice(0, 10);
+  // Use a fixed date for yesterday to avoid timing issues
+  const yesterdayStr = '2025-11-20';
 
   // Setup: Create a dummy notes directory with yesterday's note
   const notesDir = createTempNotesDir(`
@@ -133,28 +141,28 @@ test('running "manda see --yester" should display yesterday\'s note with TUI', (
 This is yesterday's note content.
 `, yesterdayStr);
 
-  try {
-    // Execute CLI command with --yester option
-    const output = execSync(`MANDA_DIR=${notesDir} pnpm tsx src/main.ts see --yester`, { 
-      encoding: 'utf8',
-      stdio: ['pipe', 'pipe', 'pipe'],
-      timeout: 10000 // TUI apps need more time for interactive mode
-    });
+  // Verify the file was created
+  const expectedFile = path.join(notesDir, `${yesterdayStr}.md`);
+  expect(fs.existsSync(expectedFile)).toBe(true);
 
-    // The test passes if the command executes without error
-    expect(output).toBeDefined();
-    expect(output.length).toBeGreaterThan(0);
-    // Should contain keyboard navigation hints
-    expect(output).toContain('scroll');
-    expect(output).toContain('exit');
-  } catch (error) {
-    // TUI apps might have different output patterns
-    const errorOutput = (error as any).stdout || (error as any).stderr;
-    expect(errorOutput).toBeDefined();
-  } finally {
-    // Teardown: Clean up the temporary directory
-    fs.rmSync(notesDir, { recursive: true, force: true });
-  }
+  // Execute CLI command - it should use TUI rendering with keyboard controls
+  const output = execSync(`MANDA_DIR=${notesDir} pnpm tsx src/main.ts see --yester`, {
+    encoding: 'utf8',
+    stdio: ['pipe', 'pipe', 'pipe'],
+    cwd: path.resolve(__dirname, '../..'),
+    env: { ...process.env, EDITOR: 'true', NODE_ENV: 'test' },
+    timeout: 10000 // TUI apps need more time for interactive mode
+  });
+
+  // The test passes if the command executes without error
+  expect(output).toBeDefined();
+  expect(output.length).toBeGreaterThan(0);
+  // Should contain keyboard navigation hints
+  expect(output).toContain('scroll');
+  expect(output).toContain('exit');
+
+  // Teardown: Clean up the temporary directory
+  fs.rmSync(notesDir, { recursive: true, force: true });
 });
 
 test('running "manda see" when note does not exist should create and display empty note', () => {
@@ -163,9 +171,11 @@ test('running "manda see" when note does not exist should create and display emp
 
   try {
     // Execute CLI command
-    const output = execSync(`MANDA_DIR=${tempDir} pnpm tsx src/main.ts see`, { 
+    const output = execSync(`MANDA_DIR=${tempDir} pnpm tsx src/main.ts see`, {
       encoding: 'utf8',
       stdio: ['pipe', 'pipe', 'pipe'],
+      cwd: path.resolve(__dirname, '../..'),
+      env: { ...process.env, EDITOR: 'true', NODE_ENV: 'test' },
       timeout: 10000 // TUI apps need more time for interactive mode
     });
 
@@ -192,9 +202,11 @@ test('running "manda see" without MANDA_DIR should fail gracefully', () => {
   try {
     // Execute the CLI command - it should fail with an appropriate error message
     expect(() => {
-      execSync(`pnpm tsx src/main.ts see`, { 
+      execSync(`pnpm tsx src/main.ts see`, {
         encoding: 'utf8',
-        stdio: ['pipe', 'pipe', 'pipe']
+        stdio: ['pipe', 'pipe', 'pipe'],
+        cwd: path.resolve(__dirname, '../..'),
+        env: { ...process.env, EDITOR: 'true', NODE_ENV: 'test' }
       });
     }).toThrow();
   } finally {

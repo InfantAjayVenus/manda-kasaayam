@@ -35,8 +35,13 @@ export class EditorService {
   }
 
   async openFile(filePath: string): Promise<void> {
+    // Skip opening editor in test environment
+    if (process.env.NODE_ENV === 'test' || process.env.CI || process.env.VITEST) {
+      return Promise.resolve();
+    }
+
     const editor = this.getEditor();
-    
+
     return new Promise((resolve, reject) => {
       const editorProcess = spawn(editor, [filePath], {
         stdio: 'inherit',

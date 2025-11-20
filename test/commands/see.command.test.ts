@@ -14,6 +14,12 @@ vi.mock('ink', () => ({
 // Mock process.stdout.write
 const mockStdoutWrite = vi.spyOn(process.stdout, 'write').mockImplementation(() => true);
 
+// Mock process.exit
+const mockExit = vi.spyOn(process, 'exit').mockImplementation(() => {
+  // Do nothing in tests - prevent actual exit
+  return undefined as never;
+});
+
 describe('SeeCommand', () => {
   let mockNoteService: NoteService;
   let mockFileSystemService: FileSystemService;
