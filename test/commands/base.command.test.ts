@@ -1,27 +1,21 @@
 import { test, expect, describe, vi, beforeEach, afterEach } from 'vitest';
-import { HelloCommand } from '../../src/commands/hello.command.js';
+import { BaseCommand } from '../../src/commands/base.command.js';
 import { NoteService } from '../../src/domain/note.service.js';
-import * as ink from 'ink';
-
-vi.mock('ink', async () => {
-  const actual = await vi.importActual('ink');
-  return {
-    ...actual,
-    render: vi.fn(() => ({ unmount: vi.fn(), waitUntilExit: vi.fn() })),
-  };
-});
 
 vi.mock('../../src/domain/note.service.js');
 
-describe('HelloCommand', () => {
-  let renderSpy: any;
+class TestCommand extends BaseCommand {
+  public async execute(): Promise<void> {
+    // Test implementation
+    await this.ensureTodaysNoteExists();
+  }
+}
+
+describe('BaseCommand', () => {
   let mockNoteService: NoteService;
   let originalMandaDir: string | undefined;
 
   beforeEach(() => {
-    renderSpy = vi.mocked(ink.render);
-    renderSpy.mockClear();
-
     mockNoteService = new NoteService(null as any);
     vi.mocked(mockNoteService.ensureNotesDirExists).mockResolvedValue(undefined);
     vi.mocked(mockNoteService.getNotePath).mockReturnValue('/test/notes/2025-11-19.md');
@@ -42,15 +36,15 @@ describe('HelloCommand', () => {
   test('should throw error if MANDA_DIR is not set', async () => {
     delete process.env.MANDA_DIR;
 
-    const command = new HelloCommand(mockNoteService);
-    await expect(command.execute({})).rejects.toThrow('MANDA_DIR environment variable is not set');
+    const command = new TestCommand(mockNoteService);
+    await expect(command.execute()).rejects.toThrow('MANDA_DIR environment variable is not set');
   });
 
   test('should ensure notes directory exists', async () => {
     process.env.MANDA_DIR = '/test/notes';
 
-    const command = new HelloCommand(mockNoteService);
-    await command.execute({});
+    const command = new TestCommand(mockNoteService);
+    await command.execute();
 
     expect(mockNoteService.ensureNotesDirExists).toHaveBeenCalledWith('/test/notes');
   });
@@ -58,8 +52,8 @@ describe('HelloCommand', () => {
   test('should get note path for today', async () => {
     process.env.MANDA_DIR = '/test/notes';
 
-    const command = new HelloCommand(mockNoteService);
-    await command.execute({});
+    const command = new TestCommand(mockNoteService);
+    await command.execute();
 
     expect(mockNoteService.getNotePath).toHaveBeenCalledWith('/test/notes');
   });
@@ -67,33 +61,18 @@ describe('HelloCommand', () => {
   test('should ensure note file exists', async () => {
     process.env.MANDA_DIR = '/test/notes';
 
-    const command = new HelloCommand(mockNoteService);
-    await command.execute({});
+    const command = new TestCommand(mockNoteService);
+    await command.execute();
 
     expect(mockNoteService.ensureNoteExists).toHaveBeenCalledWith('/test/notes/2025-11-19.md');
   });
 
-  test('should render Hello component with default name', async () => {
+  test('should return the note path from ensureTodaysNoteExists', async () => {
     process.env.MANDA_DIR = '/test/notes';
 
-    const command = new HelloCommand(mockNoteService);
-    await command.execute({});
+    const command = new TestCommand(mockNoteService);
+    const notePath = await (command as any).ensureTodaysNoteExists();
 
-    expect(renderSpy).toHaveBeenCalledTimes(1);
-    const callArgs = renderSpy.mock.calls[0][0];
-    expect(callArgs.type.name).toBe('Hello');
-    expect(callArgs.props.name).toBeUndefined();
-  });
-
-  test('should render Hello component with provided name', async () => {
-    process.env.MANDA_DIR = '/test/notes';
-
-    const command = new HelloCommand(mockNoteService);
-    await command.execute({ name: 'Alice' });
-
-    expect(renderSpy).toHaveBeenCalledTimes(1);
-    const callArgs = renderSpy.mock.calls[0][0];
-    expect(callArgs.type.name).toBe('Hello');
-    expect(callArgs.props.name).toBe('Alice');
+    expect(notePath).toBe('/test/notes/2025-11-19.md');
   });
 });

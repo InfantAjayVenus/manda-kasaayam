@@ -10,6 +10,7 @@ program
   .description('A Terminal User Interface (TUI) application')
   .version('1.0.0');
 
+// Default action: open today's note
 program
   .description('Open or create today\'s note')
   .action(async () => {
@@ -17,13 +18,14 @@ program
     await mandaCommand.execute();
   });
 
+// Hello command (for testing/demo purposes)
 program
-  .command('manda')
+  .command('hello')
   .description('Display a hello message')
   .option('-n, --name <name>', 'Name to greet')
-  .action((options) => {
+  .action(async (options) => {
     const helloCommand = new HelloCommand();
-    helloCommand.execute(options);
+    await helloCommand.execute(options);
   });
 
 program.parse();
