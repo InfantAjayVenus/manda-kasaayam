@@ -169,4 +169,167 @@ describe('DoCommand', () => {
       expect.any(Object)
     );
   });
+
+  test('should toggle task in file correctly', async () => {
+    process.env.MANDA_DIR = '/test/notes';
+
+    const initialContent = `# Tasks
+- [ ] Task 1
+- [x] Task 2
+- [ ] Task 3`;
+
+    const expectedContent = `# Tasks
+- [x] Task 1
+- [x] Task 2
+- [ ] Task 3`;
+
+    vi.mocked(mockFileSystemService.readFile).mockResolvedValue(initialContent);
+    vi.mocked(mockFileSystemService.writeFile).mockResolvedValue(undefined);
+
+    const command = new DoCommand(mockNoteService, mockFileSystemService);
+
+    // Parse tasks to get task IDs
+    const tasks = command['parseTasksFromMarkdown'](initialContent);
+    const taskToToggle = tasks.find(t => t.text === 'Task 1');
+
+    // Toggle the task
+    await command['toggleTaskInFile']('/test/notes/2025-11-21.md', taskToToggle!.id, tasks);
+
+    // Should read the file first
+    expect(mockFileSystemService.readFile).toHaveBeenCalledWith('/test/notes/2025-11-21.md');
+
+    // Should write the updated content
+    expect(mockFileSystemService.writeFile).toHaveBeenCalledWith('/test/notes/2025-11-21.md', expectedContent);
+  });
+
+  test('should handle task toggle when task text appears multiple times', async () => {
+    process.env.MANDA_DIR = '/test/notes';
+
+    const initialContent = `# Tasks
+## Section 1
+- [ ] Same task
+## Section 2
+- [ ] Same task`;
+
+    const expectedContent = `# Tasks
+## Section 1
+- [x] Same task
+## Section 2
+- [ ] Same task`;
+
+    vi.mocked(mockFileSystemService.readFile).mockResolvedValue(initialContent);
+    vi.mocked(mockFileSystemService.writeFile).mockResolvedValue(undefined);
+
+    const command = new DoCommand(mockNoteService, mockFileSystemService);
+
+    // Parse tasks to get task IDs
+    const tasks = command['parseTasksFromMarkdown'](initialContent);
+    const taskToToggle = tasks.find(t => t.header === 'Section 1');
+
+    // Toggle the first occurrence
+    await command['toggleTaskInFile']('/test/notes/2025-11-21.md', taskToToggle!.id, tasks);
+
+    // Should write the updated content with only the first task toggled
+    expect(mockFileSystemService.writeFile).toHaveBeenCalledWith('/test/notes/2025-11-21.md', expectedContent);
+  });
+
+  test('should parse various task formats correctly', async () => {
+    process.env.MANDA_DIR = '/test/notes';
+
+    const content = `# Tasks
+
+## Work
+- [x] Completed task
+- [ ] Incomplete task
+- [ ] Task with - dashes - in text
+- [x] Task with [brackets] in text
+
+## Personal
+- [ ] Multi line
+- [x] Task with trailing spaces
+
+## No header tasks
+- [ ] Task without header
+`;
+
+    const command = new DoCommand(mockNoteService, mockFileSystemService);
+    const tasks = command['parseTasksFromMarkdown'](content);
+
+    expect(tasks).toHaveLength(7);
+    expect(tasks).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          text: 'Completed task',
+          completed: true,
+          header: 'Work'
+        }),
+        expect.objectContaining({
+          text: 'Incomplete task',
+          completed: false,
+          header: 'Work'
+        }),
+        expect.objectContaining({
+          text: 'Task with - dashes - in text',
+          completed: false,
+          header: 'Work'
+        }),
+        expect.objectContaining({
+          text: 'Task with [brackets] in text',
+          completed: true,
+          header: 'Work'
+        }),
+        expect.objectContaining({
+          text: 'Multi line',
+          completed: false,
+          header: 'Personal'
+        }),
+        expect.objectContaining({
+          text: 'Task with trailing spaces',
+          completed: true,
+          header: 'Personal'
+        }),
+        expect.objectContaining({
+          text: 'Task without header',
+          completed: false,
+          header: 'No header tasks'
+        })
+      ])
+    );
+  });
+
+  test('should handle malformed task syntax gracefully', async () => {
+    process.env.MANDA_DIR = '/test/notes';
+
+    const content = `# Tasks
+- [x] Valid task
+- [invalid] Malformed task
+- [ ] Another valid task
+- Not a task at all
+- [ ] Valid task
+`;
+
+    const command = new DoCommand(mockNoteService, mockFileSystemService);
+    const tasks = command['parseTasksFromMarkdown'](content);
+
+    // Should only parse valid task syntax
+    expect(tasks).toHaveLength(3);
+    expect(tasks[0]).toEqual(
+      expect.objectContaining({
+        text: 'Valid task',
+        completed: true
+      })
+    );
+    expect(tasks[1]).toEqual(
+      expect.objectContaining({
+        text: 'Another valid task',
+        completed: false
+      })
+    );
+    expect(tasks[2]).toEqual(
+      expect.objectContaining({
+        text: 'Valid task',
+        completed: false
+      })
+    );
+  });
 });

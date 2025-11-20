@@ -17,12 +17,13 @@ interface TaskListProps {
 }
 
 const TaskList: React.FC<TaskListProps> = ({
-  tasks,
+  tasks: initialTasks,
   title,
   notePath,
   onExit,
   onTaskToggle,
 }) => {
+  const [tasks, setTasks] = useState(initialTasks);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const { exit } = useApp();
 
@@ -43,8 +44,22 @@ const TaskList: React.FC<TaskListProps> = ({
       setSelectedIndex((prev) => Math.min(tasks.length - 1, prev + 1));
     } else if (key.return || input === " ") {
       // Toggle the selected task
-      if (onTaskToggle && tasks[selectedIndex]) {
-        onTaskToggle(tasks[selectedIndex].id);
+      if (tasks[selectedIndex]) {
+        const taskId = tasks[selectedIndex].id;
+
+        // Update local state immediately for real-time UI update
+        setTasks(prevTasks =>
+          prevTasks.map(task =>
+            task.id === taskId
+              ? { ...task, completed: !task.completed }
+              : task
+          )
+        );
+
+        // Call callback for persistence
+        if (onTaskToggle) {
+          onTaskToggle(taskId);
+        }
       }
     } else if (input === "g") {
       setSelectedIndex(0);

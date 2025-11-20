@@ -86,3 +86,32 @@ test('TaskList should call onTaskToggle when task is toggled', () => {
 
   expect(onTaskToggle).toHaveBeenCalledWith('1');
 });
+
+test('TaskList should handle keyboard input without crashing', () => {
+  const onTaskToggle = vi.fn();
+  const onExit = vi.fn();
+  const tasks: Task[] = [
+    { id: '1', text: 'Task 1', completed: false },
+    { id: '2', text: 'Task 2', completed: false }
+  ];
+
+  const { stdin } = render(
+    <TaskList
+      tasks={tasks}
+      onTaskToggle={onTaskToggle}
+      onExit={onExit}
+    />
+  );
+
+  // Test various keyboard inputs don't crash the component
+  stdin.write('\u001b[A'); // Up arrow
+  stdin.write('\u001b[B'); // Down arrow
+  stdin.write('j'); // Vim down
+  stdin.write('k'); // Vim up
+  stdin.write('g'); // Jump to top
+  stdin.write('G'); // Jump to bottom
+  stdin.write('q'); // Exit
+
+  // Should not have crashed and should have called exit
+  expect(onExit).toHaveBeenCalled();
+});
