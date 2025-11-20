@@ -2,6 +2,7 @@
 import { Command } from 'commander';
 import { HelloCommand } from './commands/hello.command.js';
 import { MandaCommand } from './commands/manda.command.js';
+import { SeeCommand } from './commands/see.command.js';
 
 const program = new Command();
 
@@ -26,6 +27,16 @@ program
   .action(async (options) => {
     const helloCommand = new HelloCommand();
     await helloCommand.execute(options);
+  });
+
+// See command: preview notes
+program
+  .command('see')
+  .description('Preview today\'s note')
+  .option('--yester', 'Preview yesterday\'s note instead')
+  .action(async (options) => {
+    const seeCommand = new SeeCommand();
+    await seeCommand.execute(options);
   });
 
 program.parse();
