@@ -3,7 +3,7 @@ import { render } from 'ink-testing-library';
 import { test, expect } from 'vitest';
 import MarkdownPreview from '../../src/components/MarkdownPreview';
 
-test('MarkdownPreview should render headers with appropriate colors', () => {
+test('MarkdownPreview should render headers with appropriate colors without # symbols', () => {
   const content = `
 # Main Title
 ## Subtitle
@@ -17,6 +17,43 @@ test('MarkdownPreview should render headers with appropriate colors', () => {
   expect(lastFrame()).toContain('Subtitle');
   expect(lastFrame()).toContain('Section');
   expect(lastFrame()).toContain('Subsection');
+  // Ensure # symbols are not rendered
+  expect(lastFrame()).not.toContain('# Main Title');
+  expect(lastFrame()).not.toContain('## Subtitle');
+  expect(lastFrame()).not.toContain('### Section');
+  expect(lastFrame()).not.toContain('#### Subsection');
+});
+
+test('MarkdownPreview should render headers as styled text without any # symbols', () => {
+  const content = `
+# H1 Header
+## H2 Header  
+### H3 Header
+#### H4 Header
+##### H5 Header
+###### H6 Header
+`;
+
+  const { lastFrame } = render(<MarkdownPreview content={content} />);
+
+  // Headers should be rendered as plain text without any # symbols
+  expect(lastFrame()).toContain('H1 Header');
+  expect(lastFrame()).toContain('H2 Header');
+  expect(lastFrame()).toContain('H3 Header');
+  expect(lastFrame()).toContain('H4 Header');
+  expect(lastFrame()).toContain('H5 Header');
+  expect(lastFrame()).toContain('H6 Header');
+  
+  // No # symbols should be present in the output
+  expect(lastFrame()).not.toMatch(/#+\s+H[1-6] Header/);
+  
+  // The content should not contain any raw markdown header syntax
+  expect(lastFrame()).not.toContain('# H1 Header');
+  expect(lastFrame()).not.toContain('## H2 Header');
+  expect(lastFrame()).not.toContain('### H3 Header');
+  expect(lastFrame()).not.toContain('#### H4 Header');
+  expect(lastFrame()).not.toContain('##### H5 Header');
+  expect(lastFrame()).not.toContain('###### H6 Header');
 });
 
 test('MarkdownPreview should render paragraphs', () => {

@@ -143,7 +143,7 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({ content, title, onExi
         return (
           <Box key={index} marginBottom={1}>
             <Text color={headingColor} bold>
-              {'#'.repeat(headingSize)} {token.text}
+              {token.text}
             </Text>
           </Box>
         );
