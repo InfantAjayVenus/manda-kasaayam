@@ -36,7 +36,7 @@ describe('Manda Note Creation E2E', () => {
     expect(fs.existsSync(expectedFile)).toBe(true);
   });
 
-  test('running "manda" should open existing note file if it already exists', () => {
+  test('running "manda" should open existing note file and append timestamp', () => {
     const today = new Date().toISOString().slice(0, 10);
     const noteFile = path.join(tempDir, `${today}.md`);
     const existingContent = '# Existing note\n\nSome content';
@@ -46,8 +46,12 @@ describe('Manda Note Creation E2E', () => {
     execSync(`MANDA_DIR=${tempDir} pnpm tsx src/main.ts`, { stdio: 'pipe' });
 
     const content = fs.readFileSync(noteFile, 'utf-8');
-    expect(content).toBe(existingContent);
+    expect(content).toContain(existingContent);
     expect(fs.existsSync(noteFile)).toBe(true);
+    
+    // Should contain timestamp link
+    const timestampRegex = /\[\d{2}:\d{2}\]/;
+    expect(content).toMatch(timestampRegex);
   });
 
   test('running "manda" should fail if MANDA_DIR is not set', () => {
@@ -69,5 +73,63 @@ describe('Manda Note Creation E2E', () => {
     const today = new Date().toISOString().slice(0, 10);
     const expectedFile = path.join(nonExistentDir, `${today}.md`);
     expect(fs.existsSync(expectedFile)).toBe(true);
+  });
+
+  test('running "manda" should append timestamp link to new note file', () => {
+    const today = new Date().toISOString().slice(0, 10);
+    const expectedFile = path.join(tempDir, `${today}.md`);
+
+    execSync(`MANDA_DIR=${tempDir} pnpm tsx src/main.ts`, { stdio: 'pipe' });
+
+    expect(fs.existsSync(expectedFile)).toBe(true);
+    const content = fs.readFileSync(expectedFile, 'utf-8');
+    
+    // Should contain timestamp link in [HH:mm] format
+    const timestampRegex = /\[\d{2}:\d{2}\]/;
+    expect(content).toMatch(timestampRegex);
+    
+    // Should end with newline
+    expect(content).toMatch(/\n$/);
+  });
+
+  test('running "manda" should append timestamp link to existing note file', () => {
+    const today = new Date().toISOString().slice(0, 10);
+    const noteFile = path.join(tempDir, `${today}.md`);
+    const existingContent = '# Existing note\n\nSome content';
+
+    fs.writeFileSync(noteFile, existingContent);
+
+    execSync(`MANDA_DIR=${tempDir} pnpm tsx src/main.ts`, { stdio: 'pipe' });
+
+    const content = fs.readFileSync(noteFile, 'utf-8');
+    
+    // Should contain original content
+    expect(content).toContain(existingContent);
+    
+    // Should contain timestamp link in [HH:mm] format
+    const timestampRegex = /\[\d{2}:\d{2}\]/;
+    expect(content).toMatch(timestampRegex);
+    
+    // Should end with newline
+    expect(content).toMatch(/\n$/);
+  });
+
+  test('running "manda" should add newline before timestamp if content does not end with newline', () => {
+    const today = new Date().toISOString().slice(0, 10);
+    const noteFile = path.join(tempDir, `${today}.md`);
+    const existingContent = '# Note without newline at end';
+
+    fs.writeFileSync(noteFile, existingContent);
+
+    execSync(`MANDA_DIR=${tempDir} pnpm tsx src/main.ts`, { stdio: 'pipe' });
+
+    const content = fs.readFileSync(noteFile, 'utf-8');
+    
+    // Should contain original content
+    expect(content).toContain(existingContent);
+    
+    // Should contain timestamp link immediately after content
+    const timestampRegex = /# Note without newline at end\n\[\d{2}:\d{2}\]\n$/;
+    expect(content).toMatch(timestampRegex);
   });
 });

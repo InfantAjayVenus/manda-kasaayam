@@ -27,4 +27,32 @@ export class NoteService {
   async ensureNotesDirExists(notesDir: string): Promise<void> {
     await this.fileSystemService.ensureDirectoryExists(notesDir);
   }
+
+  getCurrentTimeString(): string {
+    const now = new Date();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    return `${hours}:${minutes}`;
+  }
+
+  async appendTimestampLink(notePath: string): Promise<void> {
+    const timestamp = this.getCurrentTimeString();
+    const timestampLink = `[${timestamp}]`;
+    
+    const exists = await this.fileSystemService.fileExists(notePath);
+    let content = '';
+    
+    if (exists) {
+      content = await this.fileSystemService.readFile(notePath);
+    }
+    
+    // Add timestamp link to the end of the file
+    // If file is empty or doesn't end with newline, add one first
+    if (content && !content.endsWith('\n')) {
+      content += '\n';
+    }
+    content += timestampLink + '\n';
+    
+    await this.fileSystemService.writeFile(notePath, content);
+  }
 }

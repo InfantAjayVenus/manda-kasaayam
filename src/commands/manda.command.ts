@@ -27,6 +27,9 @@ export class MandaCommand {
     const notePath = this.noteService.getNotePath(notesDir);
     await this.noteService.ensureNoteExists(notePath);
     
+    // Append timestamp link to today's note
+    await this.noteService.appendTimestampLink(notePath);
+    
     await this.editorService.openFile(notePath);
   }
 }

@@ -79,4 +79,93 @@ describe('NoteService', () => {
       expect(mockFileSystemService.ensureDirectoryExists).toHaveBeenCalledWith('/notes');
     });
   });
+
+  describe('getCurrentTimeString', () => {
+    test('should return current time in HH:mm format', () => {
+      const timeString = service.getCurrentTimeString();
+
+      // Should match HH:mm format
+      expect(timeString).toMatch(/^\d{2}:\d{2}$/);
+    });
+
+
+  });
+
+  describe('appendTimestampLink', () => {
+    test('should append timestamp link to existing file', async () => {
+      vi.mocked(mockFileSystemService.fileExists).mockResolvedValue(true);
+      vi.mocked(mockFileSystemService.readFile).mockResolvedValue('# Existing Note\n\nSome content');
+      vi.mocked(mockFileSystemService.writeFile).mockResolvedValue(undefined);
+
+      await service.appendTimestampLink('/notes/2025-11-19.md');
+
+      expect(mockFileSystemService.fileExists).toHaveBeenCalledWith('/notes/2025-11-19.md');
+      expect(mockFileSystemService.readFile).toHaveBeenCalledWith('/notes/2025-11-19.md');
+      expect(mockFileSystemService.writeFile).toHaveBeenCalledWith(
+        '/notes/2025-11-19.md',
+        expect.stringContaining('# Existing Note')
+      );
+      expect(mockFileSystemService.writeFile).toHaveBeenCalledWith(
+        '/notes/2025-11-19.md',
+        expect.stringContaining('Some content')
+      );
+      expect(mockFileSystemService.writeFile).toHaveBeenCalledWith(
+        '/notes/2025-11-19.md',
+        expect.stringMatching(/\[\d{2}:\d{2}\]/)
+      );
+    });
+
+    test('should append timestamp link to empty file', async () => {
+      vi.mocked(mockFileSystemService.fileExists).mockResolvedValue(true);
+      vi.mocked(mockFileSystemService.readFile).mockResolvedValue('');
+      vi.mocked(mockFileSystemService.writeFile).mockResolvedValue(undefined);
+
+      await service.appendTimestampLink('/notes/2025-11-19.md');
+
+      expect(mockFileSystemService.writeFile).toHaveBeenCalledWith(
+        '/notes/2025-11-19.md',
+        expect.stringMatching(/^\[\d{2}:\d{2}\]\n$/)
+      );
+    });
+
+    test('should create file and append timestamp link if file does not exist', async () => {
+      vi.mocked(mockFileSystemService.fileExists).mockResolvedValue(false);
+      vi.mocked(mockFileSystemService.writeFile).mockResolvedValue(undefined);
+
+      await service.appendTimestampLink('/notes/2025-11-19.md');
+
+      expect(mockFileSystemService.fileExists).toHaveBeenCalledWith('/notes/2025-11-19.md');
+      expect(mockFileSystemService.readFile).not.toHaveBeenCalled();
+      expect(mockFileSystemService.writeFile).toHaveBeenCalledWith(
+        '/notes/2025-11-19.md',
+        expect.stringMatching(/^\[\d{2}:\d{2}\]\n$/)
+      );
+    });
+
+    test('should add newline before timestamp if file content does not end with newline', async () => {
+      vi.mocked(mockFileSystemService.fileExists).mockResolvedValue(true);
+      vi.mocked(mockFileSystemService.readFile).mockResolvedValue('# Note without newline at end');
+      vi.mocked(mockFileSystemService.writeFile).mockResolvedValue(undefined);
+
+      await service.appendTimestampLink('/notes/2025-11-19.md');
+
+      expect(mockFileSystemService.writeFile).toHaveBeenCalledWith(
+        '/notes/2025-11-19.md',
+        expect.stringMatching(/^# Note without newline at end\s+\[\d{2}:\d{2}\]\n$/)
+      );
+    });
+
+    test('should not add extra newline if file already ends with newline', async () => {
+      vi.mocked(mockFileSystemService.fileExists).mockResolvedValue(true);
+      vi.mocked(mockFileSystemService.readFile).mockResolvedValue('# Note ending with newline\n');
+      vi.mocked(mockFileSystemService.writeFile).mockResolvedValue(undefined);
+
+      await service.appendTimestampLink('/notes/2025-11-19.md');
+
+      expect(mockFileSystemService.writeFile).toHaveBeenCalledWith(
+        '/notes/2025-11-19.md',
+        expect.stringMatching(/^# Note ending with newline\s+\[\d{2}:\d{2}\]\n$/)
+      );
+    });
+  });
 });

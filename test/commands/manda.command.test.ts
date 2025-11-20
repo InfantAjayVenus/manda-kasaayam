@@ -83,6 +83,19 @@ describe('MandaCommand', () => {
     expect(mockEditorService.openFile).toHaveBeenCalledWith('/test/notes/2025-11-19.md');
   });
 
+  test('should append timestamp link to note', async () => {
+    process.env.MANDA_DIR = '/test/notes';
+    vi.mocked(mockNoteService.ensureNotesDirExists).mockResolvedValue(undefined);
+    vi.mocked(mockNoteService.getNotePath).mockReturnValue('/test/notes/2025-11-19.md');
+    vi.mocked(mockNoteService.ensureNoteExists).mockResolvedValue(undefined);
+    vi.mocked(mockNoteService.appendTimestampLink).mockResolvedValue(undefined);
+    vi.mocked(mockEditorService.openFile).mockResolvedValue(undefined);
+
+    await command.execute();
+
+    expect(mockNoteService.appendTimestampLink).toHaveBeenCalledWith('/test/notes/2025-11-19.md');
+  });
+
   test('should execute all steps in correct order', async () => {
     process.env.MANDA_DIR = '/test/notes';
     const callOrder: string[] = [];
@@ -97,6 +110,9 @@ describe('MandaCommand', () => {
     vi.mocked(mockNoteService.ensureNoteExists).mockImplementation(async () => {
       callOrder.push('ensureNoteExists');
     });
+    vi.mocked(mockNoteService.appendTimestampLink).mockImplementation(async () => {
+      callOrder.push('appendTimestampLink');
+    });
     vi.mocked(mockEditorService.openFile).mockImplementation(async () => {
       callOrder.push('openFile');
     });
@@ -107,6 +123,7 @@ describe('MandaCommand', () => {
       'ensureNotesDirExists',
       'getNotePath',
       'ensureNoteExists',
+      'appendTimestampLink',
       'openFile',
     ]);
   });
