@@ -46,6 +46,20 @@ test('MarkdownPreview should render lists', () => {
   expect(lastFrame()).toContain('Third item');
 });
 
+test('MarkdownPreview should render task lists with checkboxes', () => {
+  const content = `
+- [x] Completed task
+- [ ] Incomplete task
+- [x] Another completed task
+`;
+
+  const { lastFrame } = render(<MarkdownPreview content={content} />);
+
+  expect(lastFrame()).toContain('[✓] Completed task');
+  expect(lastFrame()).toContain('[ ] Incomplete task');
+  expect(lastFrame()).toContain('[✓] Another completed task');
+});
+
 test('MarkdownPreview should render inline code', () => {
   const content = `
 Here is some \`inline code\` in a paragraph.
@@ -56,11 +70,12 @@ Here is some \`inline code\` in a paragraph.
   expect(lastFrame()).toContain('inline code');
 });
 
-test('MarkdownPreview should render code blocks', () => {
+test('MarkdownPreview should render code blocks with syntax highlighting', () => {
   const content = `
 \`\`\`javascript
 function hello() {
   console.log("Hello World");
+  return true;
 }
 \`\`\`
 `;
@@ -69,6 +84,24 @@ function hello() {
 
   expect(lastFrame()).toContain('function hello()');
   expect(lastFrame()).toContain('console.log("Hello World")');
+  expect(lastFrame()).toContain('return true');
+  expect(lastFrame()).toContain('1 '); // Line numbers
+});
+
+test('MarkdownPreview should render Python code with syntax highlighting', () => {
+  const content = `
+\`\`\`python
+def hello():
+    print("Hello World")
+    return True
+\`\`\`
+`;
+
+  const { lastFrame } = render(<MarkdownPreview content={content} />);
+
+  expect(lastFrame()).toContain('def hello()');
+  expect(lastFrame()).toContain('print("Hello World")');
+  expect(lastFrame()).toContain('return True');
 });
 
 test('MarkdownPreview should render blockquotes', () => {
@@ -92,6 +125,44 @@ This is **bold** text and this is *italic* text.
 
   expect(lastFrame()).toContain('bold');
   expect(lastFrame()).toContain('italic');
+});
+
+test('MarkdownPreview should render strikethrough text', () => {
+  const content = `
+This is ~~strikethrough~~ text.
+`;
+
+  const { lastFrame } = render(<MarkdownPreview content={content} />);
+
+  expect(lastFrame()).toContain('strikethrough');
+});
+
+test('MarkdownPreview should render links with URLs', () => {
+  const content = `
+Check out [OpenAI](https://openai.com) for more info.
+`;
+
+  const { lastFrame } = render(<MarkdownPreview content={content} />);
+
+  expect(lastFrame()).toContain('OpenAI');
+  expect(lastFrame()).toContain('(https://openai.com)');
+});
+
+test('MarkdownPreview should render tables', () => {
+  const content = `
+| Name | Age | City |
+|------|-----|------|
+| John | 25  | NYC  |
+| Jane | 30  | LA   |
+`;
+
+  const { lastFrame } = render(<MarkdownPreview content={content} />);
+
+  expect(lastFrame()).toContain('Name');
+  expect(lastFrame()).toContain('Age');
+  expect(lastFrame()).toContain('City');
+  expect(lastFrame()).toContain('John');
+  expect(lastFrame()).toContain('Jane');
 });
 
 test('MarkdownPreview should render horizontal rules', () => {
@@ -125,39 +196,60 @@ test('MarkdownPreview should handle empty content', () => {
   expect(lastFrame()).toBeDefined();
 });
 
-test('MarkdownPreview should handle complex markdown', () => {
+test('MarkdownPreview should handle complex markdown with all features', () => {
   const content = `
 # Complex Document
 
 ## Introduction
-This is a **complex** document with *multiple* elements.
+This is a **complex** document with *multiple* elements including ~~strikethrough~~ text.
+
+## Task List
+- [x] Completed feature
+- [ ] Pending feature
+- [x] Another completed task
 
 ## Features
 - \`Inline code\` support
 - **Bold** and *italic* text
-- Code blocks
+- Code blocks with syntax highlighting
 - Blockquotes
+- Links like [GitHub](https://github.com)
 
 \`\`\`javascript
 const example = "Hello World";
 console.log(example);
+if (example) {
+  return true;
+}
 \`\`\`
 
-> Important: This is a quote
+> Important: This is a quote with **emphasis**
+
+| Feature | Status | Priority |
+|---------|--------|----------|
+| Tasks   | Done   | High     |
+| Tables  | Done   | Medium   |
 
 ---
 
 ## Conclusion
-That's all!
+That's all with rich formatting!
 `;
 
   const { lastFrame } = render(<MarkdownPreview content={content} />);
 
   expect(lastFrame()).toContain('Complex Document');
   expect(lastFrame()).toContain('Introduction');
+  expect(lastFrame()).toContain('Task List');
+  expect(lastFrame()).toContain('[✓] Completed feature');
+  expect(lastFrame()).toContain('[ ] Pending feature');
   expect(lastFrame()).toContain('Features');
   expect(lastFrame()).toContain('Inline code');
   expect(lastFrame()).toContain('const example');
   expect(lastFrame()).toContain('Important: This is a quote');
+  expect(lastFrame()).toContain('Feature');
+  expect(lastFrame()).toContain('Status');
+  expect(lastFrame()).toContain('Done');
   expect(lastFrame()).toContain('Conclusion');
+  expect(lastFrame()).toContain('(https://github.com)');
 });

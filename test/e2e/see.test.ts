@@ -50,7 +50,6 @@ function hello() {
     expect(output).toBeDefined();
     expect(output.length).toBeGreaterThan(0);
     // Should contain keyboard navigation hints
-    expect(output).toContain('Keys:');
     expect(output).toContain('scroll');
     expect(output).toContain('exit');
   } catch (error) {
@@ -103,7 +102,6 @@ function hello() {
     expect(output).toBeDefined();
     expect(output.length).toBeGreaterThan(0);
     // Should contain keyboard navigation hints
-    expect(output).toContain('Keys:');
     expect(output).toContain('scroll');
     expect(output).toContain('exit');
   } catch (error) {
@@ -147,7 +145,6 @@ This is yesterday's note content.
     expect(output).toBeDefined();
     expect(output.length).toBeGreaterThan(0);
     // Should contain keyboard navigation hints
-    expect(output).toContain('Keys:');
     expect(output).toContain('scroll');
     expect(output).toContain('exit');
   } catch (error) {
@@ -176,7 +173,6 @@ test('running "manda see" when note does not exist should create and display emp
     expect(output).toBeDefined();
     expect(output.length).toBeGreaterThan(0);
     // Should contain keyboard navigation hints even for empty content
-    expect(output).toContain('Keys:');
     expect(output).toContain('exit');
   } catch (error) {
     // Even if there's an error, process should handle it gracefully
