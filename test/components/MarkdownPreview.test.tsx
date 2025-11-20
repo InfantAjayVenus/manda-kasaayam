@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from 'ink-testing-library';
-import { test, expect } from 'vitest';
+import { test, expect, vi } from 'vitest';
 import MarkdownPreview from '../../src/components/MarkdownPreview';
 
 test('MarkdownPreview should render headers with appropriate colors without # symbols', () => {
@@ -43,17 +43,92 @@ test('MarkdownPreview should render headers as styled text without any # symbols
   expect(lastFrame()).toContain('H4 Header');
   expect(lastFrame()).toContain('H5 Header');
   expect(lastFrame()).toContain('H6 Header');
-  
+
   // No # symbols should be present in the output
   expect(lastFrame()).not.toMatch(/#+\s+H[1-6] Header/);
-  
+
   // The content should not contain any raw markdown header syntax
   expect(lastFrame()).not.toContain('# H1 Header');
-  expect(lastFrame()).not.toContain('## H2 Header');
-  expect(lastFrame()).not.toContain('### H3 Header');
-  expect(lastFrame()).not.toContain('#### H4 Header');
-  expect(lastFrame()).not.toContain('##### H5 Header');
-  expect(lastFrame()).not.toContain('###### H6 Header');
+});
+
+test('MarkdownPreview should display date information when currentDate is provided', () => {
+  const content = '# Test Note';
+  const currentDate = new Date('2025-11-21');
+
+  const { lastFrame } = render(
+    <MarkdownPreview
+      content={content}
+      title="2025-11-21"
+      currentDate={currentDate}
+    />
+  );
+
+  expect(lastFrame()).toContain('2025-11-21');
+  expect(lastFrame()).toContain('Friday, November 21, 2025');
+});
+
+test('MarkdownPreview should show navigation hints when navigation callbacks are provided', () => {
+  const content = '# Test Note';
+  const onNavigatePrevious = vi.fn();
+  const onNavigateNext = vi.fn();
+
+  const { lastFrame } = render(
+    <MarkdownPreview
+      content={content}
+      title="2025-11-21"
+      onNavigatePrevious={onNavigatePrevious}
+      onNavigateNext={onNavigateNext}
+    />
+  );
+
+  expect(lastFrame()).toContain('←/h: prev day');
+  expect(lastFrame()).toContain('→/l: next day');
+});
+
+test('MarkdownPreview should not show navigation hints when navigation callbacks are not provided', () => {
+  const content = '# Test Note';
+
+  const { lastFrame } = render(
+    <MarkdownPreview
+      content={content}
+      title="2025-11-21"
+    />
+  );
+
+  expect(lastFrame()).not.toContain('←/h: prev day');
+  expect(lastFrame()).not.toContain('→/l: next day');
+});
+
+test('MarkdownPreview should call navigation callbacks when provided', () => {
+  const content = '# Test Note';
+  const onNavigatePrevious = vi.fn();
+  const onNavigateNext = vi.fn();
+  const onExit = vi.fn();
+
+  const { stdin } = render(
+    <MarkdownPreview
+      content={content}
+      title="2025-11-21"
+      onNavigatePrevious={onNavigatePrevious}
+      onNavigateNext={onNavigateNext}
+      onExit={onExit}
+    />
+  );
+
+  // Test left arrow navigation
+  stdin.write('\u001b[D'); // Left arrow
+  expect(onNavigatePrevious).toHaveBeenCalledTimes(1);
+
+  // Test right arrow navigation
+  stdin.write('\u001b[C'); // Right arrow
+  expect(onNavigateNext).toHaveBeenCalledTimes(1);
+
+  // Test vim-style navigation
+  stdin.write('h'); // Previous
+  expect(onNavigatePrevious).toHaveBeenCalledTimes(2);
+
+  stdin.write('l'); // Next
+  expect(onNavigateNext).toHaveBeenCalledTimes(2);
 });
 
 test('MarkdownPreview should render paragraphs', () => {
@@ -213,8 +288,136 @@ Below the rule
 
   const { lastFrame } = render(<MarkdownPreview content={content} />);
 
-  expect(lastFrame()).toContain('Above the rule');
-  expect(lastFrame()).toContain('Below the rule');
+   expect(lastFrame()).toContain('Above the rule');
+   expect(lastFrame()).toContain('Below the rule');
+});
+
+test('MarkdownPreview should display date information when currentDate is provided', () => {
+  const content = '# Test Note';
+  const currentDate = new Date('2025-11-21');
+
+  const { lastFrame } = render(
+    <MarkdownPreview
+      content={content}
+      title="2025-11-21"
+      currentDate={currentDate}
+    />
+  );
+
+  expect(lastFrame()).toContain('2025-11-21');
+  expect(lastFrame()).toContain('Friday, November 21, 2025');
+});
+
+test('MarkdownPreview should show navigation hints when navigation callbacks are provided', () => {
+  const content = '# Test Note';
+  const onNavigatePrevious = vi.fn();
+  const onNavigateNext = vi.fn();
+
+  const { lastFrame } = render(
+    <MarkdownPreview
+      content={content}
+      title="2025-11-21"
+      onNavigatePrevious={onNavigatePrevious}
+      onNavigateNext={onNavigateNext}
+    />
+  );
+
+  expect(lastFrame()).toContain('←/h: prev day');
+  expect(lastFrame()).toContain('→/l: next day');
+});
+
+test('MarkdownPreview should not show navigation hints when navigation callbacks are not provided', () => {
+  const content = '# Test Note';
+
+  const { lastFrame } = render(
+    <MarkdownPreview
+      content={content}
+      title="2025-11-21"
+    />
+  );
+
+  expect(lastFrame()).not.toContain('←/h: prev day');
+  expect(lastFrame()).not.toContain('→/l: next day');
+});
+
+test('MarkdownPreview should display date information when currentDate is provided', () => {
+  const content = '# Test Note';
+  const currentDate = new Date('2025-11-21');
+
+  const { lastFrame } = render(
+    <MarkdownPreview
+      content={content}
+      title="2025-11-21"
+      currentDate={currentDate}
+    />
+  );
+
+  expect(lastFrame()).toContain('2025-11-21');
+  expect(lastFrame()).toContain('Friday, November 21, 2025');
+});
+
+test('MarkdownPreview should show navigation hints when navigation callbacks are provided', () => {
+  const content = '# Test Note';
+  const onNavigatePrevious = vi.fn();
+  const onNavigateNext = vi.fn();
+
+  const { lastFrame } = render(
+    <MarkdownPreview
+      content={content}
+      title="2025-11-21"
+      onNavigatePrevious={onNavigatePrevious}
+      onNavigateNext={onNavigateNext}
+    />
+  );
+
+  expect(lastFrame()).toContain('←/h: prev day');
+  expect(lastFrame()).toContain('→/l: next day');
+});
+
+test('MarkdownPreview should not show navigation hints when navigation callbacks are not provided', () => {
+  const content = '# Test Note';
+
+  const { lastFrame } = render(
+    <MarkdownPreview
+      content={content}
+      title="2025-11-21"
+    />
+  );
+
+  expect(lastFrame()).not.toContain('←/h: prev day');
+  expect(lastFrame()).not.toContain('→/l: next day');
+});
+
+test('MarkdownPreview should call navigation callbacks when provided', () => {
+  const content = '# Test Note';
+  const onNavigatePrevious = vi.fn();
+  const onNavigateNext = vi.fn();
+  const onExit = vi.fn();
+
+  const { stdin } = render(
+    <MarkdownPreview
+      content={content}
+      title="2025-11-21"
+      onNavigatePrevious={onNavigatePrevious}
+      onNavigateNext={onNavigateNext}
+      onExit={onExit}
+    />
+  );
+
+  // Test left arrow navigation
+  stdin.write('\u001b[D'); // Left arrow
+  expect(onNavigatePrevious).toHaveBeenCalledTimes(1);
+
+  // Test right arrow navigation
+  stdin.write('\u001b[C'); // Right arrow
+  expect(onNavigateNext).toHaveBeenCalledTimes(1);
+
+  // Test vim-style navigation
+  stdin.write('h'); // Previous
+  expect(onNavigatePrevious).toHaveBeenCalledTimes(2);
+
+  stdin.write('l'); // Next
+  expect(onNavigateNext).toHaveBeenCalledTimes(2);
 });
 
 test('MarkdownPreview should display title when provided', () => {

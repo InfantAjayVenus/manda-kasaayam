@@ -5,7 +5,10 @@ import { marked } from "marked";
 interface MarkdownPreviewProps {
   content: string;
   title?: string;
+  currentDate?: Date;
   onExit?: () => void;
+  onNavigatePrevious?: () => void;
+  onNavigateNext?: () => void;
 }
 
 interface MarkdownToken {
@@ -26,7 +29,10 @@ interface MarkdownToken {
 const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
   content,
   title,
+  currentDate,
   onExit,
+  onNavigatePrevious,
+  onNavigateNext,
 }) => {
   const [offset, setOffset] = useState(0);
 
@@ -50,6 +56,20 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
       return;
     }
 
+    // Navigation keys
+    if (key.leftArrow || input === "h") {
+      if (onNavigatePrevious) {
+        onNavigatePrevious();
+        return;
+      }
+    } else if (key.rightArrow || input === "l") {
+      if (onNavigateNext) {
+        onNavigateNext();
+        return;
+      }
+    }
+
+    // Scrolling keys
     if (key.upArrow || input === "k") {
       setOffset((prev) => Math.max(0, prev - 1));
     } else if (key.downArrow || input === "j") {
@@ -451,6 +471,17 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
         <Box marginBottom={1}>
           <Text color="blue" bold underline>
             {title}
+            {currentDate && (
+              <Text color="cyan">
+                {" "}
+                ({currentDate.toLocaleDateString('en-US', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })})
+              </Text>
+            )}
           </Text>
         </Box>
       )}
@@ -462,8 +493,10 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
       <Box marginTop={1}>
         <Text color="gray" dimColor>
           {hasMore && "-- More -- "}
-          {tokens.length > 0 && `(${scrollPercentage}% scrolled) `}| ↑↓/j/k:
-          scroll | g/G: top/bottom | q/ESC: exit
+          {tokens.length > 0 && `(${scrollPercentage}% scrolled) `}|
+          {onNavigatePrevious && " ←/h: prev day "}
+          {onNavigateNext && " →/l: next day | "}
+          ↑↓/j/k: scroll | g/G: top/bottom | q/ESC: exit
         </Text>
       </Box>
     </Box>

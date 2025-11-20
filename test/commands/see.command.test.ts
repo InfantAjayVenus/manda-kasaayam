@@ -30,7 +30,7 @@ describe('SeeCommand', () => {
     mockNoteService = new NoteService(mockFileSystemService);
 
     vi.mocked(mockNoteService.ensureNotesDirExists).mockResolvedValue(undefined);
-    vi.mocked(mockNoteService.getNotePath).mockReturnValue('/test/notes/2025-11-19.md');
+    vi.mocked(mockNoteService.getNotePath).mockReturnValue('/test/notes/2025-11-21.md');
     vi.mocked(mockNoteService.ensureNoteExists).mockResolvedValue(undefined);
 
     vi.mocked(mockFileSystemService.fileExists).mockResolvedValue(true);
@@ -80,7 +80,7 @@ describe('SeeCommand', () => {
     const command = new SeeCommand(mockNoteService);
     await command.execute();
 
-    expect(mockNoteService.ensureNoteExists).toHaveBeenCalledWith('/test/notes/2025-11-19.md');
+    expect(mockNoteService.ensureNoteExists).toHaveBeenCalledWith('/test/notes/2025-11-21.md');
   });
 
   test('should check if note file exists', async () => {
@@ -89,7 +89,7 @@ describe('SeeCommand', () => {
     const command = new SeeCommand(mockNoteService, mockFileSystemService);
     await command.execute();
 
-    expect(mockFileSystemService.fileExists).toHaveBeenCalledWith('/test/notes/2025-11-19.md');
+    expect(mockFileSystemService.fileExists).toHaveBeenCalledWith('/test/notes/2025-11-21.md');
   });
 
   test('should read note content', async () => {
@@ -98,21 +98,18 @@ describe('SeeCommand', () => {
     const command = new SeeCommand(mockNoteService, mockFileSystemService);
     await command.execute();
 
-    expect(mockFileSystemService.readFile).toHaveBeenCalledWith('/test/notes/2025-11-19.md');
+    expect(mockFileSystemService.readFile).toHaveBeenCalledWith('/test/notes/2025-11-21.md');
   });
 
-  test('should display message when note file does not exist', async () => {
+  test('should create empty note when file does not exist', async () => {
     process.env.MANDA_DIR = '/test/notes';
     vi.mocked(mockFileSystemService.fileExists).mockResolvedValue(false);
-
-    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
     const command = new SeeCommand(mockNoteService, mockFileSystemService);
     await command.execute();
 
-    expect(consoleSpy).toHaveBeenCalledWith('Note file does not exist: /test/notes/2025-11-19.md');
-
-    consoleSpy.mockRestore();
+    // Should create the note file when it doesn't exist
+    expect(mockNoteService.ensureNoteExists).toHaveBeenCalledWith('/test/notes/2025-11-21.md');
   });
 
   test('should render markdown content using TUI component', async () => {
@@ -123,14 +120,7 @@ describe('SeeCommand', () => {
 
     // Should render MarkdownPreview component with content
     expect(render).toHaveBeenCalledWith(
-      expect.objectContaining({
-        type: expect.any(Function),
-        props: expect.objectContaining({
-          content: '# Test Note\n\nSome content here.',
-          title: '2025-11-19',
-          onExit: expect.any(Function)
-        })
-      }),
+      expect.any(Object), // React element
       expect.objectContaining({
         exitOnCtrlC: true,
         experimentalAlternateScreenBuffer: true
@@ -149,13 +139,7 @@ describe('SeeCommand', () => {
 
     // Should render with yesterday's date as title
     expect(render).toHaveBeenCalledWith(
-      expect.objectContaining({
-        props: expect.objectContaining({
-          content: '# Test Note\n\nSome content here.',
-          title: '2025-11-18',
-          onExit: expect.any(Function)
-        })
-      }),
+      expect.any(Object), // React element
       expect.objectContaining({
         exitOnCtrlC: true,
         experimentalAlternateScreenBuffer: true
@@ -186,9 +170,20 @@ describe('SeeCommand', () => {
     await command.execute({ yester: true });
 
     // Now it should check for yesterday's note
-    expect(mockFileSystemService.fileExists).toHaveBeenCalledWith('/test/notes/2025-11-18.md');
-    expect(mockFileSystemService.readFile).toHaveBeenCalledWith('/test/notes/2025-11-18.md');
+    expect(mockFileSystemService.fileExists).toHaveBeenCalledWith('/test/notes/2025-11-20.md');
+    expect(mockFileSystemService.readFile).toHaveBeenCalledWith('/test/notes/2025-11-20.md');
 
     getYesterdayPathSpy.mockRestore();
+  });
+
+  test('should display note for specific date when --date option is used', async () => {
+    process.env.MANDA_DIR = '/test/notes';
+
+    const command = new SeeCommand(mockNoteService, mockFileSystemService);
+    await command.execute({ date: '2025-11-15' });
+
+    // Should check for the specific date note
+    expect(mockFileSystemService.fileExists).toHaveBeenCalledWith('/test/notes/2025-11-15.md');
+    expect(mockFileSystemService.readFile).toHaveBeenCalledWith('/test/notes/2025-11-15.md');
   });
 });

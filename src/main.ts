@@ -32,8 +32,9 @@ program
 // See command: preview notes
 program
   .command('see')
-  .description('Preview today\'s note')
+  .description('Preview notes with navigation')
   .option('--yester', 'Preview yesterday\'s note instead')
+  .option('--date <date>', 'Preview note for specific date (YYYY-MM-DD format)')
   .action(async (options) => {
     const seeCommand = new SeeCommand();
     await seeCommand.execute(options);
