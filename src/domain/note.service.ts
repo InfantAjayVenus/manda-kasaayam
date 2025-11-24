@@ -42,10 +42,10 @@ export class NoteService {
       return "";
     }
 
-    // Format the tasks with headers
+    // Format the tasks with links to source notes
     let content = "";
     for (const [date, tasks] of incompleteTasks) {
-      content += `## ${date}\n\n`;
+      content += `[${date}](${date}.md)\n\n`;
       for (const task of tasks) {
         content += `${task}\n`;
       }

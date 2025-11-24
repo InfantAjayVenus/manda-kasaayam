@@ -76,7 +76,7 @@ describe("NoteService", () => {
       );
       expect(mockFileSystemService.writeFile).toHaveBeenCalledWith(
         "/notes/2025-11-19.md",
-        "## 2025-11-18\n\n- [ ] Incomplete task\n\n",
+        "[2025-11-18](2025-11-18.md)\n\n- [ ] Incomplete task\n\n",
       );
     });
 
@@ -129,7 +129,7 @@ Some notes here.`);
 
       const result = await (service as any).generateNoteWithIncompleteTasks("/notes/2025-11-19.md");
 
-      expect(result).toContain("## 2025-11-18");
+      expect(result).toContain("[2025-11-18](2025-11-18.md)");
       expect(result).toContain("- [ ] Incomplete task 1");
       expect(result).toContain("- [ ] Incomplete task 2");
       expect(result).not.toContain("- [x] Completed task");
