@@ -50,8 +50,20 @@ describe("NoteService", () => {
   });
 
   describe("ensureNoteExists", () => {
-    test("should create note file if it does not exist", async () => {
-      vi.mocked(mockFileSystemService.fileExists).mockResolvedValue(false);
+    test("should create note file with incomplete tasks if it does not exist and is today's note", async () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date("2025-11-19T10:00:00Z"));
+
+      vi.mocked(mockFileSystemService.fileExists).mockImplementation(async (path: string) => {
+        if (path === "/notes/2025-11-19.md") return false;
+        if (path === "/notes/2025-11-18.md") return true;
+        return false;
+      });
+      vi.mocked(mockFileSystemService.readFile).mockResolvedValue(`# 2025-11-18
+
+## Tasks
+- [ ] Incomplete task
+`);
       vi.mocked(mockFileSystemService.writeFile).mockResolvedValue(undefined);
 
       await service.ensureNoteExists("/notes/2025-11-19.md");
@@ -59,8 +71,29 @@ describe("NoteService", () => {
       expect(mockFileSystemService.fileExists).toHaveBeenCalledWith(
         "/notes/2025-11-19.md",
       );
+      expect(mockFileSystemService.fileExists).toHaveBeenCalledWith(
+        "/notes/2025-11-18.md",
+      );
       expect(mockFileSystemService.writeFile).toHaveBeenCalledWith(
         "/notes/2025-11-19.md",
+        "## 2025-11-18\n\n- [ ] Incomplete task\n\n",
+      );
+    });
+
+    test("should create empty note file if it does not exist and is not today's note", async () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date("2025-11-19T10:00:00Z"));
+
+      vi.mocked(mockFileSystemService.fileExists).mockResolvedValue(false);
+      vi.mocked(mockFileSystemService.writeFile).mockResolvedValue(undefined);
+
+      await service.ensureNoteExists("/notes/2025-11-18.md");
+
+      expect(mockFileSystemService.fileExists).toHaveBeenCalledWith(
+        "/notes/2025-11-18.md",
+      );
+      expect(mockFileSystemService.writeFile).toHaveBeenCalledWith(
+        "/notes/2025-11-18.md",
         "",
       );
     });
@@ -74,6 +107,104 @@ describe("NoteService", () => {
         "/notes/2025-11-19.md",
       );
       expect(mockFileSystemService.writeFile).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("generateNoteWithIncompleteTasks", () => {
+    test("should generate note content with incomplete tasks from yesterday's note", async () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date("2025-11-19T10:00:00Z"));
+
+      // Mock yesterday's note with incomplete tasks
+      vi.mocked(mockFileSystemService.fileExists).mockResolvedValue(true);
+      vi.mocked(mockFileSystemService.readFile).mockResolvedValue(`# 2025-11-18
+
+## Tasks
+- [x] Completed task
+- [ ] Incomplete task 1
+- [ ] Incomplete task 2
+
+## Notes
+Some notes here.`);
+
+      const result = await (service as any).generateNoteWithIncompleteTasks("/notes/2025-11-19.md");
+
+      expect(result).toContain("## 2025-11-18");
+      expect(result).toContain("- [ ] Incomplete task 1");
+      expect(result).toContain("- [ ] Incomplete task 2");
+      expect(result).not.toContain("- [x] Completed task");
+    });
+
+    test("should return empty string when yesterday's note has no incomplete tasks", async () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date("2025-11-19T10:00:00Z"));
+
+      vi.mocked(mockFileSystemService.fileExists).mockResolvedValue(true);
+      vi.mocked(mockFileSystemService.readFile).mockResolvedValue(`# 2025-11-18
+
+## Tasks
+- [x] Completed task 1
+- [x] Completed task 2
+
+## Notes
+Some notes.`);
+
+      const result = await (service as any).generateNoteWithIncompleteTasks("/notes/2025-11-19.md");
+
+      expect(result).toBe("");
+    });
+
+    test("should return empty string when yesterday's note does not exist", async () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date("2025-11-19T10:00:00Z"));
+
+      vi.mocked(mockFileSystemService.fileExists).mockResolvedValue(false);
+
+      const result = await (service as any).generateNoteWithIncompleteTasks("/notes/2025-11-19.md");
+
+      expect(result).toBe("");
+    });
+  });
+
+  describe("extractIncompleteTasks", () => {
+    test("should extract incomplete tasks from markdown content", () => {
+      const content = `# Note
+
+## Tasks
+- [x] Completed task
+- [ ] Incomplete task 1
+- [ ] Incomplete task 2
+  - [ ] Nested incomplete task
+
+## Notes
+Some notes here.
+
+- [ ] Another incomplete task
+`;
+
+      const result = (service as any).extractIncompleteTasks(content);
+
+      expect(result).toEqual([
+        "- [ ] Incomplete task 1",
+        "- [ ] Incomplete task 2",
+        "- [ ] Nested incomplete task",
+        "- [ ] Another incomplete task"
+      ]);
+    });
+
+    test("should return empty array when no incomplete tasks", () => {
+      const content = `# Note
+
+## Tasks
+- [x] Completed task 1
+- [x] Completed task 2
+
+## Notes
+Some notes.`;
+
+      const result = (service as any).extractIncompleteTasks(content);
+
+      expect(result).toEqual([]);
     });
   });
 

@@ -20,8 +20,84 @@ export class NoteService {
   async ensureNoteExists(notePath: string): Promise<void> {
     const exists = await this.fileSystemService.fileExists(notePath);
     if (!exists) {
-      await this.fileSystemService.writeFile(notePath, "");
+      // Check if this is today's note
+      const fileName = path.basename(notePath);
+      const todayFileName = this.getTodayFileName();
+
+      let content = "";
+      if (fileName === todayFileName) {
+        // For today's note, include incomplete tasks from previous notes
+        content = await this.generateNoteWithIncompleteTasks(notePath);
+      }
+
+      await this.fileSystemService.writeFile(notePath, content);
     }
+  }
+
+  private async generateNoteWithIncompleteTasks(todayNotePath: string): Promise<string> {
+    const notesDir = path.dirname(todayNotePath);
+    const incompleteTasks = await this.collectIncompleteTasksFromPreviousNotes(notesDir);
+
+    if (incompleteTasks.length === 0) {
+      return "";
+    }
+
+    // Format the tasks with headers
+    let content = "";
+    for (const [date, tasks] of incompleteTasks) {
+      content += `## ${date}\n\n`;
+      for (const task of tasks) {
+        content += `${task}\n`;
+      }
+      content += "\n";
+    }
+
+    return content;
+  }
+
+  private async collectIncompleteTasksFromPreviousNotes(notesDir: string): Promise<Array<[string, string[]]>> {
+    // Only collect from yesterday's note
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    yesterday.setHours(0, 0, 0, 0);
+
+    const yesterdayFileName = `${yesterday.getFullYear()}-${String(yesterday.getMonth() + 1).padStart(2, '0')}-${String(yesterday.getDate()).padStart(2, '0')}.md`;
+    const yesterdayNotePath = path.join(notesDir, yesterdayFileName);
+
+    const result: Array<[string, string[]]> = [];
+
+    try {
+      const exists = await this.fileSystemService.fileExists(yesterdayNotePath);
+      if (exists) {
+        const content = await this.fileSystemService.readFile(yesterdayNotePath);
+        const incompleteTasks = this.extractIncompleteTasks(content);
+
+        if (incompleteTasks.length > 0) {
+          const dateStr = `${yesterday.getFullYear()}-${String(yesterday.getMonth() + 1).padStart(2, '0')}-${String(yesterday.getDate()).padStart(2, '0')}`;
+          result.push([dateStr, incompleteTasks]);
+        }
+      }
+    } catch (error) {
+      // If there's an error reading yesterday's note, just skip it
+      // This ensures the note creation doesn't fail
+    }
+
+    return result;
+  }
+
+  private extractIncompleteTasks(content: string): string[] {
+    const lines = content.split('\n');
+    const incompleteTasks: string[] = [];
+
+    for (const line of lines) {
+      // Match incomplete task list items: - [ ] task text
+      const taskMatch = line.match(/^\s*-\s*\[\s*\]\s*(.+)$/);
+      if (taskMatch) {
+        incompleteTasks.push(`- [ ] ${taskMatch[1].trim()}`);
+      }
+    }
+
+    return incompleteTasks;
   }
 
   async ensureNotesDirExists(notesDir: string): Promise<void> {
