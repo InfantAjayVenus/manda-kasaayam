@@ -1,6 +1,7 @@
 import { BaseCommand } from './base.command.js';
 import { NoteService } from '../domain/note.service.js';
 import { FileSystemService } from '../services/file-system.service.js';
+import { EditorService } from '../services/editor.service.js';
 import { render } from 'ink';
 import React from 'react';
 import MarkdownPreview from '../components/MarkdownPreview.js';
@@ -12,10 +13,12 @@ export interface SeeOptions {
 
 export class SeeCommand extends BaseCommand {
   private fileSystemService: FileSystemService;
+  private editorService: EditorService;
 
-  constructor(noteService?: NoteService, fileSystemService?: FileSystemService) {
+  constructor(noteService?: NoteService, fileSystemService?: FileSystemService, editorService?: EditorService) {
     super(noteService);
     this.fileSystemService = fileSystemService || new FileSystemService();
+    this.editorService = editorService || new EditorService();
   }
 
   async execute(options: SeeOptions = {}): Promise<void> {
@@ -64,6 +67,20 @@ export class SeeCommand extends BaseCommand {
       }
     };
 
+    const onEdit = async () => {
+      const today = new Date();
+      const isToday = currentDate.toDateString() === today.toDateString();
+
+      if (isToday) {
+        // Open today's note in editor
+        const notePath = this.getNotePathForDate(currentDate);
+        await this.editorService.openFile(notePath);
+      } else {
+        // Show message for old notes
+        console.log('Old notes cannot be edited');
+      }
+    };
+
     const notePath = this.getNotePathForDate(currentDate);
     const title = this.formatDateForTitle(currentDate);
 
@@ -79,7 +96,7 @@ export class SeeCommand extends BaseCommand {
     }
 
     // Display the content using TUI markdown preview with navigation
-    await this.displayMarkdownWithTUINavigation(content, title, currentDate, navigatePrevious, navigateNext);
+    await this.displayMarkdownWithTUINavigation(content, title, currentDate, navigatePrevious, navigateNext, onEdit);
   }
 
   private getYesterdayDate(): Date {
@@ -214,7 +231,8 @@ export class SeeCommand extends BaseCommand {
     title: string,
     currentDate: Date,
     navigatePrevious: () => Promise<void>,
-    navigateNext: () => Promise<void>
+    navigateNext: () => Promise<void>,
+    onEdit?: () => Promise<void>
   ): Promise<void> {
     // Create and render TUI component with navigation
     const { waitUntilExit } = render(
@@ -229,7 +247,8 @@ export class SeeCommand extends BaseCommand {
           }
         },
         onNavigatePrevious: navigatePrevious,
-        onNavigateNext: navigateNext
+        onNavigateNext: navigateNext,
+        onEdit
       }),
       {
         exitOnCtrlC: true,

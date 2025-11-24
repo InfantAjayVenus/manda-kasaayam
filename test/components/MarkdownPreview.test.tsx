@@ -493,3 +493,48 @@ That's all with rich formatting!
   expect(lastFrame()).toContain('Conclusion');
   expect(lastFrame()).toContain('(https://github.com)');
 });
+
+test('MarkdownPreview should show edit hint when onEdit callback is provided', () => {
+  const content = '# Test Note';
+  const onEdit = vi.fn();
+
+  const { lastFrame } = render(
+    <MarkdownPreview
+      content={content}
+      title="2025-11-21"
+      onEdit={onEdit}
+    />
+  );
+
+  expect(lastFrame()).toContain('e: edit');
+});
+
+test('MarkdownPreview should not show edit hint when onEdit callback is not provided', () => {
+  const content = '# Test Note';
+
+  const { lastFrame } = render(
+    <MarkdownPreview
+      content={content}
+      title="2025-11-21"
+    />
+  );
+
+  expect(lastFrame()).not.toContain('e: edit');
+});
+
+test('MarkdownPreview should call onEdit callback when e key is pressed', () => {
+  const content = '# Test Note';
+  const onEdit = vi.fn();
+
+  const { stdin } = render(
+    <MarkdownPreview
+      content={content}
+      title="2025-11-21"
+      onEdit={onEdit}
+    />
+  );
+
+  // Test 'e' key press
+  stdin.write('e');
+  expect(onEdit).toHaveBeenCalledTimes(1);
+});

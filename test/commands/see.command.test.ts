@@ -2,10 +2,12 @@ import { test, expect, describe, vi, beforeEach, afterEach } from 'vitest';
 import { SeeCommand } from '../../src/commands/see.command.js';
 import { NoteService } from '../../src/domain/note.service.js';
 import { FileSystemService } from '../../src/services/file-system.service.js';
+import { EditorService } from '../../src/services/editor.service.js';
 import { render } from 'ink';
 
 vi.mock('../../src/domain/note.service.js');
 vi.mock('../../src/services/file-system.service.js');
+vi.mock('../../src/services/editor.service.js');
 vi.mock('ink', () => ({
   render: vi.fn(),
   useStdin: vi.fn(() => ({ stdin: null, setRawMode: vi.fn() }))
@@ -23,11 +25,13 @@ const mockExit = vi.spyOn(process, 'exit').mockImplementation(() => {
 describe('SeeCommand', () => {
   let mockNoteService: NoteService;
   let mockFileSystemService: FileSystemService;
+  let mockEditorService: EditorService;
   let originalMandaDir: string | undefined;
 
   beforeEach(() => {
     mockFileSystemService = new FileSystemService();
     mockNoteService = new NoteService(mockFileSystemService);
+    mockEditorService = new EditorService();
 
     vi.mocked(mockNoteService.ensureNotesDirExists).mockResolvedValue(undefined);
     vi.mocked(mockNoteService.getNotePath).mockReturnValue('/test/notes/2025-11-24.md');
@@ -36,6 +40,8 @@ describe('SeeCommand', () => {
     vi.mocked(mockFileSystemService.fileExists).mockResolvedValue(true);
     vi.mocked(mockFileSystemService.readFile).mockResolvedValue('# Test Note\n\nSome content here.');
     vi.mocked(mockFileSystemService.listDirectory).mockResolvedValue([]);
+
+    vi.mocked(mockEditorService.openFile).mockResolvedValue(undefined);
 
     vi.mocked(render).mockImplementation((element: any) => {
       // Simulate calling onExit after a short delay to resolve the promise
@@ -62,14 +68,14 @@ describe('SeeCommand', () => {
   test('should throw error if MANDA_DIR is not set', async () => {
     delete process.env.MANDA_DIR;
 
-    const command = new SeeCommand(mockNoteService);
+    const command = new SeeCommand(mockNoteService, undefined, mockEditorService);
     await expect(command.execute()).rejects.toThrow('MANDA_DIR environment variable is not set');
   });
 
   test('should ensure notes directory exists', async () => {
     process.env.MANDA_DIR = '/test/notes';
 
-    const command = new SeeCommand(mockNoteService);
+    const command = new SeeCommand(mockNoteService, undefined, mockEditorService);
     await command.execute();
 
     expect(mockNoteService.ensureNotesDirExists).toHaveBeenCalledWith('/test/notes');
@@ -78,7 +84,7 @@ describe('SeeCommand', () => {
   test('should ensure note file exists', async () => {
     process.env.MANDA_DIR = '/test/notes';
 
-    const command = new SeeCommand(mockNoteService);
+    const command = new SeeCommand(mockNoteService, undefined, mockEditorService);
     await command.execute();
 
     expect(mockNoteService.ensureNoteExists).toHaveBeenCalledWith('/test/notes/2025-11-24.md');
@@ -87,7 +93,7 @@ describe('SeeCommand', () => {
   test('should check if note file exists', async () => {
     process.env.MANDA_DIR = '/test/notes';
 
-    const command = new SeeCommand(mockNoteService, mockFileSystemService);
+    const command = new SeeCommand(mockNoteService, mockFileSystemService, mockEditorService);
     await command.execute();
 
     expect(mockFileSystemService.fileExists).toHaveBeenCalledWith('/test/notes/2025-11-24.md');
@@ -96,7 +102,7 @@ describe('SeeCommand', () => {
   test('should read note content', async () => {
     process.env.MANDA_DIR = '/test/notes';
 
-    const command = new SeeCommand(mockNoteService, mockFileSystemService);
+    const command = new SeeCommand(mockNoteService, mockFileSystemService, mockEditorService);
     await command.execute();
 
     expect(mockFileSystemService.readFile).toHaveBeenCalledWith('/test/notes/2025-11-24.md');
@@ -106,7 +112,7 @@ describe('SeeCommand', () => {
     process.env.MANDA_DIR = '/test/notes';
     vi.mocked(mockFileSystemService.fileExists).mockResolvedValue(false);
 
-    const command = new SeeCommand(mockNoteService, mockFileSystemService);
+    const command = new SeeCommand(mockNoteService, mockFileSystemService, mockEditorService);
     await command.execute();
 
     // Should create the note file when it doesn't exist
@@ -116,7 +122,7 @@ describe('SeeCommand', () => {
   test('should render markdown content using TUI component', async () => {
     process.env.MANDA_DIR = '/test/notes';
 
-    const command = new SeeCommand(mockNoteService, mockFileSystemService);
+    const command = new SeeCommand(mockNoteService, mockFileSystemService, mockEditorService);
     await command.execute();
 
     // Should render MarkdownPreview component with content
@@ -132,7 +138,7 @@ describe('SeeCommand', () => {
    test('should render yesterday\'s note with correct title', async () => {
     process.env.MANDA_DIR = '/test/notes';
 
-    const command = new SeeCommand(mockNoteService, mockFileSystemService);
+    const command = new SeeCommand(mockNoteService, mockFileSystemService, mockEditorService);
     const getYesterdayPathSpy = vi.spyOn(command as any, 'getYesterdayNotePath')
       .mockReturnValue('/test/notes/2025-11-18.md');
 
@@ -153,7 +159,7 @@ describe('SeeCommand', () => {
   test('should wait for TUI rendering to complete', async () => {
     process.env.MANDA_DIR = '/test/notes';
 
-    const command = new SeeCommand(mockNoteService, mockFileSystemService);
+    const command = new SeeCommand(mockNoteService, mockFileSystemService, mockEditorService);
     await command.execute();
 
     // Test passes if execute completes without throwing
@@ -164,7 +170,7 @@ describe('SeeCommand', () => {
     process.env.MANDA_DIR = '/test/notes';
 
     // Mock getYesterdayNotePath to return a predictable path
-    const command = new SeeCommand(mockNoteService, mockFileSystemService);
+    const command = new SeeCommand(mockNoteService, mockFileSystemService, mockEditorService);
     const getYesterdayPathSpy = vi.spyOn(command as any, 'getYesterdayNotePath')
       .mockReturnValue('/test/notes/2025-11-18.md');
 
@@ -180,7 +186,7 @@ describe('SeeCommand', () => {
   test('should display note for specific date when --date option is used', async () => {
     process.env.MANDA_DIR = '/test/notes';
 
-    const command = new SeeCommand(mockNoteService, mockFileSystemService);
+    const command = new SeeCommand(mockNoteService, mockFileSystemService, mockEditorService);
     await command.execute({ date: '2025-11-15' });
 
     // Should check for the specific date note
@@ -194,7 +200,7 @@ describe('SeeCommand', () => {
     // Mock listDirectory to return some files
     vi.mocked(mockFileSystemService.listDirectory).mockResolvedValue(['2025-11-19.md', '2025-11-20.md', '2025-11-21.md']);
 
-    const command = new SeeCommand(mockNoteService, mockFileSystemService);
+    const command = new SeeCommand(mockNoteService, mockFileSystemService, mockEditorService);
 
     // Mock the render to capture navigation calls
     const navigationCalls: string[] = [];
@@ -238,7 +244,7 @@ describe('SeeCommand', () => {
       return false;
     });
 
-    const command = new SeeCommand(mockNoteService, mockFileSystemService);
+    const command = new SeeCommand(mockNoteService, mockFileSystemService, mockEditorService);
 
     // Spy on displayNoteWithNavigation to track navigation calls
     const navigateSpy = vi.spyOn(command as any, 'displayNoteWithNavigation');
@@ -279,7 +285,7 @@ describe('SeeCommand', () => {
       return false;
     });
 
-    const command = new SeeCommand(mockNoteService, mockFileSystemService);
+    const command = new SeeCommand(mockNoteService, mockFileSystemService, mockEditorService);
 
     // Spy on displayNoteWithNavigation to track navigation calls
     const navigateSpy = vi.spyOn(command as any, 'displayNoteWithNavigation');
@@ -319,7 +325,7 @@ describe('SeeCommand', () => {
       'some-other-file.txt'
     ]);
 
-    const command = new SeeCommand(mockNoteService, mockFileSystemService);
+    const command = new SeeCommand(mockNoteService, mockFileSystemService, mockEditorService);
     const oldestDate = await (command as any).findOldestNote();
 
     expect(oldestDate).toEqual(new Date('2025-11-15T00:00:00'));
@@ -331,10 +337,74 @@ describe('SeeCommand', () => {
     // Mock listDirectory to return no .md files
     vi.mocked(mockFileSystemService.listDirectory).mockResolvedValue(['some-file.txt', 'another-file.json']);
 
-    const command = new SeeCommand(mockNoteService, mockFileSystemService);
+    const command = new SeeCommand(mockNoteService, mockFileSystemService, mockEditorService);
     const oldestDate = await (command as any).findOldestNote();
 
     expect(oldestDate).toBeNull();
+  });
+
+  test('should open editor for today\'s note when e key is pressed', async () => {
+    process.env.MANDA_DIR = '/test/notes';
+
+    const command = new SeeCommand(mockNoteService, mockFileSystemService, mockEditorService);
+
+    // Mock render to capture and call the onEdit function
+    let capturedOnEdit: (() => Promise<void>) | null = null;
+    vi.mocked(render).mockImplementation((element: any) => {
+      if (element?.props?.onEdit) {
+        capturedOnEdit = element.props.onEdit;
+      }
+      if (element?.props?.onExit) {
+        setTimeout(() => element.props.onExit(), 10);
+      }
+      return {
+        waitUntilExit: vi.fn().mockResolvedValue(undefined)
+      } as any;
+    });
+
+    // Execute with today's date (default)
+    await command.execute();
+
+    // Call the captured onEdit function
+    await capturedOnEdit!();
+
+    // Should have opened the editor with today's note path
+    expect(mockEditorService.openFile).toHaveBeenCalledWith('/test/notes/2025-11-24.md');
+  });
+
+  test('should show message when trying to edit old notes', async () => {
+    process.env.MANDA_DIR = '/test/notes';
+
+    const command = new SeeCommand(mockNoteService, mockFileSystemService, mockEditorService);
+
+    // Mock console.log to capture the message
+    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+
+    // Mock render to capture and call the onEdit function
+    let capturedOnEdit: (() => Promise<void>) | null = null;
+    vi.mocked(render).mockImplementation((element: any) => {
+      if (element?.props?.onEdit) {
+        capturedOnEdit = element.props.onEdit;
+      }
+      if (element?.props?.onExit) {
+        setTimeout(() => element.props.onExit(), 10);
+      }
+      return {
+        waitUntilExit: vi.fn().mockResolvedValue(undefined)
+      } as any;
+    });
+
+    // Execute with an old date
+    await command.execute({ date: '2025-11-20' });
+
+    // Call the captured onEdit function
+    await capturedOnEdit!();
+
+    // Should have logged the message and not opened editor
+    expect(consoleSpy).toHaveBeenCalledWith('Old notes cannot be edited');
+    expect(mockEditorService.openFile).not.toHaveBeenCalled();
+
+    consoleSpy.mockRestore();
   });
 
 

@@ -9,6 +9,7 @@ interface MarkdownPreviewProps {
   onExit?: () => void;
   onNavigatePrevious?: () => void;
   onNavigateNext?: () => void;
+  onEdit?: () => void;
 }
 
 interface MarkdownToken {
@@ -33,6 +34,7 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
   onExit,
   onNavigatePrevious,
   onNavigateNext,
+  onEdit,
 }) => {
   const [offset, setOffset] = useState(0);
 
@@ -54,6 +56,14 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
         process.exit(0);
       }
       return;
+    }
+
+    // Edit key
+    if (input === "e") {
+      if (onEdit) {
+        onEdit();
+        return;
+      }
     }
 
     // Navigation keys
@@ -496,6 +506,7 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
           {tokens.length > 0 && `(${scrollPercentage}% scrolled) `}|
           {onNavigatePrevious && " ←/h: prev day "}
           {onNavigateNext && " →/l: next day | "}
+          {onEdit && " e: edit | "}
           ↑↓/j/k: scroll | g/G: top/bottom | q/ESC: exit
         </Text>
       </Box>
