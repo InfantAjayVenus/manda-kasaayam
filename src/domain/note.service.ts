@@ -34,9 +34,13 @@ export class NoteService {
     }
   }
 
-  private async generateNoteWithIncompleteTasks(todayNotePath: string): Promise<string> {
+  private async generateNoteWithIncompleteTasks(
+    todayNotePath: string,
+  ): Promise<string> {
     const notesDir = path.dirname(todayNotePath);
-    const incompleteTasks = await this.collectIncompleteTasksFromPreviousNotes(notesDir);
+    const incompleteTasks = await this.collectIncompleteTasksFromPreviousNotes(
+      notesDir,
+    );
 
     if (incompleteTasks.length === 0) {
       return "";
@@ -58,13 +62,17 @@ export class NoteService {
     return content;
   }
 
-  private async collectIncompleteTasksFromPreviousNotes(notesDir: string): Promise<Array<[string, string[]]>> {
+  private async collectIncompleteTasksFromPreviousNotes(
+    notesDir: string,
+  ): Promise<Array<[string, string[]]>> {
     // Only collect from yesterday's note
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
     yesterday.setHours(0, 0, 0, 0);
 
-    const yesterdayFileName = `${yesterday.getFullYear()}-${String(yesterday.getMonth() + 1).padStart(2, '0')}-${String(yesterday.getDate()).padStart(2, '0')}.md`;
+    const yesterdayFileName = `${yesterday.getFullYear()}-${String(
+      yesterday.getMonth() + 1,
+    ).padStart(2, "0")}-${String(yesterday.getDate()).padStart(2, "0")}.md`;
     const yesterdayNotePath = path.join(notesDir, yesterdayFileName);
 
     const result: Array<[string, string[]]> = [];
@@ -73,8 +81,15 @@ export class NoteService {
     try {
       const exists = await this.fileSystemService.fileExists(yesterdayNotePath);
       if (exists) {
-        const content = await this.fileSystemService.readFile(yesterdayNotePath);
-        await this.extractIncompleteTasksGroupedByDateRecursive(content, notesDir, result, processedDates);
+        const content = await this.fileSystemService.readFile(
+          yesterdayNotePath,
+        );
+        await this.extractIncompleteTasksGroupedByDateRecursive(
+          content,
+          notesDir,
+          result,
+          processedDates,
+        );
       }
     } catch (error) {
       // If there's an error reading yesterday's note, just skip it
@@ -84,18 +99,22 @@ export class NoteService {
     return result;
   }
 
-  private extractIncompleteTasksGroupedByDate(content: string): Array<[string, string[]]> {
-    const lines = content.split('\n');
+  private extractIncompleteTasksGroupedByDate(
+    content: string,
+  ): Array<[string, string[]]> {
+    const lines = content.split("\n");
     const result: Array<[string, string[]]> = [];
 
-    let currentDate = '';
+    let currentDate = "";
     let currentTasks: string[] = [];
 
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
 
       // Check for date link: [YYYY-MM-DD](YYYY-MM-DD.md)
-      const dateLinkMatch = line.match(/^\[(\d{4}-\d{2}-\d{2})\]\((\d{4}-\d{2}-\d{2})\.md\)$/);
+      const dateLinkMatch = line.match(
+        /^\[(\d{4}-\d{2}-\d{2})\]\((\d{4}-\d{2}-\d{2})\.md\)$/,
+      );
       if (dateLinkMatch) {
         // Save previous section if it had tasks
         if (currentDate && currentTasks.length > 0) {
@@ -107,7 +126,7 @@ export class NoteService {
         currentTasks = [];
 
         // Skip the next line if it's empty (the line after the date link)
-        if (i + 1 < lines.length && lines[i + 1].trim() === '') {
+        if (i + 1 < lines.length && lines[i + 1].trim() === "") {
           i++;
         }
         continue;
@@ -130,7 +149,9 @@ export class NoteService {
       const yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
       yesterday.setHours(0, 0, 0, 0);
-      const yesterdayStr = `${yesterday.getFullYear()}-${String(yesterday.getMonth() + 1).padStart(2, '0')}-${String(yesterday.getDate()).padStart(2, '0')}`;
+      const yesterdayStr = `${yesterday.getFullYear()}-${String(
+        yesterday.getMonth() + 1,
+      ).padStart(2, "0")}-${String(yesterday.getDate()).padStart(2, "0")}`;
 
       const allTasks = this.extractIncompleteTasks(content);
       if (allTasks.length > 0) {
@@ -142,21 +163,23 @@ export class NoteService {
   }
 
   private async extractIncompleteTasksGroupedByDateRecursive(
-    content: string, 
-    notesDir: string, 
-    result: Array<[string, string[]]>, 
-    processedDates: Set<string>
+    content: string,
+    notesDir: string,
+    result: Array<[string, string[]]>,
+    processedDates: Set<string>,
   ): Promise<void> {
-    const lines = content.split('\n');
+    const lines = content.split("\n");
 
-    let currentDate = '';
+    let currentDate = "";
     let currentTasks: string[] = [];
 
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
 
       // Check for date link: [YYYY-MM-DD](YYYY-MM-DD.md)
-      const dateLinkMatch = line.match(/^\[(\d{4}-\d{2}-\d{2})\]\((\d{4}-\d{2}-\d{2})\.md\)$/);
+      const dateLinkMatch = line.match(
+        /^\[(\d{4}-\d{2}-\d{2})\]\((\d{4}-\d{2}-\d{2})\.md\)$/,
+      );
       if (dateLinkMatch) {
         // Save previous section if it had tasks
         if (currentDate && currentTasks.length > 0) {
@@ -171,12 +194,21 @@ export class NoteService {
         if (!processedDates.has(currentDate)) {
           processedDates.add(currentDate);
           const linkedFilePath = path.join(notesDir, `${currentDate}.md`);
-          
+
           try {
-            const exists = await this.fileSystemService.fileExists(linkedFilePath);
+            const exists = await this.fileSystemService.fileExists(
+              linkedFilePath,
+            );
             if (exists) {
-              const linkedContent = await this.fileSystemService.readFile(linkedFilePath);
-              await this.extractIncompleteTasksGroupedByDateRecursive(linkedContent, notesDir, result, processedDates);
+              const linkedContent = await this.fileSystemService.readFile(
+                linkedFilePath,
+              );
+              await this.extractIncompleteTasksGroupedByDateRecursive(
+                linkedContent,
+                notesDir,
+                result,
+                processedDates,
+              );
             }
           } catch (error) {
             // Ignore errors reading linked files
@@ -184,7 +216,7 @@ export class NoteService {
         }
 
         // Skip the next line if it's empty (the line after the date link)
-        if (i + 1 < lines.length && lines[i + 1].trim() === '') {
+        if (i + 1 < lines.length && lines[i + 1].trim() === "") {
           i++;
         }
         continue;
@@ -207,7 +239,9 @@ export class NoteService {
       const yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
       yesterday.setHours(0, 0, 0, 0);
-      const yesterdayStr = `${yesterday.getFullYear()}-${String(yesterday.getMonth() + 1).padStart(2, '0')}-${String(yesterday.getDate()).padStart(2, '0')}`;
+      const yesterdayStr = `${yesterday.getFullYear()}-${String(
+        yesterday.getMonth() + 1,
+      ).padStart(2, "0")}-${String(yesterday.getDate()).padStart(2, "0")}`;
 
       const allTasks = this.extractIncompleteTasks(content);
       if (allTasks.length > 0) {
@@ -217,7 +251,7 @@ export class NoteService {
   }
 
   private extractIncompleteTasks(content: string): string[] {
-    const lines = content.split('\n');
+    const lines = content.split("\n");
     const incompleteTasks: string[] = [];
 
     for (const line of lines) {
@@ -361,8 +395,8 @@ export class NoteService {
       // Add separator line at the end of the document
       let updatedContent = afterContent;
 
-      // Check if separator already exists anywhere in the content
-      if (!updatedContent.includes("---")) {
+      // Check if content already ends with separator
+      if (!updatedContent.endsWith("\n---\n\n")) {
         // Ensure content ends with exactly one newline, then add separator
         if (!updatedContent.endsWith("\n")) {
           updatedContent += "\n";
@@ -370,7 +404,7 @@ export class NoteService {
         updatedContent += "\n---\n\n";
         await this.fileSystemService.writeFile(notePath, updatedContent);
       }
-      // If separator already exists, no need to write
+      // If separator already exists at the end, no need to write
     }
   }
 }

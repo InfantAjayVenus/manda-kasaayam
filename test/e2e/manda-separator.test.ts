@@ -211,11 +211,49 @@ describe("Manda Command Separator Integration Tests", () => {
     expect(finalContent).not.toContain("---");
   });
 
-  test("should not add duplicate separator when already present", async () => {
+  test("should not add duplicate separator when already present at end", async () => {
+    // Create initial note with timestamp and separator at end
+    await writeNoteFile("# Meeting Notes\n[10:30]\nDiscussion\n\n---\n\n");
+
+    // Test post-processing directly - no new content added
+    const beforeContent = await readNoteFile();
+    const afterContent = "# Meeting Notes\n[10:30]\nDiscussion\n\n---\n\n";
+
+    const noteService = new (
+      await import("../../src/domain/note.service.js")
+    ).NoteService(
+      new (
+        await import("../../src/services/file-system.service.js")
+      ).FileSystemService(),
+    );
+
+    // Verify hasContentAddedBelowLastTimestamp returns false (no new content)
+    const hasContent = (noteService as any).hasContentAddedBelowLastTimestamp(
+      beforeContent,
+      afterContent,
+    );
+    expect(hasContent).toBe(false);
+
+    await noteService.postProcessAfterEdit(
+      path.join(notesDir, getTodayFileName()),
+      beforeContent,
+      afterContent,
+    );
+
+    const finalContent = await readNoteFile();
+    expect(finalContent).toContain("# Meeting Notes");
+    expect(finalContent).toContain("[10:30]");
+    expect(finalContent).toContain("Discussion");
+    // Should have only one separator
+    const separatorCount = (finalContent.match(/---/g) || []).length;
+    expect(separatorCount).toBe(1);
+  });
+
+  test("should add new separator when content is added after existing separator", async () => {
     // Create initial note with timestamp and separator
     await writeNoteFile("# Meeting Notes\n[10:30]\nDiscussion\n\n---\n\n");
 
-    // Test post-processing directly
+    // Test post-processing directly - add new content after separator
     const beforeContent = await readNoteFile();
     const afterContent =
       "# Meeting Notes\n[10:30]\nDiscussion\n\n---\n\nAdditional notes";
@@ -229,7 +267,7 @@ describe("Manda Command Separator Integration Tests", () => {
       ).FileSystemService(),
     );
 
-    // Verify hasContentAddedBelowLastTimestamp returns true but separator already exists
+    // Verify hasContentAddedBelowLastTimestamp returns true
     const hasContent = (noteService as any).hasContentAddedBelowLastTimestamp(
       beforeContent,
       afterContent,
@@ -247,9 +285,10 @@ describe("Manda Command Separator Integration Tests", () => {
     expect(finalContent).toContain("[10:30]");
     expect(finalContent).toContain("Discussion");
     expect(finalContent).toContain("Additional notes");
-    // Should have only one separator (the existing one)
+    // Should have two separators now
     const separatorCount = (finalContent.match(/---/g) || []).length;
-    expect(separatorCount).toBe(1);
+    expect(separatorCount).toBe(2);
+    expect(finalContent).toMatch(/\n\n---\n\n$/); // Should end with separator
   });
 
   test("should handle complex note structure correctly", async () => {

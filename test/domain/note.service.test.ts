@@ -741,16 +741,31 @@ Some notes.`;
       expect(mockFileSystemService.writeFile).not.toHaveBeenCalled();
     });
 
-    test("should not add duplicate separator when already present", async () => {
-      const before = "# Note\n[10:30]";
-      const after = "# Note\n[10:30]\nSome new content\n---\n\n";
+    test("should not add separator when already present at end", async () => {
+      const before = "# Note\n[10:30]\nSome content\n---\n\n";
+      const after = "# Note\n[10:30]\nSome content\n---\n\n";
 
       vi.mocked(mockFileSystemService.writeFile).mockResolvedValue(undefined);
 
       await service.postProcessAfterEdit("/test/note.md", before, after);
 
-      // Content was added but separator already exists, so no modification needed
+      // No new content added and separator already at end, so no modification needed
       expect(mockFileSystemService.writeFile).not.toHaveBeenCalled();
+    });
+
+    test("should add separator when content is added after existing separator", async () => {
+      const before = "# Note\n[10:30]\nSome content\n---\n\n";
+      const after = "# Note\n[10:30]\nSome content\n---\n\nAdditional content";
+
+      vi.mocked(mockFileSystemService.writeFile).mockResolvedValue(undefined);
+
+      await service.postProcessAfterEdit("/test/note.md", before, after);
+
+      // Content was added after existing separator, so new separator should be added
+      expect(mockFileSystemService.writeFile).toHaveBeenCalledWith(
+        "/test/note.md",
+        "# Note\n[10:30]\nSome content\n---\n\nAdditional content\n\n---\n\n",
+      );
     });
 
     test("should add separator when content does not end with newline", async () => {
