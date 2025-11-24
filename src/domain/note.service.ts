@@ -52,6 +52,9 @@ export class NoteService {
       content += "\n";
     }
 
+    // Add separator after old tasks
+    content += "---\n\n";
+
     return content;
   }
 

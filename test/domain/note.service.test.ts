@@ -76,7 +76,7 @@ describe("NoteService", () => {
       );
       expect(mockFileSystemService.writeFile).toHaveBeenCalledWith(
         "/notes/2025-11-19.md",
-        "[2025-11-18](2025-11-18.md)\n\n- [ ] Incomplete task\n\n",
+        "[2025-11-18](2025-11-18.md)\n\n- [ ] Incomplete task\n\n---\n\n",
       );
     });
 
@@ -133,6 +133,7 @@ Some notes here.`);
       expect(result).toContain("- [ ] Incomplete task 1");
       expect(result).toContain("- [ ] Incomplete task 2");
       expect(result).not.toContain("- [x] Completed task");
+      expect(result).toContain("---");
     });
 
     test("should preserve existing date links when extracting tasks", async () => {
@@ -173,6 +174,7 @@ Some notes here.`);
       expect(result).toContain("- [ ] Task from yesterday");
       expect(result).not.toContain("- [x] Completed task from yesterday");
       expect(result).toContain("- [ ] Task from three days ago");
+      expect(result).toContain("---");
     });
 
     test("should return empty string when yesterday's note has no incomplete tasks", async () => {
