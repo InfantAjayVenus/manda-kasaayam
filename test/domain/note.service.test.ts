@@ -135,6 +135,46 @@ Some notes here.`);
       expect(result).not.toContain("- [x] Completed task");
     });
 
+    test("should preserve existing date links when extracting tasks", async () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date("2025-11-19T10:00:00Z"));
+
+      // Mock fileExists to return true for any file
+      vi.mocked(mockFileSystemService.fileExists).mockImplementation((filePath: string) => {
+        return Promise.resolve(true);
+      });
+
+      // Mock readFile to return different content based on file path
+      vi.mocked(mockFileSystemService.readFile).mockImplementation((filePath: string) => {
+        if (filePath.includes("2025-11-18.md")) {
+          return Promise.resolve(`# 2025-11-18
+
+[2025-11-17](2025-11-17.md)
+
+- [ ] Task from two days ago
+- [x] Completed task from two days ago
+
+- [ ] Task from yesterday
+- [x] Completed task from yesterday`);
+        } else if (filePath.includes("2025-11-17.md")) {
+          return Promise.resolve(`# 2025-11-17
+
+- [ ] Task from three days ago
+- [x] Completed task from three days ago`);
+        }
+        return Promise.resolve("");
+      });
+
+      const result = await (service as any).generateNoteWithIncompleteTasks("/notes/2025-11-19.md");
+
+      expect(result).toContain("[2025-11-17](2025-11-17.md)");
+      expect(result).toContain("- [ ] Task from two days ago");
+      expect(result).not.toContain("- [x] Completed task from two days ago");
+      expect(result).toContain("- [ ] Task from yesterday");
+      expect(result).not.toContain("- [x] Completed task from yesterday");
+      expect(result).toContain("- [ ] Task from three days ago");
+    });
+
     test("should return empty string when yesterday's note has no incomplete tasks", async () => {
       vi.useFakeTimers();
       vi.setSystemTime(new Date("2025-11-19T10:00:00Z"));
@@ -203,6 +243,67 @@ Some notes here.
 Some notes.`;
 
       const result = (service as any).extractIncompleteTasks(content);
+
+      expect(result).toEqual([]);
+    });
+  });
+
+  describe("extractIncompleteTasksGroupedByDate", () => {
+    test("should extract tasks grouped by date links", () => {
+      const content = `# 2025-11-18
+
+[2025-11-17](2025-11-17.md)
+
+- [ ] Task from two days ago
+- [x] Completed task from two days ago
+
+- [ ] Task from yesterday
+- [x] Completed task from yesterday
+
+[2025-11-16](2025-11-16.md)
+
+- [ ] Task from three days ago`;
+
+      const result = (service as any).extractIncompleteTasksGroupedByDate(content);
+
+      expect(result).toEqual([
+        ["2025-11-17", ["- [ ] Task from two days ago", "- [ ] Task from yesterday"]],
+        ["2025-11-16", ["- [ ] Task from three days ago"]]
+      ]);
+    });
+
+    test("should handle content without date links", () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date("2025-11-19T10:00:00Z"));
+
+      const content = `# 2025-11-18
+
+## Tasks
+- [ ] Task 1
+- [x] Completed task
+
+## Notes
+Some notes.`;
+
+      const result = (service as any).extractIncompleteTasksGroupedByDate(content);
+
+      expect(result).toEqual([
+        ["2025-11-18", ["- [ ] Task 1"]]
+      ]);
+    });
+
+    test("should return empty array when no incomplete tasks", () => {
+      const content = `# Note
+
+[2025-11-17](2025-11-17.md)
+
+- [x] Completed task 1
+- [x] Completed task 2
+
+## Notes
+Some notes.`;
+
+      const result = (service as any).extractIncompleteTasksGroupedByDate(content);
 
       expect(result).toEqual([]);
     });

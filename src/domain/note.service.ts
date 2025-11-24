@@ -65,17 +65,13 @@ export class NoteService {
     const yesterdayNotePath = path.join(notesDir, yesterdayFileName);
 
     const result: Array<[string, string[]]> = [];
+    const processedDates = new Set<string>();
 
     try {
       const exists = await this.fileSystemService.fileExists(yesterdayNotePath);
       if (exists) {
         const content = await this.fileSystemService.readFile(yesterdayNotePath);
-        const incompleteTasks = this.extractIncompleteTasks(content);
-
-        if (incompleteTasks.length > 0) {
-          const dateStr = `${yesterday.getFullYear()}-${String(yesterday.getMonth() + 1).padStart(2, '0')}-${String(yesterday.getDate()).padStart(2, '0')}`;
-          result.push([dateStr, incompleteTasks]);
-        }
+        await this.extractIncompleteTasksGroupedByDateRecursive(content, notesDir, result, processedDates);
       }
     } catch (error) {
       // If there's an error reading yesterday's note, just skip it
@@ -83,6 +79,138 @@ export class NoteService {
     }
 
     return result;
+  }
+
+  private extractIncompleteTasksGroupedByDate(content: string): Array<[string, string[]]> {
+    const lines = content.split('\n');
+    const result: Array<[string, string[]]> = [];
+
+    let currentDate = '';
+    let currentTasks: string[] = [];
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+
+      // Check for date link: [YYYY-MM-DD](YYYY-MM-DD.md)
+      const dateLinkMatch = line.match(/^\[(\d{4}-\d{2}-\d{2})\]\((\d{4}-\d{2}-\d{2})\.md\)$/);
+      if (dateLinkMatch) {
+        // Save previous section if it had tasks
+        if (currentDate && currentTasks.length > 0) {
+          result.push([currentDate, [...currentTasks]]);
+        }
+
+        // Start new section
+        currentDate = dateLinkMatch[1];
+        currentTasks = [];
+
+        // Skip the next line if it's empty (the line after the date link)
+        if (i + 1 < lines.length && lines[i + 1].trim() === '') {
+          i++;
+        }
+        continue;
+      }
+
+      // Look for incomplete tasks
+      const taskMatch = line.match(/^\s*-\s*\[\s*\]\s*(.+)$/);
+      if (taskMatch) {
+        currentTasks.push(`- [ ] ${taskMatch[1].trim()}`);
+      }
+    }
+
+    // Save the last section if it had tasks
+    if (currentDate && currentTasks.length > 0) {
+      result.push([currentDate, currentTasks]);
+    }
+
+    // If no date links were found, treat all tasks as belonging to yesterday
+    if (result.length === 0) {
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      yesterday.setHours(0, 0, 0, 0);
+      const yesterdayStr = `${yesterday.getFullYear()}-${String(yesterday.getMonth() + 1).padStart(2, '0')}-${String(yesterday.getDate()).padStart(2, '0')}`;
+
+      const allTasks = this.extractIncompleteTasks(content);
+      if (allTasks.length > 0) {
+        result.push([yesterdayStr, allTasks]);
+      }
+    }
+
+    return result;
+  }
+
+  private async extractIncompleteTasksGroupedByDateRecursive(
+    content: string, 
+    notesDir: string, 
+    result: Array<[string, string[]]>, 
+    processedDates: Set<string>
+  ): Promise<void> {
+    const lines = content.split('\n');
+
+    let currentDate = '';
+    let currentTasks: string[] = [];
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+
+      // Check for date link: [YYYY-MM-DD](YYYY-MM-DD.md)
+      const dateLinkMatch = line.match(/^\[(\d{4}-\d{2}-\d{2})\]\((\d{4}-\d{2}-\d{2})\.md\)$/);
+      if (dateLinkMatch) {
+        // Save previous section if it had tasks
+        if (currentDate && currentTasks.length > 0) {
+          result.push([currentDate, [...currentTasks]]);
+        }
+
+        // Start new section
+        currentDate = dateLinkMatch[1];
+        currentTasks = [];
+
+        // Recursively process linked date if not already processed
+        if (!processedDates.has(currentDate)) {
+          processedDates.add(currentDate);
+          const linkedFilePath = path.join(notesDir, `${currentDate}.md`);
+          
+          try {
+            const exists = await this.fileSystemService.fileExists(linkedFilePath);
+            if (exists) {
+              const linkedContent = await this.fileSystemService.readFile(linkedFilePath);
+              await this.extractIncompleteTasksGroupedByDateRecursive(linkedContent, notesDir, result, processedDates);
+            }
+          } catch (error) {
+            // Ignore errors reading linked files
+          }
+        }
+
+        // Skip the next line if it's empty (the line after the date link)
+        if (i + 1 < lines.length && lines[i + 1].trim() === '') {
+          i++;
+        }
+        continue;
+      }
+
+      // Look for incomplete tasks
+      const taskMatch = line.match(/^\s*-\s*\[\s*\]\s*(.+)$/);
+      if (taskMatch) {
+        currentTasks.push(`- [ ] ${taskMatch[1].trim()}`);
+      }
+    }
+
+    // Save the last section if it had tasks
+    if (currentDate && currentTasks.length > 0) {
+      result.push([currentDate, currentTasks]);
+    }
+
+    // If no date links were found, treat all tasks as belonging to yesterday
+    if (result.length === 0) {
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      yesterday.setHours(0, 0, 0, 0);
+      const yesterdayStr = `${yesterday.getFullYear()}-${String(yesterday.getMonth() + 1).padStart(2, '0')}-${String(yesterday.getDate()).padStart(2, '0')}`;
+
+      const allTasks = this.extractIncompleteTasks(content);
+      if (allTasks.length > 0) {
+        result.push([yesterdayStr, allTasks]);
+      }
+    }
   }
 
   private extractIncompleteTasks(content: string): string[] {
