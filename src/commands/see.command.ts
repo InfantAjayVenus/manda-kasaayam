@@ -58,12 +58,8 @@ export class SeeCommand extends BaseCommand {
     const navigateNext = async () => {
       const nextDate = this.getNextDate(currentDate);
       if (this.isDateBeforeOrEqualToday(nextDate)) {
-        // Only navigate if the next note already exists (no new files created on horizontal nav)
-        const nextPath = this.getNotePathForDate(nextDate);
-        const existsNext = await this.fileSystemService.fileExists(nextPath);
-        if (existsNext) {
-          await navigateToDate(nextDate);
-        }
+        // Allow navigation to any date before or equal to today, creating the note if needed
+        await navigateToDate(nextDate);
       }
     };
 
@@ -144,8 +140,9 @@ export class SeeCommand extends BaseCommand {
   private isDateBeforeOrEqualToday(date: Date): boolean {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    date.setHours(0, 0, 0, 0);
-    return date <= today;
+    const normalizedDate = new Date(date);
+    normalizedDate.setHours(0, 0, 0, 0);
+    return normalizedDate <= today;
   }
 
   private async findOldestNote(): Promise<Date | null> {

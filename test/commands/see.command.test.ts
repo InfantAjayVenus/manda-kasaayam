@@ -273,7 +273,7 @@ describe('SeeCommand', () => {
     expect(navigateSpy).toHaveBeenCalledWith(new Date('2025-11-21T00:00:00'));
   });
 
-  test('should not navigate to next note if it does not exist', async () => {
+  test('should navigate to next note even if it does not exist (for past dates)', async () => {
     process.env.MANDA_DIR = '/test/notes';
 
     // Mock file system to simulate existing notes
@@ -304,14 +304,14 @@ describe('SeeCommand', () => {
       } as any;
     });
 
-    // Execute with a date that doesn't have a next note
+    // Execute with a date that has a next note that doesn't exist
     await command.execute({ date: '2025-11-20' });
 
     // Call the captured navigateNext function
     await capturedNavigateNext!();
 
-    // Should NOT have navigated (only the initial call should exist)
-    expect(navigateSpy).toHaveBeenCalledTimes(1); // Only the initial call
+    // Should have navigated to the next date even though the note doesn't exist
+    expect(navigateSpy).toHaveBeenCalledWith(new Date('2025-11-21T00:00:00'));
   });
 
   test('should find oldest note correctly', async () => {
@@ -405,6 +405,47 @@ describe('SeeCommand', () => {
     expect(mockEditorService.openFile).not.toHaveBeenCalled();
 
     consoleSpy.mockRestore();
+  });
+
+  test('should navigate to today\'s note even if it does not exist yet', async () => {
+    process.env.MANDA_DIR = '/test/notes';
+
+    // Mock file system to simulate existing notes
+    vi.mocked(mockFileSystemService.fileExists).mockImplementation(async (path: string) => {
+      // Current note exists (yesterday)
+      if (path.includes('2025-11-23.md')) return true;
+      // Today's note doesn't exist yet
+      if (path.includes('2025-11-24.md')) return false;
+      return false;
+    });
+
+    const command = new SeeCommand(mockNoteService, mockFileSystemService, mockEditorService);
+
+    // Spy on displayNoteWithNavigation to track navigation calls
+    const navigateSpy = vi.spyOn(command as any, 'displayNoteWithNavigation');
+
+    // Mock render to capture and call the navigateNext function
+    let capturedNavigateNext: (() => Promise<void>) | null = null;
+    vi.mocked(render).mockImplementation((element: any) => {
+      if (element?.props?.onNavigateNext) {
+        capturedNavigateNext = element.props.onNavigateNext;
+      }
+      if (element?.props?.onExit) {
+        setTimeout(() => element.props.onExit(), 10);
+      }
+      return {
+        waitUntilExit: vi.fn().mockResolvedValue(undefined)
+      } as any;
+    });
+
+    // Execute with yesterday's date
+    await command.execute({ date: '2025-11-23' });
+
+    // Call the captured navigateNext function (should navigate to today)
+    await capturedNavigateNext!();
+
+    // Should have navigated to today's note even though it doesn't exist
+    expect(navigateSpy).toHaveBeenCalledWith(new Date('2025-11-24T00:00:00'));
   });
 
 
