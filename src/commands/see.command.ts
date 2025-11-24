@@ -55,7 +55,12 @@ export class SeeCommand extends BaseCommand {
     const navigateNext = async () => {
       const nextDate = this.getNextDate(currentDate);
       if (this.isDateBeforeOrEqualToday(nextDate)) {
-        await navigateToDate(nextDate);
+        // Only navigate if the next note already exists (no new files created on horizontal nav)
+        const nextPath = this.getNotePathForDate(nextDate);
+        const existsNext = await this.fileSystemService.fileExists(nextPath);
+        if (existsNext) {
+          await navigateToDate(nextDate);
+        }
       }
     };
 

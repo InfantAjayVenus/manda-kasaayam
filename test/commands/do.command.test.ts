@@ -100,7 +100,7 @@ describe('DoCommand', () => {
     const command = new DoCommand(mockNoteService, mockFileSystemService);
     await command.execute();
 
-    expect(consoleSpy).toHaveBeenCalledWith('No tasks found in note: /test/notes/2025-11-21.md');
+    expect(consoleSpy).toHaveBeenCalledWith('No tasks found in note: /test/notes/2025-11-24.md');
 
     consoleSpy.mockRestore();
   });
@@ -133,7 +133,7 @@ describe('DoCommand', () => {
     await command.execute();
 
     // Should create the note file
-    expect(mockNoteService.ensureNoteExists).toHaveBeenCalledWith('/test/notes/2025-11-21.md');
+    expect(mockNoteService.ensureNoteExists).toHaveBeenCalledWith('/test/notes/2025-11-24.md');
   });
 
   test('should parse tasks with headers correctly', async () => {
