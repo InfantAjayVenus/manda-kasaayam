@@ -135,9 +135,11 @@ const TaskList: React.FC<TaskListProps> = ({
         ) : (
           Object.entries(groupedTasks).map(([header, groupTasks]) => (
             <Box key={header} flexDirection="column" marginBottom={1}>
-              <Text color="yellow" bold marginBottom={1}>
-                {header}
-              </Text>
+              <Box marginBottom={1}>
+                <Text color="yellow" bold>
+                  {header}
+                </Text>
+              </Box>
               {groupTasks.map((task) => renderTask(task, tasks.indexOf(task)))}
             </Box>
           ))

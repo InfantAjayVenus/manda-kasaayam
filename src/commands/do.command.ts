@@ -67,13 +67,28 @@ export class DoCommand extends BaseCommand {
     const lines = content.split('\n');
 
     let currentHeader = '';
+    let pendingTimestamp = ''; // Timestamp waiting to be associated with next header
+    let headerTimestamp = ''; // Timestamp associated with the current header
     let taskId = 0;
 
     for (const line of lines) {
+      // Check for timestamps: [HH:MM]
+      const timestampMatch = line.match(/^\[(\d{2}:\d{2})\]$/);
+      if (timestampMatch) {
+        pendingTimestamp = timestampMatch[1];
+        // Reset header when timestamp is encountered
+        currentHeader = '';
+        headerTimestamp = '';
+        continue;
+      }
+
       // Check for headers
       const headerMatch = line.match(/^#{1,6}\s+(.+)$/);
       if (headerMatch) {
         currentHeader = headerMatch[1].trim();
+        // Associate the pending timestamp with this header
+        headerTimestamp = pendingTimestamp;
+        pendingTimestamp = ''; // Clear pending timestamp
         continue;
       }
 
@@ -83,12 +98,25 @@ export class DoCommand extends BaseCommand {
         const [, checkbox, text] = taskMatch;
         const completed = checkbox === 'x';
 
+        // Create header that includes timestamp if there's both a header and associated timestamp
+        let header = '';
+        if (currentHeader && headerTimestamp) {
+          header = `${currentHeader} [${headerTimestamp}]`;
+        } else if (currentHeader) {
+          header = currentHeader;
+        } else {
+          header = 'General';
+        }
+
         tasks.push({
           id: `task-${taskId++}`,
           text: text.trim(),
           completed,
-          header: currentHeader || undefined
+          header: header
         });
+
+        // Clear pending timestamp if a task is encountered before a header
+        pendingTimestamp = '';
       }
     }
 

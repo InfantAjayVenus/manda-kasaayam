@@ -335,4 +335,134 @@ describe('DoCommand', () => {
       })
     );
   });
+
+  test('should group tasks by header and timestamp correctly', async () => {
+    process.env.MANDA_DIR = '/test/notes';
+
+    const content = `# Daily Tasks
+
+[10:30]
+## Morning Tasks
+- [ ] Wake up early
+- [x] Brush teeth
+
+[11:00]
+## Work Tasks
+- [ ] Review pull requests
+- [ ] Update documentation
+
+[12:00]
+- [ ] Have lunch
+
+## Evening Tasks
+- [ ] Go for a walk
+`;
+
+    const command = new DoCommand(mockNoteService, mockFileSystemService);
+    const tasks = command['parseTasksFromMarkdown'](content);
+
+    expect(tasks).toHaveLength(6);
+    expect(tasks).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          text: 'Wake up early',
+          completed: false,
+          header: 'Morning Tasks [10:30]'
+        }),
+        expect.objectContaining({
+          text: 'Brush teeth',
+          completed: true,
+          header: 'Morning Tasks [10:30]'
+        }),
+        expect.objectContaining({
+          text: 'Review pull requests',
+          completed: false,
+          header: 'Work Tasks [11:00]'
+        }),
+        expect.objectContaining({
+          text: 'Update documentation',
+          completed: false,
+          header: 'Work Tasks [11:00]'
+        }),
+        expect.objectContaining({
+          text: 'Have lunch',
+          completed: false,
+          header: 'General'
+        }),
+        expect.objectContaining({
+          text: 'Go for a walk',
+          completed: false,
+          header: 'Evening Tasks'
+        })
+      ])
+    );
+  });
+
+  test('should handle tasks with headers but no timestamps', async () => {
+    process.env.MANDA_DIR = '/test/notes';
+
+    const content = `# Tasks
+
+## Work
+- [ ] Task 1
+- [ ] Task 2
+
+## Personal
+- [ ] Task 3
+`;
+
+    const command = new DoCommand(mockNoteService, mockFileSystemService);
+    const tasks = command['parseTasksFromMarkdown'](content);
+
+    expect(tasks).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          text: 'Task 1',
+          header: 'Work'
+        }),
+        expect.objectContaining({
+          text: 'Task 2',
+          header: 'Work'
+        }),
+        expect.objectContaining({
+          text: 'Task 3',
+          header: 'Personal'
+        })
+      ])
+    );
+  });
+
+  test('should handle tasks with timestamps but no headers', async () => {
+    process.env.MANDA_DIR = '/test/notes';
+
+    const content = `# Tasks
+
+[09:00]
+- [ ] Task 1
+- [ ] Task 2
+
+[10:00]
+- [ ] Task 3
+`;
+
+    const command = new DoCommand(mockNoteService, mockFileSystemService);
+    const tasks = command['parseTasksFromMarkdown'](content);
+
+    expect(tasks).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          text: 'Task 1',
+          header: 'General'
+        }),
+        expect.objectContaining({
+          text: 'Task 2',
+          header: 'General'
+        }),
+        expect.objectContaining({
+          text: 'Task 3',
+          header: 'General'
+        })
+      ])
+    );
+  });
 });
