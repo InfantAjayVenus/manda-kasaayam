@@ -3,7 +3,7 @@ import { render } from 'ink-testing-library';
 import { test, expect, vi } from 'vitest';
 import TaskList, { Task } from '../../src/components/TaskList';
 
-test('TaskList should render tasks with correct status indicators', () => {
+test('TaskList should render tasks with correct status indicators and group by headers', () => {
   const tasks: Task[] = [
     { id: '1', text: 'Task 1', completed: false, header: 'Work' },
     { id: '2', text: 'Task 2', completed: true, header: 'Personal' },
@@ -15,8 +15,27 @@ test('TaskList should render tasks with correct status indicators', () => {
   expect(lastFrame()).toContain('[ ] Task 1');
   expect(lastFrame()).toContain('[✓] Task 2');
   expect(lastFrame()).toContain('[ ] Task 3');
-  expect(lastFrame()).toContain('(Work)');
-  expect(lastFrame()).toContain('(Personal)');
+  expect(lastFrame()).toContain('Work');
+  expect(lastFrame()).toContain('Personal');
+  expect(lastFrame()).toContain('General');
+});
+
+test('TaskList should group multiple tasks under the same header', () => {
+  const tasks: Task[] = [
+    { id: '1', text: 'Task 1', completed: false, header: 'Work' },
+    { id: '2', text: 'Task 2', completed: true, header: 'Work' },
+    { id: '3', text: 'Task 3', completed: false, header: 'Personal' }
+  ];
+
+  const { lastFrame } = render(<TaskList tasks={tasks} />);
+
+  const frame = lastFrame();
+  // Check that Work header appears once and both tasks are under it
+  expect(frame).toContain('Work');
+  expect(frame).toContain('[ ] Task 1');
+  expect(frame).toContain('[✓] Task 2');
+  expect(frame).toContain('Personal');
+  expect(frame).toContain('[ ] Task 3');
 });
 
 test('TaskList should show progress information', () => {

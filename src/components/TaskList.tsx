@@ -27,6 +27,19 @@ const TaskList: React.FC<TaskListProps> = ({
   const [selectedIndex, setSelectedIndex] = useState(0);
   const { exit } = useApp();
 
+  // Group tasks by header
+  const groupedTasks = React.useMemo(() => {
+    const groups: { [header: string]: Task[] } = {};
+    tasks.forEach(task => {
+      const header = task.header || 'General';
+      if (!groups[header]) {
+        groups[header] = [];
+      }
+      groups[header].push(task);
+    });
+    return groups;
+  }, [tasks]);
+
   // Handle keyboard input
   useInput((input, key) => {
     if (input === "q" || key.escape || (key.ctrl && input === "c")) {
@@ -68,13 +81,13 @@ const TaskList: React.FC<TaskListProps> = ({
     }
   });
 
-  const renderTask = useCallback((task: Task, index: number) => {
-    const isSelected = index === selectedIndex;
+  const renderTask = useCallback((task: Task, globalIndex: number) => {
+    const isSelected = globalIndex === selectedIndex;
     const checkbox = task.completed ? "✓" : " ";
     const statusColor = task.completed ? "green" : "red";
 
     return (
-      <Box key={task.id} marginBottom={1}>
+      <Box key={task.id} marginLeft={2} marginBottom={1}>
         <Text color={isSelected ? "cyan" : "white"}>
           {isSelected ? "→ " : "  "}
         </Text>
@@ -85,12 +98,6 @@ const TaskList: React.FC<TaskListProps> = ({
           {" "}
           {task.text}
         </Text>
-        {task.header && (
-          <Text color="blue" dimColor>
-            {" "}
-            ({task.header})
-          </Text>
-        )}
       </Box>
     );
   }, [selectedIndex]);
@@ -126,7 +133,14 @@ const TaskList: React.FC<TaskListProps> = ({
             No tasks found in this note.
           </Text>
         ) : (
-          tasks.map((task, index) => renderTask(task, index))
+          Object.entries(groupedTasks).map(([header, groupTasks]) => (
+            <Box key={header} flexDirection="column" marginBottom={1}>
+              <Text color="yellow" bold marginBottom={1}>
+                {header}
+              </Text>
+              {groupTasks.map((task) => renderTask(task, tasks.indexOf(task)))}
+            </Box>
+          ))
         )}
       </Box>
 
