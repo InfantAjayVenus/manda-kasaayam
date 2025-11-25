@@ -134,3 +134,35 @@ test('TaskList should handle keyboard input without crashing', () => {
   // Should not have crashed and should have called exit
   expect(onExit).toHaveBeenCalled();
 });
+
+test('TaskList should create display-ordered task list for navigation', () => {
+  const tasks: Task[] = [
+    // Note order: Work task first, then Personal tasks
+    { id: '1', text: 'Work Task 1', completed: false, header: 'Work' },
+    { id: '2', text: 'Personal Task 1', completed: false, header: 'Personal' },
+    { id: '3', text: 'Personal Task 2', completed: false, header: 'Personal' },
+    { id: '4', text: 'Work Task 2', completed: false, header: 'Work' }
+  ];
+
+  const { lastFrame } = render(<TaskList tasks={tasks} />);
+
+  // Check that tasks appear in display order: Work tasks first, then Personal tasks
+  const frame = lastFrame();
+  expect(frame).toContain('Work Task 1');
+  expect(frame).toContain('Work Task 2');
+  expect(frame).toContain('Personal Task 1');
+  expect(frame).toContain('Personal Task 2');
+
+  const workTask1Index = frame!.indexOf('Work Task 1');
+  const workTask2Index = frame!.indexOf('Work Task 2');
+  const personalTask1Index = frame!.indexOf('Personal Task 1');
+  const personalTask2Index = frame!.indexOf('Personal Task 2');
+
+  // Work tasks should appear before Personal tasks
+  expect(workTask1Index).toBeLessThan(personalTask1Index);
+  expect(workTask2Index).toBeLessThan(personalTask1Index);
+  
+  // Within each group, tasks should maintain their relative order
+  expect(workTask1Index).toBeLessThan(workTask2Index);
+  expect(personalTask1Index).toBeLessThan(personalTask2Index);
+});

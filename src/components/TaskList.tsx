@@ -40,6 +40,15 @@ const TaskList: React.FC<TaskListProps> = ({
     return groups;
   }, [tasks]);
 
+  // Create display-ordered task list (flattened groups in display order)
+  const displayTasks = React.useMemo(() => {
+    const result: Task[] = [];
+    Object.entries(groupedTasks).forEach(([, groupTasks]) => {
+      result.push(...groupTasks);
+    });
+    return result;
+  }, [groupedTasks]);
+
   // Handle keyboard input
   useInput((input, key) => {
     if (input === "q" || key.escape || (key.ctrl && input === "c")) {
@@ -54,11 +63,11 @@ const TaskList: React.FC<TaskListProps> = ({
     if (key.upArrow || input === "k") {
       setSelectedIndex((prev) => Math.max(0, prev - 1));
     } else if (key.downArrow || input === "j") {
-      setSelectedIndex((prev) => Math.min(tasks.length - 1, prev + 1));
+      setSelectedIndex((prev) => Math.min(displayTasks.length - 1, prev + 1));
     } else if (key.return || input === " ") {
       // Toggle the selected task
-      if (tasks[selectedIndex]) {
-        const taskId = tasks[selectedIndex].id;
+      if (displayTasks[selectedIndex]) {
+        const taskId = displayTasks[selectedIndex].id;
 
         // Update local state immediately for real-time UI update
         setTasks(prevTasks =>
@@ -77,12 +86,13 @@ const TaskList: React.FC<TaskListProps> = ({
     } else if (input === "g") {
       setSelectedIndex(0);
     } else if (input === "G") {
-      setSelectedIndex(Math.max(0, tasks.length - 1));
+      setSelectedIndex(Math.max(0, displayTasks.length - 1));
     }
   });
 
-  const renderTask = useCallback((task: Task, globalIndex: number) => {
-    const isSelected = globalIndex === selectedIndex;
+  const renderTask = useCallback((task: Task) => {
+    const displayIndex = displayTasks.findIndex(t => t.id === task.id);
+    const isSelected = displayIndex === selectedIndex;
     const checkbox = task.completed ? "✓" : " ";
     const statusColor = task.completed ? "green" : "red";
 
@@ -100,10 +110,11 @@ const TaskList: React.FC<TaskListProps> = ({
         </Text>
       </Box>
     );
-  }, [selectedIndex]);
+  }, [selectedIndex, displayTasks]);
 
   const completedCount = tasks.filter(task => task.completed).length;
   const totalCount = tasks.length;
+  const displayCount = displayTasks.length;
 
   return (
     <Box flexDirection="column" height="100%">
@@ -140,7 +151,7 @@ const TaskList: React.FC<TaskListProps> = ({
                   {header}
                 </Text>
               </Box>
-              {groupTasks.map((task) => renderTask(task, tasks.indexOf(task)))}
+              {groupTasks.map((task) => renderTask(task))}
             </Box>
           ))
         )}
@@ -148,7 +159,7 @@ const TaskList: React.FC<TaskListProps> = ({
 
       <Box marginTop={1}>
         <Text color="gray" dimColor>
-          {tasks.length > 0 && `↑↓/j/k: navigate | Space/Enter: toggle | `}
+          {displayTasks.length > 0 && `↑↓/j/k: navigate | Space/Enter: toggle | `}
           g/G: top/bottom | q/ESC: exit
         </Text>
       </Box>
