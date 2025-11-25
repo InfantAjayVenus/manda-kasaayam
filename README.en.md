@@ -12,8 +12,11 @@ It creates a new markdown file for you every day. When you start a new day, it s
 - **Task Rollover:** Incomplete markdown tasks (`- [ ]`) from the previous day are carried over to the new note, with a reference link back to the original file (`## Header [[YYYY-MM-DD.md]]`).
 - **Session Timestamps:** Adds `[[HH:MM]]` timestamps each time you open the note (only if you added content since last opening), separated by `---` dividers.
 - **Header Timestamps:** Run `manda <file.md>` to add `@HH:MM` timestamps to all `## headers` that don't already have one.
-- **Interactive TUI:** The `do` command launches a terminal UI for managing tasks. Toggle completion with space, delete with `d`, navigate with `j/k` or arrows, switch between headers (`h`) and tasks (`l`), and collapse/expand headers with `c`.
-- **Markdown Preview:** The `see` command previews today's note without opening your editor. Uses `bat`, `glow`, or `mdcat` if available, otherwise falls back to `less`.
+- **Enhanced Interactive TUI:** The `do` command features a modern React-based terminal UI with improved performance and visual feedback. Toggle completion with space, delete with `d`, navigate with `j/k` or arrows, switch between headers (`h`) and tasks (`l`), and collapse/expand headers with `c`.
+- **Advanced Markdown Preview:** The `see` command provides enhanced preview with better formatting and navigation. Uses `bat`, `glow`, or `mdcat` if available, otherwise falls back to `less`.
+- **Flexible Date Navigation:** Both `do` and `see` commands support `--yester` and `--date <YYYY-MM-DD>` options for accessing any note, not just today's.
+- **Modular Architecture:** Built with TypeScript for better type safety and maintainability, using a layered architecture with clear separation of concerns.
+- **Extensible Design:** Easy to extend with new commands and features thanks to the modular command structure.
 
 ## Installation
 
@@ -55,6 +58,25 @@ manda --help
 
 For detailed installation instructions and troubleshooting, see [INSTALL.md](./INSTALL.md).
 
+## Migration from Bash Script
+
+**⚠️ Deprecation Notice:** The Bash script (`src/manda.sh`) is deprecated and will be removed in a future release. All users should migrate to the TypeScript implementation for continued support and new features.
+
+### Why Migrate to TypeScript?
+- **Enhanced UI:** Modern React-based terminal interface with better visual feedback
+- **Type Safety:** Fewer runtime errors with TypeScript's static typing
+- **Extensibility:** Easy to add new commands and features
+- **Cross-Platform:** More consistent behavior across different operating systems
+- **Testing:** Comprehensive test suite with unit and integration tests
+- **Active Development:** All new features and improvements are being added to the TypeScript version
+
+### Migration Steps
+1. Install the TypeScript version following the installation instructions above
+2. The command interface remains the same, so your existing workflows will continue to work
+3. New features like `--date` options are now available for enhanced functionality
+
+The TypeScript version maintains full compatibility with existing note formats and workflows while providing significant improvements in user experience and maintainability.
+
 ## Usage
 
 ### The Basics
@@ -72,6 +94,12 @@ mk
 # Fire up the interactive task manager for today's note.
 manda do
 mk do
+
+# Manage tasks from yesterday's note
+manda do --yester
+
+# Manage tasks for a specific date
+manda do --date 2025-11-15
 ```
 
 In the TUI:
@@ -89,8 +117,12 @@ manda see
 mk see
 
 # Preview yesterday's note.
-manda see yester
-mk see yester
+manda see --yester
+mk see --yester
+
+# Preview a specific date's note.
+manda see --date 2025-11-15
+mk see --date 2025-11-15
 ```
 
 ### Add Timestamps to Headers
