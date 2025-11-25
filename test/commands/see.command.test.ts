@@ -87,7 +87,7 @@ describe('SeeCommand', () => {
     const command = new SeeCommand(mockNoteService, undefined, mockEditorService);
     await command.execute();
 
-    expect(mockNoteService.ensureNoteExists).toHaveBeenCalledWith('/test/notes/2025-11-24.md');
+    expect(mockNoteService.ensureNoteExists).toHaveBeenCalledWith('/test/notes/2025-11-25.md');
   });
 
   test('should check if note file exists', async () => {
@@ -96,7 +96,7 @@ describe('SeeCommand', () => {
     const command = new SeeCommand(mockNoteService, mockFileSystemService, mockEditorService);
     await command.execute();
 
-    expect(mockFileSystemService.fileExists).toHaveBeenCalledWith('/test/notes/2025-11-24.md');
+    expect(mockFileSystemService.fileExists).toHaveBeenCalledWith('/test/notes/2025-11-25.md');
   });
 
   test('should read note content', async () => {
@@ -105,7 +105,7 @@ describe('SeeCommand', () => {
     const command = new SeeCommand(mockNoteService, mockFileSystemService, mockEditorService);
     await command.execute();
 
-    expect(mockFileSystemService.readFile).toHaveBeenCalledWith('/test/notes/2025-11-24.md');
+    expect(mockFileSystemService.readFile).toHaveBeenCalledWith('/test/notes/2025-11-25.md');
   });
 
   test('should create empty note when file does not exist', async () => {
@@ -116,7 +116,7 @@ describe('SeeCommand', () => {
     await command.execute();
 
     // Should create the note file when it doesn't exist
-    expect(mockNoteService.ensureNoteExists).toHaveBeenCalledWith('/test/notes/2025-11-24.md');
+    expect(mockNoteService.ensureNoteExists).toHaveBeenCalledWith('/test/notes/2025-11-25.md');
   });
 
   test('should render markdown content using TUI component', async () => {
@@ -177,8 +177,8 @@ describe('SeeCommand', () => {
     await command.execute({ yester: true });
 
     // Now it should check for yesterday's note
-    expect(mockFileSystemService.fileExists).toHaveBeenCalledWith('/test/notes/2025-11-20.md');
-    expect(mockFileSystemService.readFile).toHaveBeenCalledWith('/test/notes/2025-11-20.md');
+    expect(mockFileSystemService.fileExists).toHaveBeenCalledWith('/test/notes/2025-11-24.md');
+    expect(mockFileSystemService.readFile).toHaveBeenCalledWith('/test/notes/2025-11-24.md');
 
     getYesterdayPathSpy.mockRestore();
   });
@@ -369,7 +369,7 @@ describe('SeeCommand', () => {
     await capturedOnEdit!();
 
     // Should have opened the editor with today's note path
-    expect(mockEditorService.openFile).toHaveBeenCalledWith('/test/notes/2025-11-24.md');
+    expect(mockEditorService.openFile).toHaveBeenCalledWith('/test/notes/2025-11-25.md');
   });
 
   test('should show message when trying to edit old notes', async () => {

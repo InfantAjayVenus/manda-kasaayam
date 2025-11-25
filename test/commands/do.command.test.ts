@@ -91,18 +91,21 @@ describe('DoCommand', () => {
     );
   });
 
-  test('should display message when no tasks found', async () => {
+  test('should display empty task list when no tasks found', async () => {
     process.env.MANDA_DIR = '/test/notes';
     vi.mocked(mockFileSystemService.readFile).mockResolvedValue('# Note without tasks\n\nJust some regular content.');
-
-    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
     const command = new DoCommand(mockNoteService, mockFileSystemService);
     await command.execute();
 
-    expect(consoleSpy).toHaveBeenCalledWith('No tasks found in note: /test/notes/2025-11-24.md');
-
-    consoleSpy.mockRestore();
+    // Should render TaskList with empty tasks array
+    expect(render).toHaveBeenCalledWith(
+      expect.any(Object), // React element
+      expect.objectContaining({
+        exitOnCtrlC: true,
+        experimentalAlternateScreenBuffer: true
+      })
+    );
   });
 
   test('should handle yesterday option correctly', async () => {
@@ -111,8 +114,8 @@ describe('DoCommand', () => {
     const command = new DoCommand(mockNoteService, mockFileSystemService);
     await command.execute({ yester: true });
 
-    // Should check for yesterday's note
-    expect(mockFileSystemService.fileExists).toHaveBeenCalledWith('/test/notes/2025-11-20.md');
+    // Should check for yesterday's note (2025-11-24.md since today is 2025-11-25)
+    expect(mockFileSystemService.fileExists).toHaveBeenCalledWith('/test/notes/2025-11-24.md');
   });
 
   test('should handle date option correctly', async () => {
@@ -132,8 +135,8 @@ describe('DoCommand', () => {
     const command = new DoCommand(mockNoteService, mockFileSystemService);
     await command.execute();
 
-    // Should create the note file
-    expect(mockNoteService.ensureNoteExists).toHaveBeenCalledWith('/test/notes/2025-11-24.md');
+    // Should create the note file for today
+    expect(mockNoteService.ensureNoteExists).toHaveBeenCalledWith('/test/notes/2025-11-25.md');
   });
 
   test('should parse tasks with headers correctly', async () => {
