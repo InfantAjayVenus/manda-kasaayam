@@ -33,4 +33,8 @@ export class FileSystemService {
   async listDirectory(dirPath: string): Promise<string[]> {
     return await fs.readdir(dirPath);
   }
+
+  async moveFile(sourcePath: string, destinationPath: string): Promise<void> {
+    await fs.rename(sourcePath, destinationPath);
+  }
 }

@@ -325,6 +325,63 @@ Some notes.`;
     });
   });
 
+  describe("moveYesterdaysNoteToOrganizedStructure", () => {
+    test("should move yesterday's note to organized directory structure", async () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date("2025-11-19T10:00:00Z"));
+
+      // Mock yesterday's note exists
+      vi.mocked(mockFileSystemService.fileExists).mockImplementation(async (path: string) => {
+        return path === "/notes/2025-11-18.md";
+      });
+      vi.mocked(mockFileSystemService.ensureDirectoryExists).mockResolvedValue(undefined);
+      vi.mocked(mockFileSystemService.moveFile).mockResolvedValue(undefined);
+
+      await (service as any).moveYesterdaysNoteToOrganizedStructure("/notes/2025-11-19.md");
+
+      expect(mockFileSystemService.fileExists).toHaveBeenCalledWith("/notes/2025-11-18.md");
+      expect(mockFileSystemService.ensureDirectoryExists).toHaveBeenCalledWith("/notes/2025/11");
+      expect(mockFileSystemService.moveFile).toHaveBeenCalledWith(
+        "/notes/2025-11-18.md",
+        "/notes/2025/11/2025-11-18.md"
+      );
+    });
+
+    test("should not move note if yesterday's note does not exist", async () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date("2025-11-19T10:00:00Z"));
+
+      // Mock yesterday's note does not exist
+      vi.mocked(mockFileSystemService.fileExists).mockResolvedValue(false);
+
+      await (service as any).moveYesterdaysNoteToOrganizedStructure("/notes/2025-11-19.md");
+
+      expect(mockFileSystemService.fileExists).toHaveBeenCalledWith("/notes/2025-11-18.md");
+      expect(mockFileSystemService.ensureDirectoryExists).not.toHaveBeenCalled();
+      expect(mockFileSystemService.moveFile).not.toHaveBeenCalled();
+    });
+
+    test("should create correct directory structure with padded month", async () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date("2025-01-05T10:00:00Z"));
+
+      // Mock yesterday's note exists (2025-01-04)
+      vi.mocked(mockFileSystemService.fileExists).mockImplementation(async (path: string) => {
+        return path === "/notes/2025-01-04.md";
+      });
+      vi.mocked(mockFileSystemService.ensureDirectoryExists).mockResolvedValue(undefined);
+      vi.mocked(mockFileSystemService.moveFile).mockResolvedValue(undefined);
+
+      await (service as any).moveYesterdaysNoteToOrganizedStructure("/notes/2025-01-05.md");
+
+      expect(mockFileSystemService.ensureDirectoryExists).toHaveBeenCalledWith("/notes/2025/01");
+      expect(mockFileSystemService.moveFile).toHaveBeenCalledWith(
+        "/notes/2025-01-04.md",
+        "/notes/2025/01/2025-01-04.md"
+      );
+    });
+  });
+
   describe("getCurrentTimeString", () => {
     test("should return current time in HH:mm format", () => {
       const timeString = service.getCurrentTimeString();

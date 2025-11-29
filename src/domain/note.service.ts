@@ -24,6 +24,11 @@ export class NoteService {
       const fileName = path.basename(notePath);
       const todayFileName = this.getTodayFileName();
 
+      if (fileName === todayFileName) {
+        // Move yesterday's note to organized directory structure
+        await this.moveYesterdaysNoteToOrganizedStructure(notePath);
+      }
+
       let content = "";
       if (fileName === todayFileName) {
         // For today's note, include incomplete tasks from previous notes
@@ -267,6 +272,37 @@ export class NoteService {
 
   async ensureNotesDirExists(notesDir: string): Promise<void> {
     await this.fileSystemService.ensureDirectoryExists(notesDir);
+  }
+
+  private async moveYesterdaysNoteToOrganizedStructure(todayNotePath: string): Promise<void> {
+    const notesDir = path.dirname(todayNotePath);
+
+    // Calculate yesterday's date
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    yesterday.setHours(0, 0, 0, 0);
+
+    const yesterdayFileName = `${yesterday.getFullYear()}-${String(
+      yesterday.getMonth() + 1,
+    ).padStart(2, "0")}-${String(yesterday.getDate()).padStart(2, "0")}.md`;
+    const yesterdayNotePath = path.join(notesDir, yesterdayFileName);
+
+    // Check if yesterday's note exists in the root directory
+    const yesterdayNoteExists = await this.fileSystemService.fileExists(yesterdayNotePath);
+    if (!yesterdayNoteExists) {
+      return; // No yesterday's note to move
+    }
+
+    // Create organized directory structure: YYYY/MM
+    const year = yesterday.getFullYear();
+    const month = String(yesterday.getMonth() + 1).padStart(2, "0");
+
+    const organizedDir = path.join(notesDir, String(year), month);
+    await this.fileSystemService.ensureDirectoryExists(organizedDir);
+
+    // Move yesterday's note to the organized directory
+    const organizedNotePath = path.join(organizedDir, yesterdayFileName);
+    await this.fileSystemService.moveFile(yesterdayNotePath, organizedNotePath);
   }
 
   async readFileContent(notePath: string): Promise<string> {

@@ -82,4 +82,14 @@ describe('FileSystemService', () => {
       expect(fs.mkdir).not.toHaveBeenCalled();
     });
   });
+
+  describe('moveFile', () => {
+    test('should move file from source to destination', async () => {
+      vi.mocked(fs.rename).mockResolvedValue(undefined);
+
+      await service.moveFile('/source/file.txt', '/destination/file.txt');
+
+      expect(fs.rename).toHaveBeenCalledWith('/source/file.txt', '/destination/file.txt');
+    });
+  });
 });
