@@ -1,5 +1,5 @@
-import path from "path";
-import { FileSystemService } from "../services/file-system.service.js";
+import path from 'path';
+import { FileSystemService } from '../services/file-system.service.js';
 
 export class NoteService {
   constructor(private fileSystemService: FileSystemService) { }
