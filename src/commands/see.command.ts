@@ -110,18 +110,6 @@ export class SeeCommand extends BaseCommand {
     }
   }
 
-  private getYesterdayFromToday(): Date {
-    // Anchor today for tests to 2025-11-25; yesterday will be 2025-11-24
-    if (process.env.NODE_ENV === 'test' || process.env.CI || process.env.VITEST) {
-      const today = new Date('2025-11-25T00:00:00');
-      today.setDate(today.getDate() - 1);
-      return today;
-    } else {
-      const today = new Date();
-      today.setDate(today.getDate() - 1);
-      return today;
-    }
-  }
 
   private getTodayForTests(): Date {
     // Anchor today for tests to 2025-11-25 to ensure deterministic behavior
