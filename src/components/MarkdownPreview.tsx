@@ -18,13 +18,18 @@ interface MarkdownToken {
   tokens?: MarkdownToken[];
   depth?: number;
   raw?: string;
-  items?: any[];
+  items?: MarkdownToken[];
   href?: string;
   title?: string;
   lang?: string;
   align?: string[];
-  header?: boolean;
+  header?: any[];
   cells?: string[][];
+  ordered?: boolean;
+  start?: number;
+  task?: boolean;
+  checked?: boolean;
+  rows?: any[][];
 }
 
 const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
@@ -268,7 +273,7 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
               paddingLeft={2}
               flexDirection="column"
             >
-              {(token as any).items?.map((listItem: any, listIndex: number) =>
+              {token.items?.map((listItem: MarkdownToken, listIndex: number) =>
                 renderToken(listItem, listIndex),
               )}
             </Box>
@@ -276,8 +281,8 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
 
         case "list_item":
           // Check if this is a task list item (GFM checkbox)
-          if ((token as any).task) {
-            const isChecked = (token as any).checked;
+          if (token.task) {
+            const isChecked = token.checked;
             const taskText = token.text || "";
             return (
               <Box key={index} marginBottom={1}>
@@ -395,22 +400,21 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
 
         case "table":
           // Render table as simple text format
-          const tableToken = token as any;
           let tableText = "";
 
-          if (tableToken.header && Array.isArray(tableToken.header)) {
+          if (token.header && Array.isArray(token.header)) {
             // Header row
             tableText +=
-              tableToken.header
+              token.header
                 .map((h: any) => (typeof h === "string" ? h : h.text || h))
                 .join(" | ") + "\n";
             // Separator
-            tableText += tableToken.header.map(() => "---").join(" | ") + "\n";
+            tableText += token.header.map(() => "---").join(" | ") + "\n";
           }
 
-          if (tableToken.rows && Array.isArray(tableToken.rows)) {
+          if (token.rows && Array.isArray(token.rows)) {
             // Data rows
-            tableToken.rows.forEach((row: any[]) => {
+            token.rows.forEach((row: any[]) => {
               tableText +=
                 row
                   .map((cell: any) => {

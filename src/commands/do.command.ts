@@ -10,6 +10,7 @@ import {
   formatDateForTitle 
 } from "../utils/dateUtils.js";
 import { getNotePathForDate } from "../utils/fileUtils.js";
+import { InkRenderOptions } from "../types/index.js";
 
 export interface DoOptions {
   yester?: boolean;
@@ -160,7 +161,7 @@ export class DoCommand extends BaseCommand {
       {
         exitOnCtrlC: true,
         experimentalAlternateScreenBuffer: true,
-      } as any,
+      } as InkRenderOptions,
     );
 
     await waitUntilExit();

@@ -13,6 +13,7 @@ import {
   isDateBeforeOrEqualToday 
 } from '../utils/dateUtils.js';
 import { getNotePathForDate } from '../utils/fileUtils.js';
+import { InkRenderOptions } from '../types/index.js';
 
 export interface SeeOptions {
   yester?: boolean;
@@ -186,7 +187,7 @@ export class SeeCommand extends BaseCommand {
       {
         exitOnCtrlC: true,
         experimentalAlternateScreenBuffer: true
-      } as any
+      } as InkRenderOptions
     );
 
     await waitUntilExit();
