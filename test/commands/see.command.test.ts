@@ -372,13 +372,8 @@ describe('SeeCommand', () => {
     expect(mockEditorService.openFile).toHaveBeenCalledWith('/test/notes/2025-11-25.md');
   });
 
-  test('should show message when trying to edit old notes', async () => {
-    process.env.MANDA_DIR = '/test/notes';
-
+  test('should not open editor when trying to edit old notes', async () => {
     const command = new SeeCommand(mockNoteService, mockFileSystemService, mockEditorService);
-
-    // Mock console.log to capture the message
-    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
     // Mock render to capture and call the onEdit function
     let capturedOnEdit: (() => Promise<void>) | null = null;
@@ -400,11 +395,8 @@ describe('SeeCommand', () => {
     // Call the captured onEdit function
     await capturedOnEdit!();
 
-    // Should have logged the message and not opened editor
-    expect(consoleSpy).toHaveBeenCalledWith('Old notes cannot be edited');
+    // Should not have opened editor (editing is disabled for old notes)
     expect(mockEditorService.openFile).not.toHaveBeenCalled();
-
-    consoleSpy.mockRestore();
   });
 
   test('should navigate to today\'s note even if it does not exist yet', async () => {

@@ -72,10 +72,8 @@ export class SeeCommand extends BaseCommand {
         // Open the note in editor
         const notePath = this.getNotePathForDate(currentDate);
         await this.editorService.openFile(notePath);
-      } else {
-        // Show message for old notes
-        console.log('Old notes cannot be edited');
       }
+      // Note: Editing is disabled for old notes - no action needed when allowEditNotes is false
     };
 
     const notePath = this.getNotePathForDate(currentDate);
@@ -210,30 +208,7 @@ export class SeeCommand extends BaseCommand {
     return null;
   }
 
-  private async displayMarkdownWithTUI(content: string, notePath: string): Promise<void> {
-    const fileName = notePath.split('/').pop() || 'Note';
-    const title = fileName.replace('.md', '');
 
-    // Create and render TUI component
-    const { waitUntilExit } = render(
-      React.createElement(MarkdownPreview, {
-        content,
-        title: title,
-        onExit: () => {
-          // Don't exit in test environments
-          if (process.env.NODE_ENV !== 'test' && !process.env.CI && !process.env.VITEST) {
-            process.exit(0);
-          }
-        }
-      }),
-      {
-        exitOnCtrlC: true,
-        experimentalAlternateScreenBuffer: true
-      } as any
-    );
-
-    await waitUntilExit();
-  }
 
   private async displayMarkdownWithTUINavigation(
     content: string,
