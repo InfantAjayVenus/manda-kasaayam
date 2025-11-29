@@ -1,165 +1,404 @@
-# Manda-Kasaayam
+# Manda Kasaayam
 
-For when your brain is a sieve and you need to remember what you did yesterday. It's a simple script that wrangles your daily notes in a git repo, because who has time for GUIs?
+> தமிழ் பதிப்புக்கு [README.md](./README.md) பார்க்கவும்
 
-It creates a new markdown file for you every day. When you start a new day, it sneakily commits yesterday's note, so you can't forget. It also yanks your unfinished todos over to the new file, because procrastination is a feature, not a bug.
+**Manda Kasaayam** is a Terminal User Interface (TUI) application for managing daily notes with automatic organization and task tracking. It helps you maintain a clean, organized notes system while ensuring you never lose track of incomplete tasks.
 
-## What it does
+## Features
 
-- **Daily Notes:** Creates a `YYYY-MM-DD.md` file for your daily thoughts.
-- **Auto-Commit:** When you open a new day's note, it commits and pushes the previous day's note automatically.
-- **Auto-Archive:** Previous notes are automatically organized into `YYYY/MM/` directories (e.g., `2025/11/2025-11-07.md`), keeping your notes folder tidy.
-- **Task Rollover:** Incomplete markdown tasks (`- [ ]`) from the previous day are carried over to the new note, with a reference link back to the original file (`## Header [[YYYY-MM-DD.md]]`).
-- **Session Timestamps:** Adds `[[HH:MM]]` timestamps each time you open the note (only if you added content since last opening), separated by `---` dividers.
-- **Header Timestamps:** Run `manda <file.md>` to add `@HH:MM` timestamps to all `## headers` that don't already have one.
-- **Enhanced Interactive TUI:** The `do` command features a modern React-based terminal UI with improved performance and visual feedback. Toggle completion with space, delete with `d`, navigate with `j/k` or arrows, switch between headers (`h`) and tasks (`l`), and collapse/expand headers with `c`.
-- **Advanced Markdown Preview:** The `see` command provides enhanced preview with better formatting and navigation. Uses `bat`, `glow`, or `mdcat` if available, otherwise falls back to `less`.
-- **Flexible Date Navigation:** Both `do` and `see` commands support `--yester` and `--date <YYYY-MM-DD>` options for accessing any note, not just today's.
-- **Modular Architecture:** Built with TypeScript for better type safety and maintainability, using a layered architecture with clear separation of concerns.
-- **Extensible Design:** Easy to extend with new commands and features thanks to the modular command structure.
+- **Daily Notes:** Creates a new markdown file for each day in `YYYY-MM-DD.md` format
+- **Automatic Organization:** Moves previous day's notes to organized `YYYY/MM/` directory structure
+- **Task Continuity:** Automatically carries forward incomplete tasks (`- [ ]`) from previous days
+- **Timestamp Tracking:** Adds timestamps `[HH:MM]` each time you open a note
+- **Interactive TUI:** Terminal-based interface for managing tasks with `manda do`
+- **Markdown Preview:** View your notes without opening an editor with `manda see`
+- **Git Integration:** Automatically commits and pushes changes to your notes repository
+- **Navigation Support:** Browse through notes with keyboard navigation in preview mode
 
 ## Installation
 
-### Quick Install (Recommended)
+### Option 1: Install from npm (Recommended)
 
 ```bash
-# Clone the repository
+# Install globally
+npm install -g manda-kasaayam
+
+# Or install with pnpm
+pnpm add -g manda-kasaayam
+
+# Or install with yarn
+yarn global add manda-kasaayam
+```
+
+### Option 2: Install from Source
+
+1. Clone this repository:
+```bash
 git clone https://github.com/yourusername/manda-kasaayam.git
 cd manda-kasaayam
+```
 
-# Install dependencies
+2. Install dependencies:
+```bash
+pnpm install
+```
+
+3. Build the application:
+```bash
+pnpm build
+```
+
+4. Set up the environment variables (see Configuration below)
+
+5. Add to your shell path (optional):
+```bash
+export PATH="$PATH:/path/to/manda-kasaayam/bin"
+```
+
+### Option 3: Development Installation
+
+For local development and testing:
+
+```bash
+# Clone and install
+git clone https://github.com/yourusername/manda-kasaayam.git
+cd manda-kasaayam
 pnpm install
 
-# Build the project
-pnpm build
+# Link globally for testing
+pnpm link --global
 
-# Install globally
-npm link
+# When done, unlink
+pnpm unlink --global
 ```
-
-After installation, the `manda` command will be available system-wide.
-
-### Alternative: Run Without Installing
-
-```bash
-# Using pnpm
-pnpm start
-
-# Using tsx directly
-pnpm tsx src/main.ts
-```
-
-### Verify Installation
-
-```bash
-manda --version
-manda --help
-```
-
-For detailed installation instructions and troubleshooting, see [INSTALL.md](./INSTALL.md).
-
-## Migration from Bash Script
-
-**⚠️ Deprecation Notice:** The Bash script (`src/manda.sh`) is deprecated and will be removed in a future release. All users should migrate to the TypeScript implementation for continued support and new features.
-
-### Why Migrate to TypeScript?
-- **Enhanced UI:** Modern React-based terminal interface with better visual feedback
-- **Type Safety:** Fewer runtime errors with TypeScript's static typing
-- **Extensibility:** Easy to add new commands and features
-- **Cross-Platform:** More consistent behavior across different operating systems
-- **Testing:** Comprehensive test suite with unit and integration tests
-- **Active Development:** All new features and improvements are being added to the TypeScript version
-
-### Migration Steps
-1. Install the TypeScript version following the installation instructions above
-2. The command interface remains the same, so your existing workflows will continue to work
-3. New features like `--date` options are now available for enhanced functionality
-
-The TypeScript version maintains full compatibility with existing note formats and workflows while providing significant improvements in user experience and maintainability.
 
 ## Usage
 
-### The Basics
+### Basic Usage
 
+Open today's note:
 ```bash
-# Open today's note. This is the main event.
 manda
-# or use the alias
-mk
 ```
 
-### The Task Manager
+### Task Management
 
+Launch the interactive task manager:
 ```bash
-# Fire up the interactive task manager for today's note.
 manda do
-mk do
-
-# Manage tasks from yesterday's note
-manda do --yester
-
-# Manage tasks for a specific date
-manda do --date 2025-11-15
 ```
 
-In the TUI:
-- `j/k` or `↑/↓` to navigate.
-- `h` to select headers, `l` to select tasks.
-- `space` or `c` to toggle task completion or collapse a header.
-- `d` to delete a task.
-- `q` to quit.
+**Task Manager Controls:**
+- `↑↓` or `j/k`: Navigate between tasks
+- `Space` or `Enter`: Toggle task completion
+- `g/G`: Jump to first/last task
+- `q` or `ESC`: Exit
 
-### The Quick Peek
+### Note Preview
 
+Preview today's note:
 ```bash
-# Preview today's note.
 manda see
-mk see
-
-# Preview yesterday's note.
-manda see --yester
-mk see --yester
-
-# Preview a specific date's note.
-manda see --date 2025-11-15
-mk see --date 2025-11-15
 ```
 
-### Add Timestamps to Headers
-
+Preview yesterday's note:
 ```bash
-# Adds @HH:MM to all ## headers in a file that don't already have one.
-manda /path/to/any.md
-# Example:
-manda 2025-11-07.md
+manda see --yester
 ```
+
+Preview a specific date:
+```bash
+manda see --date 2025-11-25
+```
+
+**Preview Controls:**
+- `↑↓` or `j/k`: Scroll content
+- `←` or `h`: Previous day
+- `→` or `l`: Next day
+- `e`: Edit note (today's note only)
+- `g/G`: Jump to top/bottom
+- `q` or `ESC`: Exit
 
 ### Help
 
+Show help information:
 ```bash
 manda --help
 ```
 
 ## Configuration
 
-Set these environment variables, probably in your `.zshrc` or `.bashrc`.
+Set these environment variables in your `.zshrc`, `.bashrc`, or shell profile:
 
-- `MANDA_DIR`: **(Required)** The absolute path to your notes directory. This directory must be inside a git repository.
-- `EDITOR`: Your editor of choice (default: `nvim`).
-- `BRANCH`: The git branch to push to (default: `main`).
-- `REMOTE`: The git remote to push to (default: `origin`).
+### Required
 
-Example:
+- `MANDA_DIR`: **(Required)** Full path to your notes directory
+
+### Optional
+
+- `EDITOR`: Your preferred text editor (default: `nvim`)
+- `BRANCH`: Git branch name (default: `main`)
+- `REMOTE`: Git remote name (default: `origin`)
+
+**Example:**
 ```bash
-export MANDA_DIR="/Users/you/Documents/notes"
+export MANDA_DIR="/Users/your_username/Documents/notes"
 export EDITOR="vim"
+export BRANCH="main"
+export REMOTE="origin"
 ```
 
-You can also pass the notes directory as an argument, which will override the `MANDA_DIR` variable for that command.
-```bash
-manda /path/to/some/other/notes
+## Directory Structure
+
+The application automatically organizes your notes:
+
 ```
+notes/
+├── 2025-11-29.md          # Today's note (in root)
+├── 2025/
+│   ├── 01/
+│   │   ├── 2025-01-31.md  # January notes
+│   │   └── 2025-01-30.md
+│   ├── 02/
+│   │   └── 2025-02-28.md  # February notes
+│   └── 11/
+│       ├── 2025-11-28.md  # Yesterday's note (moved here)
+│       └── 2025-11-27.md
+└── .git/                  # Git repository
+```
+
+## Note Format
+
+### Daily Note Structure
+
+```markdown
+# 2025-11-29
+
+[2025-11-28](2025-11-28.md)
+
+- [ ] Incomplete task from yesterday
+- [x] Completed task from yesterday
+
+---
+
+[09:00]
+Morning meeting notes
+
+[10:30]
+Work on project X
+
+## Tasks
+- [ ] New task for today
+- [x] Completed task
+```
+
+### Task Format
+
+Use standard GitHub Flavored Markdown task lists:
+
+```markdown
+- [ ] Incomplete task
+- [x] Completed task
+```
+
+### Timestamps
+
+The app automatically adds timestamps when you open a note:
+
+```markdown
+[09:00]
+[10:30]
+[14:45]
+```
+
+## Workflow
+
+1. **Start Your Day:** Run `manda` to open today's note
+2. **Review Tasks:** Incomplete tasks from yesterday are automatically included
+3. **Add Timestamps:** Each time you open the note, a timestamp is added
+4. **Track Progress:** Use `manda do` to interactively manage tasks
+5. **Preview Notes:** Use `manda see` to quickly review notes without editing
+6. **Automatic Organization:** Previous day's notes are moved to `YYYY/MM/` directories
+7. **Git Sync:** All changes are automatically committed and pushed
+
+## Development
+
+### Tech Stack
+
+- **Language:** TypeScript
+- **TUI Framework:** [Ink](https://github.com/vadimdemedes/ink)
+- **CLI Parsing:** [Commander.js](https://github.com/tj/commander.js)
+- **Git Integration:** [simple-git](https://github.com/steveukx/git-js)
+- **Testing:** [Vitest](https://vitest.dev/) and [ink-testing-library](https://github.com/vadimdemedes/ink-testing-library)
+
+### Quick Start for Development
+
+```bash
+# Clone and setup
+git clone https://github.com/yourusername/manda-kasaayam.git
+cd manda-kasaayam
+pnpm install
+
+# Set up environment
+export MANDA_DIR="./dump"  # Test directory
+export EDITOR="code"       # Or your preferred editor
+
+# Run in development
+pnpm dev
+
+# Or run directly
+pnpm start -- --help
+```
+
+### Running Tests
+
+```bash
+# Run all tests
+pnpm test
+
+# Run tests in watch mode
+pnpm test:watch
+
+# Run specific test file
+pnpm test test/domain/note.service.test.ts
+
+# Run tests with coverage
+pnpm test --coverage
+```
+
+### Building
+
+```bash
+# Build the application
+pnpm build
+
+# Run in development mode
+pnpm dev
+
+# Test the built CLI
+node bin/manda.js --help
+```
+
+### Testing CLI Installation
+
+```bash
+# Test local package
+./test-cli.sh
+
+# Or test manually
+npm pack
+mkdir test-install && cd test-install
+pnpm add ../manda-kasaayam-1.0.0.tgz
+npx manda --help
+cd .. && rm -rf test-install
+```
+
+## Architecture
+
+The application follows a layered architecture:
+
+```
+src/
+├── commands/        # CLI command handlers
+├── components/      # React TUI components
+├── domain/          # Business logic and services
+├── services/        # External service integrations
+└── main.ts          # Application entry point
+```
+
+### Key Components
+
+- **Commands:** Handle CLI input and coordinate services
+- **Domain:** Core business logic for note management
+- **Services:** External integrations (file system, git, editor)
+- **Components:** Reusable TUI components built with React and Ink
+
+## CI/CD and Publishing
+
+This project uses GitHub Actions for automated testing and publishing to npm.
+
+### Workflow Features
+
+- **Automated Testing**: Runs tests on Node.js 18, 20, and 22
+- **Automated Publishing**: Publishes to npm when creating GitHub releases
+- **Dependency Caching**: Faster builds with pnpm cache
+- **Security**: Uses npm tokens stored in GitHub secrets
+
+### Publishing Process
+
+1. Update version in `package.json`:
+   ```bash
+   npm version patch  # or minor, major
+   ```
+
+2. Push changes and tags:
+   ```bash
+   git push origin main --tags
+   ```
+
+3. Create a new release on GitHub:
+   - Go to Releases → Create a new release
+   - Choose the tag that was created
+   - The workflow will automatically publish to npm
+
+### Setup for Publishing
+
+See [GITHUB_ACTIONS_SETUP.md](./GITHUB_ACTIONS_SETUP.md) for detailed setup instructions.
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests for new functionality
+5. Ensure all tests pass
+6. Submit a pull request
+
+### Development Guidelines
+
+- Follow the existing code style and patterns
+- Add tests for new features
+- Update documentation as needed
+- Use TypeScript strictly
+- Follow the Outside-In TDD approach described in [AGENTS.md](./AGENTS.md)
 
 ## License
 
-MIT. See [LICENSE](LICENSE).
+This project is licensed under the ISC License - see the [LICENSE](LICENSE) file for details.
+
+## Troubleshooting
+
+### Common Issues
+
+**"MANDA_DIR environment variable is not set"**
+- Make sure you've set the `MANDA_DIR` environment variable
+- Restart your shell after adding it to your profile
+
+**"Command not found: manda"**
+- Make sure the application is built (`pnpm build`)
+- Add the `bin/` directory to your PATH
+- Or use `npx manda` if installed via npm
+
+**Git push fails**
+- Check your git remote configuration
+- Ensure you have push access to the repository
+- Verify the `REMOTE` environment variable is correct
+
+### Getting Help
+
+- Check the existing issues on GitHub
+- Create a new issue with details about your problem
+- Include your OS, shell, and relevant configuration
+- Use `manda --help` for command-line assistance
+
+## Version History
+
+See the [GitHub Releases](https://github.com/yourusername/manda-kasaayam/releases) page for detailed version history.
+
+## Related Documentation
+
+- [AGENTS.md](./AGENTS.md) - Development methodology and TDD approach
+- [DEVELOPMENT.md](./DEVELOPMENT.md) - Detailed development setup
+- [GITHUB_ACTIONS_SETUP.md](./GITHUB_ACTIONS_SETUP.md) - CI/CD setup guide
+- [INSTALL.md](./INSTALL.md) - Installation troubleshooting
+- [REBUILD.md](./REBUILD.md) - Rebuild instructions
