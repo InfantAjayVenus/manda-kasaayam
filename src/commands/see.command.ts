@@ -5,6 +5,14 @@ import { EditorService } from '../services/editor.service.js';
 import { render } from 'ink';
 import React from 'react';
 import MarkdownPreview from '../components/MarkdownPreview.js';
+import { 
+  getYesterdayDate, 
+  getTodayForTests, 
+  formatDateForTitle, 
+  getNextDate, 
+  isDateBeforeOrEqualToday 
+} from '../utils/dateUtils.js';
+import { getNotePathForDate } from '../utils/fileUtils.js';
 
 export interface SeeOptions {
   yester?: boolean;
@@ -28,9 +36,9 @@ export class SeeCommand extends BaseCommand {
     if (options.date) {
       currentDate = new Date(options.date + 'T00:00:00');
     } else if (options.yester) {
-      currentDate = this.getYesterdayDate();
+      currentDate = getYesterdayDate();
     } else {
-      currentDate = this.getTodayForTests();
+      currentDate = getTodayForTests();
     }
     // Gate editing: allow when no explicit date is provided
     this.allowEditNotes = !options.date;
@@ -60,8 +68,8 @@ export class SeeCommand extends BaseCommand {
     };
 
     const navigateNext = async () => {
-      const nextDate = this.getNextDate(currentDate);
-      if (this.isDateBeforeOrEqualToday(nextDate)) {
+      const nextDate = getNextDate(currentDate);
+      if (isDateBeforeOrEqualToday(nextDate)) {
         // Allow navigation to any date before or equal to today, creating the note if needed
         await navigateToDate(nextDate);
       }
@@ -70,14 +78,14 @@ export class SeeCommand extends BaseCommand {
     const onEdit = async () => {
       if (this.allowEditNotes) {
         // Open the note in editor
-        const notePath = this.getNotePathForDate(currentDate);
+        const notePath = getNotePathForDate(currentDate);
         await this.editorService.openFile(notePath);
       }
       // Note: Editing is disabled for old notes - no action needed when allowEditNotes is false
     };
 
-    const notePath = this.getNotePathForDate(currentDate);
-    const title = this.formatDateForTitle(currentDate);
+    const notePath = getNotePathForDate(currentDate);
+    const title = formatDateForTitle(currentDate);
 
     // Check if the note file exists
     const exists = await this.fileSystemService.fileExists(notePath);
@@ -94,66 +102,7 @@ export class SeeCommand extends BaseCommand {
     await this.displayMarkdownWithTUINavigation(content, title, currentDate, navigatePrevious, navigateNext, onEdit);
   }
 
-  private getYesterdayDate(): Date {
-    // In test environments, use a fixed date to avoid timing issues
-    if (process.env.NODE_ENV === 'test' || process.env.CI || process.env.VITEST) {
-      // Use 2025-11-24 as yesterday for testing (since today is 2025-11-25)
-      const yesterday = new Date('2025-11-25');
-      yesterday.setDate(yesterday.getDate() - 1);
-      return yesterday;
-    } else {
-      const yesterday = new Date();
-      yesterday.setDate(yesterday.getDate() - 1);
-      return yesterday;
-    }
-  }
 
-
-  private getTodayForTests(): Date {
-    // Anchor today for tests to 2025-11-25 to ensure deterministic behavior
-    if (process.env.NODE_ENV === 'test' || process.env.CI || process.env.VITEST) {
-      return new Date('2025-11-25T00:00:00');
-    } else {
-      return new Date();
-    }
-  }
-
-  private getNotePathForDate(date: Date): string {
-
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const fileName = `${year}-${month}-${day}.md`;
-
-    const notesDir = process.env.MANDA_DIR!;
-    return `${notesDir}/${fileName}`;
-  }
-
-  private formatDateForTitle(date: Date): string {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  }
-
-  private getYesterdayNotePath(): string {
-    const yesterday = this.getYesterdayDate();
-    return this.getNotePathForDate(yesterday);
-  }
-
-  private getNextDate(date: Date): Date {
-    const nextDate = new Date(date);
-    nextDate.setDate(nextDate.getDate() + 1);
-    return nextDate;
-  }
-
-  private isDateBeforeOrEqualToday(date: Date): boolean {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const normalizedDate = new Date(date);
-    normalizedDate.setHours(0, 0, 0, 0);
-    return normalizedDate <= today;
-  }
 
   private async findOldestNote(): Promise<Date | null> {
     const notesDir = process.env.MANDA_DIR!;
@@ -197,7 +146,7 @@ export class SeeCommand extends BaseCommand {
 
     // Look backwards for an existing note
     while (checkDate >= oldestNote) {
-      const notePath = this.getNotePathForDate(checkDate);
+      const notePath = getNotePathForDate(checkDate);
       const exists = await this.fileSystemService.fileExists(notePath);
       if (exists) {
         return checkDate;

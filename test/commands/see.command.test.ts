@@ -139,9 +139,7 @@ describe('SeeCommand', () => {
     process.env.MANDA_DIR = '/test/notes';
 
     const command = new SeeCommand(mockNoteService, mockFileSystemService, mockEditorService);
-    const getYesterdayPathSpy = vi.spyOn(command as any, 'getYesterdayNotePath')
-      .mockReturnValue('/test/notes/2025-11-18.md');
-
+    
     await command.execute({ yester: true });
 
     // Should render with yesterday's date as title
@@ -152,8 +150,6 @@ describe('SeeCommand', () => {
         experimentalAlternateScreenBuffer: true
       })
     );
-
-    getYesterdayPathSpy.mockRestore();
   });
 
   test('should wait for TUI rendering to complete', async () => {
@@ -166,21 +162,16 @@ describe('SeeCommand', () => {
     expect(true).toBe(true);
   });
 
-  test('should display yesterday\'s note when --yester option is used', async () => {
+   test('should display yesterday\'s note when --yester option is used', async () => {
     process.env.MANDA_DIR = '/test/notes';
 
-    // Mock getYesterdayNotePath to return a predictable path
     const command = new SeeCommand(mockNoteService, mockFileSystemService, mockEditorService);
-    const getYesterdayPathSpy = vi.spyOn(command as any, 'getYesterdayNotePath')
-      .mockReturnValue('/test/notes/2025-11-18.md');
 
     await command.execute({ yester: true });
 
     // Now it should check for yesterday's note
     expect(mockFileSystemService.fileExists).toHaveBeenCalledWith('/test/notes/2025-11-24.md');
     expect(mockFileSystemService.readFile).toHaveBeenCalledWith('/test/notes/2025-11-24.md');
-
-    getYesterdayPathSpy.mockRestore();
   });
 
   test('should display note for specific date when --date option is used', async () => {

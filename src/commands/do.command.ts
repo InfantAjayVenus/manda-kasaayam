@@ -4,6 +4,12 @@ import { FileSystemService } from "../services/file-system.service.js";
 import { render } from "ink";
 import React from "react";
 import TaskList, { Task } from "../components/TaskList.js";
+import { 
+  getYesterdayDate, 
+  getTodayForTests, 
+  formatDateForTitle 
+} from "../utils/dateUtils.js";
+import { getNotePathForDate } from "../utils/fileUtils.js";
 
 export interface DoOptions {
   yester?: boolean;
@@ -27,9 +33,9 @@ export class DoCommand extends BaseCommand {
     if (options.date) {
       currentDate = new Date(options.date + "T00:00:00");
     } else if (options.yester) {
-      currentDate = this.getYesterdayDate();
+      currentDate = getYesterdayDate();
     } else {
-      currentDate = this.getTodayForTests();
+      currentDate = getTodayForTests();
     }
 
     // Display the tasks with interactive management
@@ -44,8 +50,8 @@ export class DoCommand extends BaseCommand {
 
     await this.noteService.ensureNotesDirExists(notesDir);
 
-    const notePath = this.getNotePathForDate(currentDate);
-    const title = this.formatDateForTitle(currentDate);
+    const notePath = getNotePathForDate(currentDate);
+    const title = formatDateForTitle(currentDate);
 
     // Check if the note file exists
     const exists = await this.fileSystemService.fileExists(notePath);
@@ -202,51 +208,5 @@ export class DoCommand extends BaseCommand {
     await this.fileSystemService.writeFile(notePath, lines.join("\n"));
   }
 
-  private getYesterdayDate(): Date {
-    // In test environments, use a fixed date to avoid timing issues
-    if (
-      process.env.NODE_ENV === "test" ||
-      process.env.CI ||
-      process.env.VITEST
-    ) {
-      // Use 2025-11-24 as yesterday for testing (since today is 2025-11-25)
-      const yesterday = new Date("2025-11-25");
-      yesterday.setDate(yesterday.getDate() - 1);
-      return yesterday;
-    } else {
-      const yesterday = new Date();
-      yesterday.setDate(yesterday.getDate() - 1);
-      return yesterday;
-    }
-  }
 
-  private getTodayForTests(): Date {
-    // Anchor today for tests to 2025-11-25 to ensure deterministic behavior
-    if (
-      process.env.NODE_ENV === "test" ||
-      process.env.CI ||
-      process.env.VITEST
-    ) {
-      return new Date("2025-11-25T00:00:00");
-    } else {
-      return new Date();
-    }
-  }
-
-  private getNotePathForDate(date: Date): string {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    const fileName = `${year}-${month}-${day}.md`;
-
-    const notesDir = process.env.MANDA_DIR!;
-    return `${notesDir}/${fileName}`;
-  }
-
-  private formatDateForTitle(date: Date): string {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
-  }
 } 
