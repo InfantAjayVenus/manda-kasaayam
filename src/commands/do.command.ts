@@ -187,32 +187,6 @@ export class DoCommand extends BaseCommand {
     await this.fileSystemService.writeFile(notePath, lines.join('\n'));
   }
 
-  private getYesterdayDate(): Date {
-    // In test environments, use a fixed date to avoid timing issues
-    if (process.env.NODE_ENV === 'test' || process.env.CI || process.env.VITEST) {
-      // Use 2025-11-24 as yesterday for testing (since today is 2025-11-25)
-      const yesterday = new Date('2025-11-25');
-      yesterday.setDate(yesterday.getDate() - 1);
-      return yesterday;
-    } else {
-      const yesterday = new Date();
-      yesterday.setDate(yesterday.getDate() - 1);
-      return yesterday;
-    }
-  }
- 
-  private getYesterdayFromToday(): Date {
-    // Anchor today for tests to 2025-11-25; yesterday will be 2025-11-24
-    if (process.env.NODE_ENV === 'test' || process.env.CI || process.env.VITEST) {
-      const today = new Date('2025-11-25T00:00:00');
-      today.setDate(today.getDate() - 1);
-      return today;
-    } else {
-      const today = new Date();
-      today.setDate(today.getDate() - 1);
-      return today;
-    }
-  }
 
   private getTodayForTests(): Date {
     // Anchor today for tests to 2025-11-25 to ensure deterministic behavior
