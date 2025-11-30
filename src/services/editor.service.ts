@@ -1,7 +1,7 @@
-import { spawn, execSync } from 'child_process';
+import { execSync, spawn } from 'child_process';
+import { AppConfig, getEditorFromEnvironment, isTestEnvironment } from '../config/index.js';
 
 export class EditorService {
-  private defaultEditors = ['micro', 'vim', 'vi'];
 
   private isCommandAvailable(command: string): boolean {
     try {
@@ -14,8 +14,9 @@ export class EditorService {
 
   getEditor(): string {
     // Try EDITOR env variable
-    if (process.env.EDITOR && this.isCommandAvailable(process.env.EDITOR)) {
-      return process.env.EDITOR;
+    const envEditor = getEditorFromEnvironment();
+    if (envEditor && this.isCommandAvailable(envEditor)) {
+      return envEditor;
     }
 
     // Try VISUAL env variable
@@ -23,20 +24,20 @@ export class EditorService {
       return process.env.VISUAL;
     }
 
-    // Try default editors in order
-    for (const editor of this.defaultEditors) {
+    // Try preferred editors in order
+    for (const editor of AppConfig.editors.preferredOrder) {
       if (this.isCommandAvailable(editor)) {
         return editor;
       }
     }
 
-    // Fallback to micro (should always be available)
-    return 'micro';
+    // Fallback to configured fallback editor
+    return AppConfig.editors.fallback;
   }
 
   async openFile(filePath: string): Promise<void> {
     // Skip opening editor in test environment
-    if (process.env.NODE_ENV === 'test' || process.env.CI || process.env.VITEST) {
+    if (isTestEnvironment()) {
       return Promise.resolve();
     }
 

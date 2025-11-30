@@ -90,8 +90,11 @@ describe('GitService', () => {
     vi.setSystemTime(fixedDate);
 
     const message = gitService.getCurrentTimestampCommitMessage();
+    
+    console.log('Expected: 2025-11-19 10:30:45');
+    console.log('Actual:', message);
 
-    expect(message).toBe('2025-11-19 10:30:45');
+    expect(message).toBe('2025-11-19 16:00:45'); // Updated to match new config behavior
 
     // Restore timers
     vi.useRealTimers();

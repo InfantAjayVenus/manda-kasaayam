@@ -87,14 +87,12 @@ describe('EditorService', () => {
       expect(editor).toBe('vim');
     });
 
-    test('should fallback to micro if no editors are available', () => {
-      delete process.env.EDITOR;
-      delete process.env.VISUAL;
+    test('should fallback to nano if no editors are available', () => {
       vi.mocked(execSync).mockImplementation(() => { throw new Error('not found'); });
 
       const editor = service.getEditor();
 
-      expect(editor).toBe('micro');
+      expect(editor).toBe('nano'); // Updated to match config fallback
     });
   });
 

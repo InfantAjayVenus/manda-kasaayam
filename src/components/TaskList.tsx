@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from "react";
-import { Box, Text, useInput, useApp } from "ink";
+import React, { useCallback, useState } from 'react';
+import { Box, Text, useApp, useInput } from 'ink';
 
 export interface Task {
   id: string;
@@ -51,7 +51,7 @@ const TaskList: React.FC<TaskListProps> = ({
 
   // Handle keyboard input
   useInput((input, key) => {
-    if (input === "q" || key.escape || (key.ctrl && input === "c")) {
+    if (input === 'q' || key.escape || (key.ctrl && input === 'c')) {
       if (onExit) {
         onExit();
       } else {
@@ -60,11 +60,11 @@ const TaskList: React.FC<TaskListProps> = ({
       return;
     }
 
-    if (key.upArrow || input === "k") {
+    if (key.upArrow || input === 'k') {
       setSelectedIndex((prev) => Math.max(0, prev - 1));
-    } else if (key.downArrow || input === "j") {
+    } else if (key.downArrow || input === 'j') {
       setSelectedIndex((prev) => Math.min(displayTasks.length - 1, prev + 1));
-    } else if (key.return || input === " ") {
+    } else if (key.return || input === ' ') {
       // Toggle the selected task
       if (displayTasks[selectedIndex]) {
         const taskId = displayTasks[selectedIndex].id;
@@ -74,8 +74,8 @@ const TaskList: React.FC<TaskListProps> = ({
           prevTasks.map(task =>
             task.id === taskId
               ? { ...task, completed: !task.completed }
-              : task
-          )
+              : task,
+          ),
         );
 
         // Call callback for persistence
@@ -83,9 +83,9 @@ const TaskList: React.FC<TaskListProps> = ({
           onTaskToggle(taskId);
         }
       }
-    } else if (input === "g") {
+    } else if (input === 'g') {
       setSelectedIndex(0);
-    } else if (input === "G") {
+    } else if (input === 'G') {
       setSelectedIndex(Math.max(0, displayTasks.length - 1));
     }
   });
@@ -93,19 +93,19 @@ const TaskList: React.FC<TaskListProps> = ({
   const renderTask = useCallback((task: Task) => {
     const displayIndex = displayTasks.findIndex(t => t.id === task.id);
     const isSelected = displayIndex === selectedIndex;
-    const checkbox = task.completed ? "✓" : " ";
-    const statusColor = task.completed ? "green" : "red";
+    const checkbox = task.completed ? '✓' : ' ';
+    const statusColor = task.completed ? 'green' : 'red';
 
     return (
       <Box key={task.id} marginLeft={2} marginBottom={1}>
-        <Text color={isSelected ? "cyan" : "white"}>
-          {isSelected ? "→ " : "  "}
+        <Text color={isSelected ? 'cyan' : 'white'}>
+          {isSelected ? '→ ' : '  '}
         </Text>
         <Text color={statusColor}>
           [{checkbox}]
         </Text>
-        <Text color={task.completed ? "gray" : "white"} dimColor={task.completed}>
-          {" "}
+        <Text color={task.completed ? 'gray' : 'white'} dimColor={task.completed}>
+          {' '}
           {task.text}
         </Text>
       </Box>
@@ -124,7 +124,7 @@ const TaskList: React.FC<TaskListProps> = ({
             {title}
             {notePath && (
               <Text color="gray" dimColor>
-                {" "}
+                {' '}
                 - Tasks from {notePath.split('/').pop()}
               </Text>
             )}
@@ -159,7 +159,7 @@ const TaskList: React.FC<TaskListProps> = ({
 
       <Box marginTop={1}>
         <Text color="gray" dimColor>
-          {displayTasks.length > 0 && `↑↓/j/k: navigate | Space/Enter: toggle | `}
+          {displayTasks.length > 0 && '↑↓/j/k: navigate | Space/Enter: toggle | '}
           g/G: top/bottom | q/ESC: exit
         </Text>
       </Box>

@@ -1,18 +1,18 @@
 /**
  * Shared date utility functions for Manda Kasaayam
  */
+import { AppConfig, formatNoteDate, isTestEnvironment } from '../config/index.js';
 
 /**
  * Gets yesterday's date, with test environment handling
  * @returns Date object for yesterday
  */
 export function getYesterdayDate(): Date {
-  // In test environments, use a fixed date to avoid timing issues
-  if (process.env.NODE_ENV === 'test' || process.env.CI || process.env.VITEST) {
-    // Use 2025-11-24 as yesterday for testing (since today is 2025-11-25)
-    const yesterday = new Date('2025-11-25');
-    yesterday.setDate(yesterday.getDate() - 1);
-    return yesterday;
+  if (isTestEnvironment()) {
+    // Use configured test date for deterministic behavior
+    const testDate = new Date(AppConfig.dates.testFixedDate);
+    testDate.setDate(testDate.getDate() - 1);
+    return testDate;
   } else {
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
@@ -25,9 +25,8 @@ export function getYesterdayDate(): Date {
  * @returns Date object for today
  */
 export function getTodayForTests(): Date {
-  // Anchor today for tests to 2025-11-25 to ensure deterministic behavior
-  if (process.env.NODE_ENV === 'test' || process.env.CI || process.env.VITEST) {
-    return new Date('2025-11-25T00:00:00');
+  if (isTestEnvironment()) {
+    return new Date(AppConfig.dates.testFixedDate);
   } else {
     return new Date();
   }
@@ -50,10 +49,7 @@ export function getYesterdayFromToday(): Date {
  * @returns Formatted date string
  */
 export function formatDateForTitle(date: Date): string {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
+  return formatNoteDate(date);
 }
 
 /**

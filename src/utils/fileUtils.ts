@@ -1,6 +1,7 @@
 /**
  * Shared file path utility functions for Manda Kasaayam
  */
+import { AppConfig, formatNoteDate } from '../config/index.js';
 
 /**
  * Generates the note file path for a given date
@@ -8,10 +9,7 @@
  * @returns Full path to the note file
  */
 export function getNotePathForDate(date: Date): string {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  const fileName = `${year}-${month}-${day}.md`;
+  const fileName = `${formatNoteDate(date)}${AppConfig.files.noteExtension}`;
 
   const notesDir = process.env.MANDA_DIR!;
   return `${notesDir}/${fileName}`;

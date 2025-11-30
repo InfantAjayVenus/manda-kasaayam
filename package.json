@@ -13,7 +13,13 @@
 		"build": "pnpm exec tsc",
 		"test": "vitest",
 		"test:watch": "vitest --watch",
-		"prepublishOnly": "pnpm build"
+		"lint": "eslint src --ext .ts,.tsx",
+		"lint:fix": "eslint src --ext .ts,.tsx --fix",
+		"format": "prettier --write src",
+		"format:check": "prettier --check src",
+		"type-check": "tsc --noEmit",
+		"prepublishOnly": "pnpm build",
+		"prepare": "husky"
 	},
 	"files": ["dist", "bin", "README.md", "LICENSE"],
 	"keywords": [

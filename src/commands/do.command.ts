@@ -1,16 +1,17 @@
-import { BaseCommand } from "./base.command.js";
-import { NoteService } from "../domain/note.service.js";
-import { FileSystemService } from "../services/file-system.service.js";
-import { render } from "ink";
-import React from "react";
-import TaskList, { Task } from "../components/TaskList.js";
+import { BaseCommand } from './base.command.js';
+import { NoteService } from '../domain/note.service.js';
+import { FileSystemService } from '../services/file-system.service.js';
+import { render } from 'ink';
+import React from 'react';
+import TaskList, { Task } from '../components/TaskList.js';
 import { 
-  getYesterdayDate, 
+  formatDateForTitle, 
   getTodayForTests, 
-  formatDateForTitle 
-} from "../utils/dateUtils.js";
-import { getNotePathForDate } from "../utils/fileUtils.js";
-import { InkRenderOptions } from "../types/index.js";
+  getYesterdayDate, 
+} from '../utils/dateUtils.js';
+import { getNotePathForDate } from '../utils/fileUtils.js';
+import { InkRenderOptions } from '../types/index.js';
+import { AppConfig } from '../config/index.js';
 
 export interface DoOptions {
   yester?: boolean;
@@ -32,7 +33,7 @@ export class DoCommand extends BaseCommand {
     // Determine the initial date to display
     let currentDate: Date;
     if (options.date) {
-      currentDate = new Date(options.date + "T00:00:00");
+      currentDate = new Date(options.date + 'T00:00:00');
     } else if (options.yester) {
       currentDate = getYesterdayDate();
     } else {
@@ -46,7 +47,7 @@ export class DoCommand extends BaseCommand {
   private async displayTasksWithTUI(currentDate: Date): Promise<void> {
     const notesDir = process.env.MANDA_DIR!;
     if (!notesDir) {
-      throw new Error("MANDA_DIR environment variable is not set");
+      throw new Error('MANDA_DIR environment variable is not set');
     }
 
     await this.noteService.ensureNotesDirExists(notesDir);
@@ -57,7 +58,7 @@ export class DoCommand extends BaseCommand {
     // Check if the note file exists
     const exists = await this.fileSystemService.fileExists(notePath);
 
-    let content = "";
+    let content = '';
     if (exists) {
       content = await this.fileSystemService.readFile(notePath);
     } else {
@@ -74,11 +75,11 @@ export class DoCommand extends BaseCommand {
 
   private parseTasksFromMarkdown(content: string): Task[] {
     const tasks: Task[] = [];
-    const lines = content.split("\n");
+    const lines = content.split('\n');
 
-    let currentHeader = "";
-    let pendingTimestamp = ""; // Timestamp waiting to be associated with next header
-    let headerTimestamp = ""; // Timestamp associated with the current header
+    let currentHeader = '';
+    let pendingTimestamp = ''; // Timestamp waiting to be associated with next header
+    let headerTimestamp = ''; // Timestamp associated with the current header
     let taskId = 0;
 
     for (const line of lines) {
@@ -87,8 +88,8 @@ export class DoCommand extends BaseCommand {
       if (timestampMatch) {
         pendingTimestamp = timestampMatch[1];
         // Reset header when timestamp is encountered
-        currentHeader = "";
-        headerTimestamp = "";
+        currentHeader = '';
+        headerTimestamp = '';
         continue;
       }
 
@@ -98,7 +99,7 @@ export class DoCommand extends BaseCommand {
         currentHeader = headerMatch[1].trim();
         // Associate the pending timestamp with this header
         headerTimestamp = pendingTimestamp;
-        pendingTimestamp = ""; // Clear pending timestamp
+        pendingTimestamp = ''; // Clear pending timestamp
         continue;
       }
 
@@ -106,16 +107,16 @@ export class DoCommand extends BaseCommand {
       const taskMatch = line.match(/^\s*-\s+\[([ x])\]\s+(.+)$/);
       if (taskMatch) {
         const [, checkbox, text] = taskMatch;
-        const completed = checkbox === "x";
+        const completed = checkbox === 'x';
 
         // Create header that includes timestamp if there's both a header and associated timestamp
-        let header = "";
+        let header = '';
         if (currentHeader && headerTimestamp) {
           header = `${currentHeader} [${headerTimestamp}]`;
         } else if (currentHeader) {
           header = currentHeader;
         } else {
-          header = "General";
+          header = 'General';
         }
 
         tasks.push({
@@ -126,7 +127,7 @@ export class DoCommand extends BaseCommand {
         });
 
         // Clear pending timestamp if a task is encountered before a header
-        pendingTimestamp = "";
+        pendingTimestamp = '';
       }
     }
 
@@ -147,7 +148,7 @@ export class DoCommand extends BaseCommand {
         onExit: () => {
           // Don't exit in test environments
           if (
-            process.env.NODE_ENV !== "test" &&
+            process.env.NODE_ENV !== 'test' &&
             !process.env.CI &&
             !process.env.VITEST
           ) {
@@ -159,8 +160,8 @@ export class DoCommand extends BaseCommand {
         },
       }),
       {
-        exitOnCtrlC: true,
-        experimentalAlternateScreenBuffer: true,
+        exitOnCtrlC: AppConfig.ui.exitOnCtrlC,
+        experimentalAlternateScreenBuffer: AppConfig.ui.experimentalAlternateScreenBuffer,
       } as InkRenderOptions,
     );
 
@@ -173,13 +174,13 @@ export class DoCommand extends BaseCommand {
     tasks: Task[],
   ): Promise<void> {
     const content = await this.fileSystemService.readFile(notePath);
-    const lines = content.split("\n");
+    const lines = content.split('\n');
 
     // Find the task in the file and toggle it
     const task = tasks.find((t) => t.id === taskId);
     if (!task) return;
 
-    let currentHeader = "";
+    let currentHeader = '';
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
 
@@ -193,12 +194,12 @@ export class DoCommand extends BaseCommand {
       const taskMatch = line.match(/^\s*-\s+\[([ x])\]\s+(.+)$/);
       if (taskMatch) {
         const [, checkbox, text] = taskMatch;
-        const lineHeader = currentHeader || "";
+        const lineHeader = currentHeader || '';
         const lineText = text.trim();
 
         // Match by text and header (since IDs are generated)
-        if (lineText === task.text && lineHeader === (task.header || "")) {
-          const newCheckbox = checkbox === "x" ? " " : "x";
+        if (lineText === task.text && lineHeader === (task.header || '')) {
+          const newCheckbox = checkbox === 'x' ? ' ' : 'x';
           lines[i] = line.replace(/\[[ x]\]/, `[${newCheckbox}]`);
           break;
         }
@@ -206,7 +207,7 @@ export class DoCommand extends BaseCommand {
     }
 
     // Write the updated content back to file
-    await this.fileSystemService.writeFile(notePath, lines.join("\n"));
+    await this.fileSystemService.writeFile(notePath, lines.join('\n'));
   }
 
 

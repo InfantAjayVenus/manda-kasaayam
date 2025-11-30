@@ -1,4 +1,5 @@
 import simpleGit, { SimpleGit } from 'simple-git';
+import { AppConfig, formatTimestamp, isTestEnvironment } from '../config/index.js';
 
 export class GitService {
   private git: SimpleGit;
@@ -8,6 +9,11 @@ export class GitService {
   }
 
   async commitAndPush(notePath: string, commitMessage: string): Promise<void> {
+    // Skip git operations if disabled in config
+    if (!AppConfig.git.enabled) {
+      return;
+    }
+
     try {
       // Check if we're in a git repository
       const isRepo = await this.git.checkIsRepo();
@@ -34,16 +40,13 @@ export class GitService {
     } catch (error) {
       // If git operations fail, we don't want to break the note-taking flow
       // Just silently ignore git errors (don't log in test environments)
-      if (process.env.NODE_ENV !== 'test' && !process.env.CI && !process.env.VITEST) {
+      if (!isTestEnvironment()) {
         console.warn('Git operation failed:', error);
       }
     }
   }
 
   getCurrentTimestampCommitMessage(): string {
-    const now = new Date();
-    const date = now.toISOString().slice(0, 10); // YYYY-MM-DD
-    const time = now.toISOString().slice(11, 19); // HH:MM:SS
-    return `${date} ${time}`;
+    return formatTimestamp();
   }
 }

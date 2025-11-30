@@ -6,13 +6,14 @@ import { render } from 'ink';
 import React from 'react';
 import MarkdownPreview from '../components/MarkdownPreview.js';
 import { 
-  getYesterdayDate, 
-  getTodayForTests, 
   formatDateForTitle, 
   getNextDate, 
-  isDateBeforeOrEqualToday 
+  getTodayForTests, 
+  getYesterdayDate, 
+  isDateBeforeOrEqualToday, 
 } from '../utils/dateUtils.js';
 import { getNotePathForDate } from '../utils/fileUtils.js';
+import { AppConfig } from '../config/index.js';
 import { InkRenderOptions } from '../types/index.js';
 
 export interface SeeOptions {
@@ -135,7 +136,7 @@ export class SeeCommand extends BaseCommand {
       return null;
     }
 
-    let checkDate = new Date(currentDate);
+    const checkDate = new Date(currentDate);
     checkDate.setDate(checkDate.getDate() - 1);
 
     // Don't go before the oldest note
@@ -166,7 +167,7 @@ export class SeeCommand extends BaseCommand {
     currentDate: Date,
     navigatePrevious: () => Promise<void>,
     navigateNext: () => Promise<void>,
-    onEdit?: () => Promise<void>
+    onEdit?: () => Promise<void>,
   ): Promise<void> {
     // Create and render TUI component with navigation
     const { waitUntilExit } = render(
@@ -182,12 +183,12 @@ export class SeeCommand extends BaseCommand {
         },
         onNavigatePrevious: navigatePrevious,
         onNavigateNext: navigateNext,
-        onEdit
+        onEdit,
       }),
       {
-        exitOnCtrlC: true,
-        experimentalAlternateScreenBuffer: true
-      } as InkRenderOptions
+        exitOnCtrlC: AppConfig.ui.exitOnCtrlC,
+        experimentalAlternateScreenBuffer: AppConfig.ui.experimentalAlternateScreenBuffer,
+      } as InkRenderOptions,
     );
 
     await waitUntilExit();

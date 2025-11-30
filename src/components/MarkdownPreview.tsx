@@ -1,6 +1,6 @@
-import React, { useState, useCallback } from "react";
-import { Box, Text, useInput } from "ink";
-import { marked } from "marked";
+import React, { useCallback, useState } from 'react';
+import { Box, Text, useInput } from 'ink';
+import { marked } from 'marked';
 
 interface MarkdownPreviewProps {
   content: string;
@@ -54,7 +54,7 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
 
   // Handle keyboard input
   useInput((input, key) => {
-    if (input === "q" || key.escape || (key.ctrl && input === "c")) {
+    if (input === 'q' || key.escape || (key.ctrl && input === 'c')) {
       if (onExit) {
         onExit();
       } else {
@@ -64,7 +64,7 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
     }
 
     // Edit key
-    if (input === "e") {
+    if (input === 'e') {
       if (onEdit) {
         onEdit();
         return;
@@ -72,12 +72,12 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
     }
 
     // Navigation keys
-    if (key.leftArrow || input === "h") {
+    if (key.leftArrow || input === 'h') {
       if (onNavigatePrevious) {
         onNavigatePrevious();
         return;
       }
-    } else if (key.rightArrow || input === "l") {
+    } else if (key.rightArrow || input === 'l') {
       if (onNavigateNext) {
         onNavigateNext();
         return;
@@ -85,21 +85,21 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
     }
 
     // Scrolling keys
-    if (key.upArrow || input === "k") {
+    if (key.upArrow || input === 'k') {
       setOffset((prev) => Math.max(0, prev - 1));
-    } else if (key.downArrow || input === "j") {
+    } else if (key.downArrow || input === 'j') {
       setOffset((prev) => prev + 1);
     } else if (key.pageUp) {
       setOffset((prev) => Math.max(0, prev - 10));
     } else if (key.pageDown) {
       setOffset((prev) => prev + 10);
-    } else if (input === "g") {
+    } else if (input === 'g') {
       setOffset(0);
-    } else if (input === "G") {
+    } else if (input === 'G') {
       setOffset(Math.max(0, tokens.length - 20));
-    } else if (key.ctrl && input === "d") {
+    } else if (key.ctrl && input === 'd') {
       setOffset((prev) => prev + 15);
-    } else if (key.ctrl && input === "u") {
+    } else if (key.ctrl && input === 'u') {
       setOffset((prev) => Math.max(0, prev - 15));
     }
   });
@@ -107,16 +107,16 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
   // Simple syntax highlighting for code
   const highlightCode = useCallback(
     (code: string, language?: string): React.ReactNode => {
-      const lines = code.split("\n");
+      const lines = code.split('\n');
       return lines.map((line, lineIndex) => {
         let segments: React.ReactNode[] = [line];
 
         // Basic syntax highlighting patterns
         if (
-          language === "javascript" ||
-          language === "js" ||
-          language === "typescript" ||
-          language === "ts"
+          language === 'javascript' ||
+          language === 'js' ||
+          language === 'typescript' ||
+          language === 'ts'
         ) {
           const keywords = line.match(
             /\b(function|const|let|var|if|else|for|while|return|class|extends|import|export|from|default)\b/g,
@@ -148,7 +148,7 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
               segments.push(line.substring(lastIndex));
             }
           }
-        } else if (language === "python" || language === "py") {
+        } else if (language === 'python' || language === 'py') {
           const keywords = line.match(
             /\b(def|class|if|elif|else|for|while|return|import|from|as|try|except|finally|with|lambda)\b/g,
           );
@@ -184,7 +184,7 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
         return (
           <Box key={lineIndex}>
             <Text color="gray" dimColor>
-              {String(lineIndex + 1).padStart(2, " ")}{" "}
+              {String(lineIndex + 1).padStart(2, ' ')}{' '}
             </Text>
             <Text>{segments}</Text>
           </Box>
@@ -197,47 +197,47 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
   const renderToken = useCallback(
     (token: MarkdownToken, index: number): React.ReactNode => {
       switch (token.type) {
-        case "heading":
+        case 'heading':
           const headingSize = token.depth || 1;
           const headingColor =
             headingSize === 1
-              ? "blueBright"
+              ? 'blueBright'
               : headingSize === 2
-                ? "cyan"
+                ? 'cyan'
                 : headingSize === 3
-                  ? "yellow"
-                  : "magenta";
+                  ? 'yellow'
+                  : 'magenta';
 
           // Different styling based on header level to make them feel larger
           const getHeadingStyle = (level: number) => {
             switch (level) {
               case 1: // H1 - largest
                 return {
-                  borderStyle: "double" as const,
-                  borderColor: "blueBright",
+                  borderStyle: 'double' as const,
+                  borderColor: 'blueBright',
                   paddingX: 2,
                   paddingY: 1,
                   marginBottom: 2,
                   marginTop: 1,
-                  alignSelf: "flex-start" as const,
+                  alignSelf: 'flex-start' as const,
                 };
               case 2: // H2 - medium
                 return {
-                  borderStyle: "single" as const,
-                  borderColor: "cyan",
+                  borderStyle: 'single' as const,
+                  borderColor: 'cyan',
                   paddingX: 1,
                   paddingY: 1,
                   marginBottom: 2,
-                  alignSelf: "flex-start" as const,
+                  alignSelf: 'flex-start' as const,
                 };
               case 3: // H3 - smaller
                 return {
-                  borderStyle: "round" as const,
-                  borderColor: "yellow",
+                  borderStyle: 'round' as const,
+                  borderColor: 'yellow',
                   paddingX: 1,
                   paddingY: 0,
                   marginBottom: 1,
-                  alignSelf: "flex-start" as const,
+                  alignSelf: 'flex-start' as const,
                 };
               default: // H4+ - minimal
                 return {
@@ -256,7 +256,7 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
             </Box>
           );
 
-        case "paragraph":
+        case 'paragraph':
           return (
             <Box key={index} marginBottom={1}>
               {token.tokens?.map((childToken, childIndex) =>
@@ -265,7 +265,7 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
             </Box>
           );
 
-        case "list":
+        case 'list':
           return (
             <Box
               key={index}
@@ -279,18 +279,18 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
             </Box>
           );
 
-        case "list_item":
+        case 'list_item':
           // Check if this is a task list item (GFM checkbox)
           if (token.task) {
             const isChecked = token.checked;
-            const taskText = token.text || "";
+            const taskText = token.text || '';
             return (
               <Box key={index} marginBottom={1}>
-                <Text color={isChecked ? "green" : "red"}>
-                  [{isChecked ? "✓" : " "}]
+                <Text color={isChecked ? 'green' : 'red'}>
+                  [{isChecked ? '✓' : ' '}]
                 </Text>
-                <Text color={isChecked ? "gray" : "white"} dimColor={isChecked}>
-                  {" "}
+                <Text color={isChecked ? 'gray' : 'white'} dimColor={isChecked}>
+                  {' '}
                   {taskText}
                 </Text>
               </Box>
@@ -310,7 +310,7 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
           } else {
             // If no tokens, parse the text content
             const textTokens = marked.lexer(
-              token.text || "",
+              token.text || '',
             ) as MarkdownToken[];
             return (
               <Box key={index}>
@@ -322,14 +322,14 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
             );
           }
 
-        case "checkbox":
+        case 'checkbox':
           // This is handled in list_item case
           return null;
 
-        case "text":
+        case 'text':
           return <Text key={index}>{token.text}</Text>;
 
-        case "code":
+        case 'code':
           return (
             <Box
               key={index}
@@ -345,19 +345,19 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
                 </Box>
               )}
               <Box flexDirection="column" paddingX={1}>
-                {highlightCode(token.text || "", token.lang)}
+                {highlightCode(token.text || '', token.lang)}
               </Box>
             </Box>
           );
 
-        case "codespan":
+        case 'codespan':
           return (
             <Text key={index} backgroundColor="gray" color="green">
               `{token.text}`
             </Text>
           );
 
-        case "blockquote":
+        case 'blockquote':
           return (
             <Box
               key={index}
@@ -373,7 +373,7 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
             </Box>
           );
 
-        case "strong":
+        case 'strong':
           return (
             <Text key={index} bold color="white">
               {token.tokens?.map((childToken, childIndex) =>
@@ -382,7 +382,7 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
             </Text>
           );
 
-        case "em":
+        case 'em':
           return (
             <Text key={index} italic color="white">
               {token.tokens?.map((childToken, childIndex) =>
@@ -391,25 +391,25 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
             </Text>
           );
 
-        case "link":
+        case 'link':
           return (
             <Text key={index} color="blue" underline>
               {token.text} ({token.href})
             </Text>
           );
 
-        case "table":
+        case 'table':
           // Render table as simple text format
-          let tableText = "";
+          let tableText = '';
 
           if (token.header && Array.isArray(token.header)) {
             // Header row
             tableText +=
               token.header
-                .map((h: any) => (typeof h === "string" ? h : h.text || h))
-                .join(" | ") + "\n";
+                .map((h: any) => (typeof h === 'string' ? h : h.text || h))
+                .join(' | ') + '\n';
             // Separator
-            tableText += token.header.map(() => "---").join(" | ") + "\n";
+            tableText += token.header.map(() => '---').join(' | ') + '\n';
           }
 
           if (token.rows && Array.isArray(token.rows)) {
@@ -418,12 +418,12 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
               tableText +=
                 row
                   .map((cell: any) => {
-                    if (typeof cell === "string") return cell;
-                    if (cell && typeof cell === "object" && cell.text)
+                    if (typeof cell === 'string') return cell;
+                    if (cell && typeof cell === 'object' && cell.text)
                       return cell.text;
-                    return "";
+                    return '';
                   })
-                  .join(" | ") + "\n";
+                  .join(' | ') + '\n';
             });
           }
 
@@ -433,7 +433,7 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
             </Box>
           );
 
-        case "del":
+        case 'del':
           return (
             <Text key={index} strikethrough color="gray" dimColor>
               {token.tokens?.map((childToken, childIndex) =>
@@ -442,16 +442,16 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
             </Text>
           );
 
-        case "hr":
+        case 'hr':
           return (
             <Box key={index} marginBottom={1}>
               <Text color="gray">
-                {"─".repeat(Math.min(50, process.stdout.columns || 50))}
+                {'─'.repeat(Math.min(50, process.stdout.columns || 50))}
               </Text>
             </Box>
           );
 
-        case "space":
+        case 'space':
           return <Text key={index}> </Text>;
 
         default:
@@ -487,12 +487,12 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
             {title}
             {currentDate && (
               <Text color="cyan">
-                {" "}
+                {' '}
                 ({currentDate.toLocaleDateString('en-US', {
                   weekday: 'long',
                   year: 'numeric',
                   month: 'long',
-                  day: 'numeric'
+                  day: 'numeric',
                 })})
               </Text>
             )}
@@ -506,11 +506,11 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
 
       <Box marginTop={1}>
         <Text color="gray" dimColor>
-          {hasMore && "-- More -- "}
+          {hasMore && '-- More -- '}
           {tokens.length > 0 && `(${scrollPercentage}% scrolled) `}|
-          {onNavigatePrevious && " ←/h: prev day "}
-          {onNavigateNext && " →/l: next day | "}
-          {onEdit && " e: edit | "}
+          {onNavigatePrevious && ' ←/h: prev day '}
+          {onNavigateNext && ' →/l: next day | '}
+          {onEdit && ' e: edit | '}
           ↑↓/j/k: scroll | g/G: top/bottom | q/ESC: exit
         </Text>
       </Box>

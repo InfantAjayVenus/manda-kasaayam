@@ -7,8 +7,8 @@ export class NoteService {
   getTodayFileName(): string {
     const today = new Date();
     const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, "0");
-    const day = String(today.getDate()).padStart(2, "0");
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}.md`;
   }
 
@@ -29,7 +29,7 @@ export class NoteService {
         await this.moveYesterdaysNoteToOrganizedStructure(notePath);
       }
 
-      let content = "";
+      let content = '';
       if (fileName === todayFileName) {
         // For today's note, include incomplete tasks from previous notes
         content = await this.generateNoteWithIncompleteTasks(notePath);
@@ -48,21 +48,21 @@ export class NoteService {
     );
 
     if (incompleteTasks.length === 0) {
-      return "";
+      return '';
     }
 
     // Format the tasks with links to source notes
-    let content = "";
+    let content = '';
     for (const [date, tasks] of incompleteTasks) {
       content += `[${date}](${date}.md)\n\n`;
       for (const task of tasks) {
         content += `${task}\n`;
       }
-      content += "\n";
+      content += '\n';
     }
 
     // Add separator after old tasks
-    content += "---\n\n";
+    content += '---\n\n';
 
     return content;
   }
@@ -77,7 +77,7 @@ export class NoteService {
 
     const yesterdayFileName = `${yesterday.getFullYear()}-${String(
       yesterday.getMonth() + 1,
-    ).padStart(2, "0")}-${String(yesterday.getDate()).padStart(2, "0")}.md`;
+    ).padStart(2, '0')}-${String(yesterday.getDate()).padStart(2, '0')}.md`;
     const yesterdayNotePath = path.join(notesDir, yesterdayFileName);
 
     const result: Array<[string, string[]]> = [];
@@ -107,10 +107,10 @@ export class NoteService {
   private extractIncompleteTasksGroupedByDate(
     content: string,
   ): Array<[string, string[]]> {
-    const lines = content.split("\n");
+    const lines = content.split('\n');
     const result: Array<[string, string[]]> = [];
 
-    let currentDate = "";
+    let currentDate = '';
     let currentTasks: string[] = [];
 
     for (let i = 0; i < lines.length; i++) {
@@ -131,7 +131,7 @@ export class NoteService {
         currentTasks = [];
 
         // Skip the next line if it's empty (the line after the date link)
-        if (i + 1 < lines.length && lines[i + 1].trim() === "") {
+        if (i + 1 < lines.length && lines[i + 1].trim() === '') {
           i++;
         }
         continue;
@@ -156,7 +156,7 @@ export class NoteService {
       yesterday.setHours(0, 0, 0, 0);
       const yesterdayStr = `${yesterday.getFullYear()}-${String(
         yesterday.getMonth() + 1,
-      ).padStart(2, "0")}-${String(yesterday.getDate()).padStart(2, "0")}`;
+      ).padStart(2, '0')}-${String(yesterday.getDate()).padStart(2, '0')}`;
 
       const allTasks = this.extractIncompleteTasks(content);
       if (allTasks.length > 0) {
@@ -173,9 +173,9 @@ export class NoteService {
     result: Array<[string, string[]]>,
     processedDates: Set<string>,
   ): Promise<void> {
-    const lines = content.split("\n");
+    const lines = content.split('\n');
 
-    let currentDate = "";
+    let currentDate = '';
     let currentTasks: string[] = [];
 
     for (let i = 0; i < lines.length; i++) {
@@ -221,7 +221,7 @@ export class NoteService {
         }
 
         // Skip the next line if it's empty (the line after the date link)
-        if (i + 1 < lines.length && lines[i + 1].trim() === "") {
+        if (i + 1 < lines.length && lines[i + 1].trim() === '') {
           i++;
         }
         continue;
@@ -246,7 +246,7 @@ export class NoteService {
       yesterday.setHours(0, 0, 0, 0);
       const yesterdayStr = `${yesterday.getFullYear()}-${String(
         yesterday.getMonth() + 1,
-      ).padStart(2, "0")}-${String(yesterday.getDate()).padStart(2, "0")}`;
+      ).padStart(2, '0')}-${String(yesterday.getDate()).padStart(2, '0')}`;
 
       const allTasks = this.extractIncompleteTasks(content);
       if (allTasks.length > 0) {
@@ -256,7 +256,7 @@ export class NoteService {
   }
 
   private extractIncompleteTasks(content: string): string[] {
-    const lines = content.split("\n");
+    const lines = content.split('\n');
     const incompleteTasks: string[] = [];
 
     for (const line of lines) {
@@ -284,7 +284,7 @@ export class NoteService {
 
     const yesterdayFileName = `${yesterday.getFullYear()}-${String(
       yesterday.getMonth() + 1,
-    ).padStart(2, "0")}-${String(yesterday.getDate()).padStart(2, "0")}.md`;
+    ).padStart(2, '0')}-${String(yesterday.getDate()).padStart(2, '0')}.md`;
     const yesterdayNotePath = path.join(notesDir, yesterdayFileName);
 
     // Check if yesterday's note exists in the root directory
@@ -295,7 +295,7 @@ export class NoteService {
 
     // Create organized directory structure: YYYY/MM
     const year = yesterday.getFullYear();
-    const month = String(yesterday.getMonth() + 1).padStart(2, "0");
+    const month = String(yesterday.getMonth() + 1).padStart(2, '0');
 
     const organizedDir = path.join(notesDir, String(year), month);
     await this.fileSystemService.ensureDirectoryExists(organizedDir);
@@ -311,8 +311,8 @@ export class NoteService {
 
   getCurrentTimeString(): string {
     const now = new Date();
-    const hours = String(now.getHours()).padStart(2, "0");
-    const minutes = String(now.getMinutes()).padStart(2, "0");
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
     return `${hours}:${minutes}`;
   }
 
@@ -338,7 +338,7 @@ export class NoteService {
     const timestampLink = `[${timestamp}]`;
 
     const exists = await this.fileSystemService.fileExists(notePath);
-    let content = "";
+    let content = '';
 
     if (exists) {
       content = await this.fileSystemService.readFile(notePath);
@@ -346,14 +346,14 @@ export class NoteService {
 
     if (!content) {
       // Empty file, just add timestamp
-      content = timestampLink + "\n";
+      content = timestampLink + '\n';
     } else if (this.hasContentAfterLastTimestamp(content)) {
       // Add timestamp link to the end of the file
       // If file doesn't end with newline, add one first
-      if (!content.endsWith("\n")) {
-        content += "\n";
+      if (!content.endsWith('\n')) {
+        content += '\n';
       }
-      content += timestampLink + "\n";
+      content += timestampLink + '\n';
     } else {
       // Replace the last timestamp
       const timestampRegex = /\[\d{2}:\d{2}\]/g;
@@ -370,10 +370,10 @@ export class NoteService {
           content.substring(lastTimestampIndex + lastTimestamp.length);
       } else {
         // No timestamps found, just append
-        if (!content.endsWith("\n")) {
-          content += "\n";
+        if (!content.endsWith('\n')) {
+          content += '\n';
         }
-        content += timestampLink + "\n";
+        content += timestampLink + '\n';
       }
     }
 
@@ -432,12 +432,12 @@ export class NoteService {
       let updatedContent = afterContent;
 
       // Check if content already ends with separator
-      if (!updatedContent.endsWith("\n---\n\n")) {
+      if (!updatedContent.endsWith('\n---\n\n')) {
         // Ensure content ends with exactly one newline, then add separator
-        if (!updatedContent.endsWith("\n")) {
-          updatedContent += "\n";
+        if (!updatedContent.endsWith('\n')) {
+          updatedContent += '\n';
         }
-        updatedContent += "\n---\n\n";
+        updatedContent += '\n---\n\n';
         await this.fileSystemService.writeFile(notePath, updatedContent);
       }
       // If separator already exists at the end, no need to write

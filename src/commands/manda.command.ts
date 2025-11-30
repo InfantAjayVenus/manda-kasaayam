@@ -10,7 +10,7 @@ export class MandaCommand extends BaseCommand {
   constructor(
     noteService?: NoteService,
     editorService?: EditorService,
-    gitService?: GitService
+    gitService?: GitService,
   ) {
     super(noteService);
     this.editorService = editorService || new EditorService();
