@@ -5,12 +5,12 @@ import { EditorService } from '../services/editor.service.js';
 import { render } from 'ink';
 import React from 'react';
 import MarkdownPreview from '../components/MarkdownPreview.js';
-import { 
-  formatDateForTitle, 
-  getNextDate, 
-  getTodayForTests, 
-  getYesterdayDate, 
-  isDateBeforeOrEqualToday, 
+import {
+  formatDateForTitle,
+  getNextDate,
+  getTodayForTests,
+  getYesterdayDate,
+  isDateBeforeOrEqualToday,
 } from '../utils/dateUtils.js';
 import { getNotePathForDate } from '../utils/fileUtils.js';
 import { AppConfig } from '../config/index.js';
@@ -26,7 +26,11 @@ export class SeeCommand extends BaseCommand {
   private editorService: EditorService;
   private allowEditNotes?: boolean;
 
-  constructor(noteService?: NoteService, fileSystemService?: FileSystemService, editorService?: EditorService) {
+  constructor(
+    noteService?: NoteService,
+    fileSystemService?: FileSystemService,
+    editorService?: EditorService,
+  ) {
     super(noteService);
     this.fileSystemService = fileSystemService || new FileSystemService();
     this.editorService = editorService || new EditorService();
@@ -49,9 +53,8 @@ export class SeeCommand extends BaseCommand {
     await this.displayNoteWithNavigation(currentDate);
   }
 
-
   private async displayNoteWithNavigation(currentDate: Date): Promise<void> {
-    const notesDir = process.env.MANDA_DIR!;
+    const notesDir = process.env.MANDA_DIR;
     if (!notesDir) {
       throw new Error('MANDA_DIR environment variable is not set');
     }
@@ -101,13 +104,21 @@ export class SeeCommand extends BaseCommand {
     }
 
     // Display the content using TUI markdown preview with navigation
-    await this.displayMarkdownWithTUINavigation(content, title, currentDate, navigatePrevious, navigateNext, onEdit);
+    await this.displayMarkdownWithTUINavigation(
+      content,
+      title,
+      currentDate,
+      navigatePrevious,
+      navigateNext,
+      onEdit,
+    );
   }
 
-
-
   private async findOldestNote(): Promise<Date | null> {
-    const notesDir = process.env.MANDA_DIR!;
+    const notesDir = process.env.MANDA_DIR;
+    if (!notesDir) {
+      return null;
+    }
     try {
       const files = await this.fileSystemService.listDirectory(notesDir);
       const noteFiles = files.filter((file: string) => file.endsWith('.md'));
@@ -125,7 +136,8 @@ export class SeeCommand extends BaseCommand {
         .sort((a: Date, b: Date) => a.getTime() - b.getTime());
 
       return dates.length > 0 ? dates[0] : null;
-    } catch (error) {
+    } catch (_error) {
+      // eslint-disable-line @typescript-eslint/no-unused-vars
       return null;
     }
   }
@@ -144,8 +156,6 @@ export class SeeCommand extends BaseCommand {
       return null;
     }
 
-    const notesDir = process.env.MANDA_DIR!;
-
     // Look backwards for an existing note
     while (checkDate >= oldestNote) {
       const notePath = getNotePathForDate(checkDate);
@@ -158,8 +168,6 @@ export class SeeCommand extends BaseCommand {
 
     return null;
   }
-
-
 
   private async displayMarkdownWithTUINavigation(
     content: string,

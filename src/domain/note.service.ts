@@ -2,7 +2,7 @@ import path from 'path';
 import { FileSystemService } from '../services/file-system.service.js';
 
 export class NoteService {
-  constructor(private fileSystemService: FileSystemService) { }
+  constructor(private fileSystemService: FileSystemService) {}
 
   getTodayFileName(): string {
     const today = new Date();
@@ -39,13 +39,9 @@ export class NoteService {
     }
   }
 
-  private async generateNoteWithIncompleteTasks(
-    todayNotePath: string,
-  ): Promise<string> {
+  private async generateNoteWithIncompleteTasks(todayNotePath: string): Promise<string> {
     const notesDir = path.dirname(todayNotePath);
-    const incompleteTasks = await this.collectIncompleteTasksFromPreviousNotes(
-      notesDir,
-    );
+    const incompleteTasks = await this.collectIncompleteTasksFromPreviousNotes(notesDir);
 
     if (incompleteTasks.length === 0) {
       return '';
@@ -86,9 +82,7 @@ export class NoteService {
     try {
       const exists = await this.fileSystemService.fileExists(yesterdayNotePath);
       if (exists) {
-        const content = await this.fileSystemService.readFile(
-          yesterdayNotePath,
-        );
+        const content = await this.fileSystemService.readFile(yesterdayNotePath);
         await this.extractIncompleteTasksGroupedByDateRecursive(
           content,
           notesDir,
@@ -96,7 +90,8 @@ export class NoteService {
           processedDates,
         );
       }
-    } catch (error) {
+    } catch (_error) {
+      // eslint-disable-line @typescript-eslint/no-unused-vars
       // If there's an error reading yesterday's note, just skip it
       // This ensures the note creation doesn't fail
     }
@@ -104,9 +99,7 @@ export class NoteService {
     return result;
   }
 
-  private extractIncompleteTasksGroupedByDate(
-    content: string,
-  ): Array<[string, string[]]> {
+  private extractIncompleteTasksGroupedByDate(content: string): Array<[string, string[]]> {
     const lines = content.split('\n');
     const result: Array<[string, string[]]> = [];
 
@@ -117,9 +110,7 @@ export class NoteService {
       const line = lines[i];
 
       // Check for date link: [YYYY-MM-DD](YYYY-MM-DD.md)
-      const dateLinkMatch = line.match(
-        /^\[(\d{4}-\d{2}-\d{2})\]\((\d{4}-\d{2}-\d{2})\.md\)$/,
-      );
+      const dateLinkMatch = line.match(/^\[(\d{4}-\d{2}-\d{2})\]\((\d{4}-\d{2}-\d{2})\.md\)$/);
       if (dateLinkMatch) {
         // Save previous section if it had tasks
         if (currentDate && currentTasks.length > 0) {
@@ -154,9 +145,10 @@ export class NoteService {
       const yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
       yesterday.setHours(0, 0, 0, 0);
-      const yesterdayStr = `${yesterday.getFullYear()}-${String(
-        yesterday.getMonth() + 1,
-      ).padStart(2, '0')}-${String(yesterday.getDate()).padStart(2, '0')}`;
+      const yesterdayStr = `${yesterday.getFullYear()}-${String(yesterday.getMonth() + 1).padStart(
+        2,
+        '0',
+      )}-${String(yesterday.getDate()).padStart(2, '0')}`;
 
       const allTasks = this.extractIncompleteTasks(content);
       if (allTasks.length > 0) {
@@ -182,9 +174,7 @@ export class NoteService {
       const line = lines[i];
 
       // Check for date link: [YYYY-MM-DD](YYYY-MM-DD.md)
-      const dateLinkMatch = line.match(
-        /^\[(\d{4}-\d{2}-\d{2})\]\((\d{4}-\d{2}-\d{2})\.md\)$/,
-      );
+      const dateLinkMatch = line.match(/^\[(\d{4}-\d{2}-\d{2})\]\((\d{4}-\d{2}-\d{2})\.md\)$/);
       if (dateLinkMatch) {
         // Save previous section if it had tasks
         if (currentDate && currentTasks.length > 0) {
@@ -201,13 +191,9 @@ export class NoteService {
           const linkedFilePath = path.join(notesDir, `${currentDate}.md`);
 
           try {
-            const exists = await this.fileSystemService.fileExists(
-              linkedFilePath,
-            );
+            const exists = await this.fileSystemService.fileExists(linkedFilePath);
             if (exists) {
-              const linkedContent = await this.fileSystemService.readFile(
-                linkedFilePath,
-              );
+              const linkedContent = await this.fileSystemService.readFile(linkedFilePath);
               await this.extractIncompleteTasksGroupedByDateRecursive(
                 linkedContent,
                 notesDir,
@@ -215,7 +201,8 @@ export class NoteService {
                 processedDates,
               );
             }
-          } catch (error) {
+          } catch (_error) {
+            // eslint-disable-line @typescript-eslint/no-unused-vars
             // Ignore errors reading linked files
           }
         }
@@ -244,9 +231,10 @@ export class NoteService {
       const yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
       yesterday.setHours(0, 0, 0, 0);
-      const yesterdayStr = `${yesterday.getFullYear()}-${String(
-        yesterday.getMonth() + 1,
-      ).padStart(2, '0')}-${String(yesterday.getDate()).padStart(2, '0')}`;
+      const yesterdayStr = `${yesterday.getFullYear()}-${String(yesterday.getMonth() + 1).padStart(
+        2,
+        '0',
+      )}-${String(yesterday.getDate()).padStart(2, '0')}`;
 
       const allTasks = this.extractIncompleteTasks(content);
       if (allTasks.length > 0) {
@@ -380,20 +368,13 @@ export class NoteService {
     await this.fileSystemService.writeFile(notePath, content);
   }
 
-  private hasContentAddedBelowLastTimestamp(
-    beforeContent: string,
-    afterContent: string,
-  ): boolean {
+  private hasContentAddedBelowLastTimestamp(beforeContent: string, afterContent: string): boolean {
     const timestampRegex = /\[\d{2}:\d{2}\]/g;
     const beforeMatches = beforeContent.match(timestampRegex);
     const afterMatches = afterContent.match(timestampRegex);
 
     // If timestamps count changed, we can't reliably detect
-    if (
-      !beforeMatches ||
-      !afterMatches ||
-      beforeMatches.length !== afterMatches.length
-    ) {
+    if (!beforeMatches || !afterMatches || beforeMatches.length !== afterMatches.length) {
       return false;
     }
 
@@ -417,9 +398,7 @@ export class NoteService {
       lastTimestampIndex + lastTimestampAfter.length,
     );
 
-    return (
-      contentAfterLastTimestamp.trim().length > contentAfterBefore.trim().length
-    );
+    return contentAfterLastTimestamp.trim().length > contentAfterBefore.trim().length;
   }
 
   async postProcessAfterEdit(

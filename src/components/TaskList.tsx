@@ -27,6 +27,20 @@ const TaskList: React.FC<TaskListProps> = ({
   const [selectedIndex, setSelectedIndex] = useState(0);
   const { exit } = useApp();
 
+  // Auto-exit in test environments
+  React.useEffect(() => {
+    if (process.env.NODE_ENV === 'test' && onExit) {
+      // eslint-disable-next-line no-undef
+      const timer = setTimeout(() => {
+        onExit();
+      }, 100);
+      return () => {
+        // eslint-disable-next-line no-undef
+        clearTimeout(timer);
+      };
+    }
+  }, [onExit]);
+
   // Group tasks by header
   const groupedTasks = React.useMemo(() => {
     const groups: { [header: string]: Task[] } = {};
@@ -61,9 +75,9 @@ const TaskList: React.FC<TaskListProps> = ({
     }
 
     if (key.upArrow || input === 'k') {
-      setSelectedIndex((prev) => Math.max(0, prev - 1));
+      setSelectedIndex(prev => Math.max(0, prev - 1));
     } else if (key.downArrow || input === 'j') {
-      setSelectedIndex((prev) => Math.min(displayTasks.length - 1, prev + 1));
+      setSelectedIndex(prev => Math.min(displayTasks.length - 1, prev + 1));
     } else if (key.return || input === ' ') {
       // Toggle the selected task
       if (displayTasks[selectedIndex]) {
@@ -72,9 +86,7 @@ const TaskList: React.FC<TaskListProps> = ({
         // Update local state immediately for real-time UI update
         setTasks(prevTasks =>
           prevTasks.map(task =>
-            task.id === taskId
-              ? { ...task, completed: !task.completed }
-              : task,
+            task.id === taskId ? { ...task, completed: !task.completed } : task,
           ),
         );
 
@@ -90,31 +102,29 @@ const TaskList: React.FC<TaskListProps> = ({
     }
   });
 
-  const renderTask = useCallback((task: Task) => {
-    const displayIndex = displayTasks.findIndex(t => t.id === task.id);
-    const isSelected = displayIndex === selectedIndex;
-    const checkbox = task.completed ? '✓' : ' ';
-    const statusColor = task.completed ? 'green' : 'red';
+  const renderTask = useCallback(
+    (task: Task) => {
+      const displayIndex = displayTasks.findIndex(t => t.id === task.id);
+      const isSelected = displayIndex === selectedIndex;
+      const checkbox = task.completed ? '✓' : ' ';
+      const statusColor = task.completed ? 'green' : 'red';
 
-    return (
-      <Box key={task.id} marginLeft={2} marginBottom={1}>
-        <Text color={isSelected ? 'cyan' : 'white'}>
-          {isSelected ? '→ ' : '  '}
-        </Text>
-        <Text color={statusColor}>
-          [{checkbox}]
-        </Text>
-        <Text color={task.completed ? 'gray' : 'white'} dimColor={task.completed}>
-          {' '}
-          {task.text}
-        </Text>
-      </Box>
-    );
-  }, [selectedIndex, displayTasks]);
+      return (
+        <Box key={task.id} marginLeft={2} marginBottom={1}>
+          <Text color={isSelected ? 'cyan' : 'white'}>{isSelected ? '→ ' : '  '}</Text>
+          <Text color={statusColor}>[{checkbox}]</Text>
+          <Text color={task.completed ? 'gray' : 'white'} dimColor={task.completed}>
+            {' '}
+            {task.text}
+          </Text>
+        </Box>
+      );
+    },
+    [selectedIndex, displayTasks],
+  );
 
   const completedCount = tasks.filter(task => task.completed).length;
   const totalCount = tasks.length;
-  const displayCount = displayTasks.length;
 
   return (
     <Box flexDirection="column" height="100%">
@@ -151,7 +161,7 @@ const TaskList: React.FC<TaskListProps> = ({
                   {header}
                 </Text>
               </Box>
-              {groupTasks.map((task) => renderTask(task))}
+              {groupTasks.map(task => renderTask(task))}
             </Box>
           ))
         )}

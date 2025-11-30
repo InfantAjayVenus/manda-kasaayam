@@ -11,7 +11,10 @@ import { AppConfig, formatNoteDate } from '../config/index.js';
 export function getNotePathForDate(date: Date): string {
   const fileName = `${formatNoteDate(date)}${AppConfig.files.noteExtension}`;
 
-  const notesDir = process.env.MANDA_DIR!;
+  const notesDir = process.env.MANDA_DIR;
+  if (!notesDir) {
+    throw new Error('MANDA_DIR environment variable is not set');
+  }
   return `${notesDir}/${fileName}`;
 }
 

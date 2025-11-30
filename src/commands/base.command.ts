@@ -1,5 +1,7 @@
 import { NoteService } from '../domain/note.service.js';
 import { FileSystemService } from '../services/file-system.service.js';
+import { ErrorHandler } from '../utils/errorHandler.js';
+import { ErrorSeverity } from '../errors/index.js';
 
 export abstract class BaseCommand {
   protected noteService: NoteService;
@@ -17,7 +19,15 @@ export abstract class BaseCommand {
     const notesDir = process.env.MANDA_DIR;
 
     if (!notesDir) {
-      throw new Error('MANDA_DIR environment variable is not set');
+      throw ErrorHandler.handle(
+        new Error('MANDA_DIR environment variable is not set'),
+        {
+          operation: 'configuration',
+          userAction: 'environment setup',
+          field: 'MANDA_DIR',
+        },
+        ErrorSeverity.HIGH,
+      );
     }
 
     await this.noteService.ensureNotesDirExists(notesDir);
@@ -28,5 +38,6 @@ export abstract class BaseCommand {
     return notePath;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   abstract execute(...args: any[]): Promise<void> | void;
 }

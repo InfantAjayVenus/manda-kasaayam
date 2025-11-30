@@ -23,13 +23,13 @@ interface MarkdownToken {
   title?: string;
   lang?: string;
   align?: string[];
-  header?: any[];
+  header?: string[];
   cells?: string[][];
   ordered?: boolean;
   start?: number;
   task?: boolean;
   checked?: boolean;
-  rows?: any[][];
+  rows?: string[][];
 }
 
 const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
@@ -86,113 +86,110 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
 
     // Scrolling keys
     if (key.upArrow || input === 'k') {
-      setOffset((prev) => Math.max(0, prev - 1));
+      setOffset(prev => Math.max(0, prev - 1));
     } else if (key.downArrow || input === 'j') {
-      setOffset((prev) => prev + 1);
+      setOffset(prev => prev + 1);
     } else if (key.pageUp) {
-      setOffset((prev) => Math.max(0, prev - 10));
+      setOffset(prev => Math.max(0, prev - 10));
     } else if (key.pageDown) {
-      setOffset((prev) => prev + 10);
+      setOffset(prev => prev + 10);
     } else if (input === 'g') {
       setOffset(0);
     } else if (input === 'G') {
       setOffset(Math.max(0, tokens.length - 20));
     } else if (key.ctrl && input === 'd') {
-      setOffset((prev) => prev + 15);
+      setOffset(prev => prev + 15);
     } else if (key.ctrl && input === 'u') {
-      setOffset((prev) => Math.max(0, prev - 15));
+      setOffset(prev => Math.max(0, prev - 15));
     }
   });
 
   // Simple syntax highlighting for code
-  const highlightCode = useCallback(
-    (code: string, language?: string): React.ReactNode => {
-      const lines = code.split('\n');
-      return lines.map((line, lineIndex) => {
-        let segments: React.ReactNode[] = [line];
+  const highlightCode = useCallback((code: string, language?: string): React.ReactNode => {
+    const lines = code.split('\n');
+    return lines.map((line, lineIndex) => {
+      let segments: React.ReactNode[] = [line];
 
-        // Basic syntax highlighting patterns
-        if (
-          language === 'javascript' ||
-          language === 'js' ||
-          language === 'typescript' ||
-          language === 'ts'
-        ) {
-          const keywords = line.match(
-            /\b(function|const|let|var|if|else|for|while|return|class|extends|import|export|from|default)\b/g,
-          );
-          const strings = line.match(/(["'`])((?:\\.|(?!\1)[^\\])*?)\1/g);
-          const comments = line.match(/\/\/.*$/);
+      // Basic syntax highlighting patterns
+      if (
+        language === 'javascript' ||
+        language === 'js' ||
+        language === 'typescript' ||
+        language === 'ts'
+      ) {
+        const keywords = line.match(
+          /\b(function|const|let|var|if|else|for|while|return|class|extends|import|export|from|default)\b/g,
+        );
+        const strings = line.match(/(["'`])((?:\\.|(?!\1)[^\\])*?)\1/g);
+        const comments = line.match(/\/\/.*$/);
 
-          if (keywords || strings || comments) {
-            segments = [];
-            let lastIndex = 0;
+        if (keywords || strings || comments) {
+          segments = [];
+          let lastIndex = 0;
 
-            // Add keyword highlighting
-            if (keywords) {
-              keywords.forEach((keyword) => {
-                const index = line.indexOf(keyword, lastIndex);
-                if (index > lastIndex) {
-                  segments.push(line.substring(lastIndex, index));
-                }
-                segments.push(
-                  <Text key={index} color="blueBright">
-                    {keyword}
-                  </Text>,
-                );
-                lastIndex = index + keyword.length;
-              });
-            }
-
-            if (lastIndex < line.length) {
-              segments.push(line.substring(lastIndex));
-            }
+          // Add keyword highlighting
+          if (keywords) {
+            keywords.forEach(keyword => {
+              const index = line.indexOf(keyword, lastIndex);
+              if (index > lastIndex) {
+                segments.push(line.substring(lastIndex, index));
+              }
+              segments.push(
+                <Text key={index} color="blueBright">
+                  {keyword}
+                </Text>,
+              );
+              lastIndex = index + keyword.length;
+            });
           }
-        } else if (language === 'python' || language === 'py') {
-          const keywords = line.match(
-            /\b(def|class|if|elif|else|for|while|return|import|from|as|try|except|finally|with|lambda)\b/g,
-          );
-          const booleans = line.match(/\b(True|False|None)\b/g);
-          const comments = line.match(/#.*$/);
 
-          if (keywords || booleans || comments) {
-            segments = [];
-            let lastIndex = 0;
-
-            // Add keyword highlighting
-            if (keywords) {
-              keywords.forEach((keyword) => {
-                const index = line.indexOf(keyword, lastIndex);
-                if (index > lastIndex) {
-                  segments.push(line.substring(lastIndex, index));
-                }
-                segments.push(
-                  <Text key={index} color="blueBright">
-                    {keyword}
-                  </Text>,
-                );
-                lastIndex = index + keyword.length;
-              });
-            }
-
-            if (lastIndex < line.length) {
-              segments.push(line.substring(lastIndex));
-            }
+          if (lastIndex < line.length) {
+            segments.push(line.substring(lastIndex));
           }
         }
-
-        return (
-          <Box key={lineIndex}>
-            <Text color="gray" dimColor>
-              {String(lineIndex + 1).padStart(2, ' ')}{' '}
-            </Text>
-            <Text>{segments}</Text>
-          </Box>
+      } else if (language === 'python' || language === 'py') {
+        const keywords = line.match(
+          /\b(def|class|if|elif|else|for|while|return|import|from|as|try|except|finally|with|lambda)\b/g,
         );
-      });
-    },
-    [],
-  );
+        const booleans = line.match(/\b(True|False|None)\b/g);
+        const comments = line.match(/#.*$/);
+
+        if (keywords || booleans || comments) {
+          segments = [];
+          let lastIndex = 0;
+
+          // Add keyword highlighting
+          if (keywords) {
+            keywords.forEach(keyword => {
+              const index = line.indexOf(keyword, lastIndex);
+              if (index > lastIndex) {
+                segments.push(line.substring(lastIndex, index));
+              }
+              segments.push(
+                <Text key={index} color="blueBright">
+                  {keyword}
+                </Text>,
+              );
+              lastIndex = index + keyword.length;
+            });
+          }
+
+          if (lastIndex < line.length) {
+            segments.push(line.substring(lastIndex));
+          }
+        }
+      }
+
+      return (
+        <Box key={lineIndex}>
+          <Text color="gray" dimColor>
+            {String(lineIndex + 1).padStart(2, ' ')}{' '}
+          </Text>
+          <Text>{segments}</Text>
+        </Box>
+      );
+    });
+  }, []);
 
   const renderToken = useCallback(
     (token: MarkdownToken, index: number): React.ReactNode => {
@@ -267,12 +264,7 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
 
         case 'list':
           return (
-            <Box
-              key={index}
-              marginBottom={1}
-              paddingLeft={2}
-              flexDirection="column"
-            >
+            <Box key={index} marginBottom={1} paddingLeft={2} flexDirection="column">
               {token.items?.map((listItem: MarkdownToken, listIndex: number) =>
                 renderToken(listItem, listIndex),
               )}
@@ -286,9 +278,7 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
             const taskText = token.text || '';
             return (
               <Box key={index} marginBottom={1}>
-                <Text color={isChecked ? 'green' : 'red'}>
-                  [{isChecked ? '✓' : ' '}]
-                </Text>
+                <Text color={isChecked ? 'green' : 'red'}>[{isChecked ? '✓' : ' '}]</Text>
                 <Text color={isChecked ? 'gray' : 'white'} dimColor={isChecked}>
                   {' '}
                   {taskText}
@@ -302,22 +292,16 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
             return (
               <Box key={index}>
                 <Text color="gray">• </Text>
-                {token.tokens.map((childToken, childIndex) =>
-                  renderToken(childToken, childIndex),
-                )}
+                {token.tokens.map((childToken, childIndex) => renderToken(childToken, childIndex))}
               </Box>
             );
           } else {
             // If no tokens, parse the text content
-            const textTokens = marked.lexer(
-              token.text || '',
-            ) as MarkdownToken[];
+            const textTokens = marked.lexer(token.text || '') as MarkdownToken[];
             return (
               <Box key={index}>
                 <Text color="gray">• </Text>
-                {textTokens.map((childToken, childIndex) =>
-                  renderToken(childToken, childIndex),
-                )}
+                {textTokens.map((childToken, childIndex) => renderToken(childToken, childIndex))}
               </Box>
             );
           }
@@ -331,12 +315,7 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
 
         case 'code':
           return (
-            <Box
-              key={index}
-              marginBottom={1}
-              borderStyle="round"
-              borderColor="gray"
-            >
+            <Box key={index} marginBottom={1} borderStyle="round" borderColor="gray">
               {token.lang && (
                 <Box backgroundColor="gray" paddingX={1}>
                   <Text color="white" bold>
@@ -376,18 +355,16 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
         case 'strong':
           return (
             <Text key={index} bold color="white">
-              {token.tokens?.map((childToken, childIndex) =>
-                renderToken(childToken, childIndex),
-              ) || token.text}
+              {token.tokens?.map((childToken, childIndex) => renderToken(childToken, childIndex)) ||
+                token.text}
             </Text>
           );
 
         case 'em':
           return (
             <Text key={index} italic color="white">
-              {token.tokens?.map((childToken, childIndex) =>
-                renderToken(childToken, childIndex),
-              ) || token.text}
+              {token.tokens?.map((childToken, childIndex) => renderToken(childToken, childIndex)) ||
+                token.text}
             </Text>
           );
 
@@ -406,6 +383,7 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
             // Header row
             tableText +=
               token.header
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 .map((h: any) => (typeof h === 'string' ? h : h.text || h))
                 .join(' | ') + '\n';
             // Separator
@@ -414,13 +392,14 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
 
           if (token.rows && Array.isArray(token.rows)) {
             // Data rows
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             token.rows.forEach((row: any[]) => {
               tableText +=
                 row
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   .map((cell: any) => {
                     if (typeof cell === 'string') return cell;
-                    if (cell && typeof cell === 'object' && cell.text)
-                      return cell.text;
+                    if (cell && typeof cell === 'object' && cell.text) return cell.text;
                     return '';
                   })
                   .join(' | ') + '\n';
@@ -436,18 +415,15 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
         case 'del':
           return (
             <Text key={index} strikethrough color="gray" dimColor>
-              {token.tokens?.map((childToken, childIndex) =>
-                renderToken(childToken, childIndex),
-              ) || token.text}
+              {token.tokens?.map((childToken, childIndex) => renderToken(childToken, childIndex)) ||
+                token.text}
             </Text>
           );
 
         case 'hr':
           return (
             <Box key={index} marginBottom={1}>
-              <Text color="gray">
-                {'─'.repeat(Math.min(50, process.stdout.columns || 50))}
-              </Text>
+              <Text color="gray">{'─'.repeat(Math.min(50, process.stdout.columns || 50))}</Text>
             </Box>
           );
 
@@ -461,9 +437,7 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
           if (token.tokens) {
             return (
               <Text key={index}>
-                {token.tokens.map((childToken, childIndex) =>
-                  renderToken(childToken, childIndex),
-                )}
+                {token.tokens.map((childToken, childIndex) => renderToken(childToken, childIndex))}
               </Text>
             );
           }
@@ -476,8 +450,7 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
   // Calculate visible content based on offset
   const visibleTokens = tokens.slice(offset);
   const hasMore = offset + visibleTokens.length < tokens.length;
-  const scrollPercentage =
-    tokens.length > 0 ? Math.round((offset / tokens.length) * 100) : 0;
+  const scrollPercentage = tokens.length > 0 ? Math.round((offset / tokens.length) * 100) : 0;
 
   return (
     <Box flexDirection="column" height="100%">
@@ -488,12 +461,14 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
             {currentDate && (
               <Text color="cyan">
                 {' '}
-                ({currentDate.toLocaleDateString('en-US', {
+                (
+                {currentDate.toLocaleDateString('en-US', {
                   weekday: 'long',
                   year: 'numeric',
                   month: 'long',
                   day: 'numeric',
-                })})
+                })}
+                )
               </Text>
             )}
           </Text>

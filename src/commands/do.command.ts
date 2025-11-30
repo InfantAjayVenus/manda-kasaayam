@@ -4,11 +4,7 @@ import { FileSystemService } from '../services/file-system.service.js';
 import { render } from 'ink';
 import React from 'react';
 import TaskList, { Task } from '../components/TaskList.js';
-import { 
-  formatDateForTitle, 
-  getTodayForTests, 
-  getYesterdayDate, 
-} from '../utils/dateUtils.js';
+import { formatDateForTitle, getTodayForTests, getYesterdayDate } from '../utils/dateUtils.js';
 import { getNotePathForDate } from '../utils/fileUtils.js';
 import { InkRenderOptions } from '../types/index.js';
 import { AppConfig } from '../config/index.js';
@@ -21,10 +17,7 @@ export interface DoOptions {
 export class DoCommand extends BaseCommand {
   private fileSystemService: FileSystemService;
 
-  constructor(
-    noteService?: NoteService,
-    fileSystemService?: FileSystemService,
-  ) {
+  constructor(noteService?: NoteService, fileSystemService?: FileSystemService) {
     super(noteService);
     this.fileSystemService = fileSystemService || new FileSystemService();
   }
@@ -45,7 +38,7 @@ export class DoCommand extends BaseCommand {
   }
 
   private async displayTasksWithTUI(currentDate: Date): Promise<void> {
-    const notesDir = process.env.MANDA_DIR!;
+    const notesDir = process.env.MANDA_DIR;
     if (!notesDir) {
       throw new Error('MANDA_DIR environment variable is not set');
     }
@@ -147,11 +140,7 @@ export class DoCommand extends BaseCommand {
         notePath,
         onExit: () => {
           // Don't exit in test environments
-          if (
-            process.env.NODE_ENV !== 'test' &&
-            !process.env.CI &&
-            !process.env.VITEST
-          ) {
+          if (process.env.NODE_ENV !== 'test' && !process.env.CI && !process.env.VITEST) {
             process.exit(0);
           }
         },
@@ -168,16 +157,12 @@ export class DoCommand extends BaseCommand {
     await waitUntilExit();
   }
 
-  private async toggleTaskInFile(
-    notePath: string,
-    taskId: string,
-    tasks: Task[],
-  ): Promise<void> {
+  private async toggleTaskInFile(notePath: string, taskId: string, tasks: Task[]): Promise<void> {
     const content = await this.fileSystemService.readFile(notePath);
     const lines = content.split('\n');
 
     // Find the task in the file and toggle it
-    const task = tasks.find((t) => t.id === taskId);
+    const task = tasks.find(t => t.id === taskId);
     if (!task) return;
 
     let currentHeader = '';
@@ -209,6 +194,4 @@ export class DoCommand extends BaseCommand {
     // Write the updated content back to file
     await this.fileSystemService.writeFile(notePath, lines.join('\n'));
   }
-
-
-} 
+}

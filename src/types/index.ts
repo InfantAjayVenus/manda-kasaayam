@@ -27,8 +27,8 @@ export interface MarkdownToken {
   task?: boolean;
   checked?: boolean;
   items?: MarkdownToken[];
-  header?: any[];
-  rows?: any[][];
+  header?: string[];
+  rows?: string[][];
 }
 
 export interface ListToken extends MarkdownToken {
@@ -48,8 +48,12 @@ export interface ListItemToken extends MarkdownToken {
 
 export interface TableToken extends MarkdownToken {
   type: 'table';
-  header?: any[];
-  rows?: any[][];
+  start?: number;
+  task?: boolean;
+  checked?: boolean;
+  items?: MarkdownToken[];
+  header?: string[];
+  rows?: string[][];
 }
 
 export interface TaskToken extends MarkdownToken {
