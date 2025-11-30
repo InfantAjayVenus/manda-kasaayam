@@ -1,8 +1,7 @@
-import { test, expect, describe, vi, beforeEach, afterEach } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { execSync } from 'child_process';
 import path from 'path';
 import fs from 'fs/promises';
-import { existsSync } from 'fs';
 
 describe('Manda Command Integration Tests', () => {
   let tempDir: string;
@@ -21,15 +20,16 @@ describe('Manda Command Integration Tests', () => {
   });
 
   const runMandaCommand = () => {
-    const env = { 
-      ...process.env, 
+    const env = {
+      ...process.env,
       MANDA_DIR: notesDir,
-      EDITOR: 'echo' // Use echo as fake editor to avoid hanging
+      EDITOR: 'echo', // Use echo as fake editor to avoid hanging
+      CI: 'true', // Disable Ink raw mode for CI/testing
     };
-    return execSync(`node dist/main.js`, { 
-      env, 
+    return execSync('pnpm tsx src/main.ts', {
+      env,
       cwd: process.cwd(),
-      encoding: 'utf8'
+      encoding: 'utf8',
     });
   };
 
@@ -141,7 +141,10 @@ describe('Manda Command Integration Tests', () => {
   test('should handle multiple timestamps correctly', async () => {
     // Create note with multiple timestamps
     const notePath = path.join(notesDir, getTodayFileName());
-    await fs.writeFile(notePath, '# Daily Log\n[09:00]\nMorning routine\n[12:30]\nLunch meeting\n[15:45]');
+    await fs.writeFile(
+      notePath,
+      '# Daily Log\n[09:00]\nMorning routine\n[12:30]\nLunch meeting\n[15:45]',
+    );
 
     runMandaCommand();
 
@@ -171,7 +174,9 @@ describe('Manda Command Integration Tests', () => {
   test('should preserve existing content structure when replacing timestamp', async () => {
     // Create note with complex structure
     const notePath = path.join(notesDir, getTodayFileName());
-    await fs.writeFile(notePath, `# Project Status
+    await fs.writeFile(
+      notePath,
+      `# Project Status
 
 ## Completed Tasks
 - [x] Setup repository
@@ -181,7 +186,8 @@ describe('Manda Command Integration Tests', () => {
 [14:20]
 
 ## Notes
-Some important notes here`);
+Some important notes here`,
+    );
 
     runMandaCommand();
 
