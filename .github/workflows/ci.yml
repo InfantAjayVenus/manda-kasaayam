@@ -41,6 +41,7 @@ jobs:
     - name: Run tests
       env:
         MANDA_DIR: ${{ github.workspace }}/manda-data
+        CI: true
       run: pnpm test
       
   publish:

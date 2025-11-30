@@ -37,7 +37,7 @@ test('running "manda do" should display incomplete tasks from today\'s note', ()
       encoding: 'utf-8',
       timeout: 5000,
       killSignal: 'SIGTERM',
-      env: { ...process.env, NODE_ENV: 'test' },
+      env: { ...process.env, NODE_ENV: 'test', CI: 'true' },
     });
 
     // Assert: Check if the output contains the expected incomplete tasks
