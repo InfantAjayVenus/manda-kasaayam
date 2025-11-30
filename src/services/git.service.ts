@@ -1,5 +1,6 @@
 import simpleGit, { SimpleGit } from 'simple-git';
 import { AppConfig, formatTimestamp, isTestEnvironment } from '../config/index.js';
+import { ErrorHandler } from '../utils/errorHandler.js';
 
 export class GitService {
   private git: SimpleGit;
@@ -38,11 +39,16 @@ export class GitService {
       // Push to the default remote (origin) and current branch
       await this.git.push();
     } catch (error) {
-      // If git operations fail, we don't want to break the note-taking flow
-      // Just silently ignore git errors (don't log in test environments)
+      // For git operations, we want to log but not break the note-taking flow
+      // Use centralized error handling but don't throw to avoid breaking note-taking
+      const gitError = ErrorHandler.handleGitError(error as Error, 'commitAndPush');
+
+      // Log the error but don't throw - git failures should not break note creation
       if (!isTestEnvironment()) {
-        console.warn('Git operation failed:', error);
+        // eslint-disable-next-line no-console
+        console.warn('Git operation failed:', gitError.message);
       }
+      // In test environment, we silently ignore to avoid breaking tests
     }
   }
 
