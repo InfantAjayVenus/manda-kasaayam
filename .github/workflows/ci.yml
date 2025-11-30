@@ -36,6 +36,8 @@ jobs:
       run: pnpm install --frozen-lockfile
       
     - name: Run tests
+      env:
+        MANDA_DIR: ${{ github.workspace }}/manda-data
       run: pnpm test
       
     - name: Build project
