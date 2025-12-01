@@ -1,0 +1,67 @@
+{
+  "name": "manda-kasaayam",
+  "version": "1.0.0",
+  "description": "A Terminal User Interface (TUI) application for managing daily notes",
+  "type": "module",
+  "main": "dist/main.js",
+  "bin": {
+    "manda": "./bin/manda.js"
+  },
+  "scripts": {
+    "start": "tsx src/main.ts",
+    "dev": "MANDA_DIR=./dump tsx src/main.ts",
+    "build": "pnpm exec tsc",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "lint": "eslint src --ext .ts,.tsx",
+    "lint:fix": "eslint src --ext .ts,.tsx --fix",
+    "format": "prettier --write src",
+    "format:check": "prettier --check src",
+    "type-check": "tsc --noEmit",
+    "prepublishOnly": "pnpm build",
+    "prepare": "husky"
+  },
+  "files": [
+    "dist",
+    "bin",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "notes",
+    "cli",
+    "tui",
+    "markdown",
+    "daily-notes",
+    "productivity"
+  ],
+  "author": "",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/manda-kasaayam.git"
+  },
+  "packageManager": "pnpm@9.15.1+sha512.1acb565e6193efbebda772702950469150cf12bcc764262e7587e71d19dc98a423dff9536e57ea44c49bdf790ff694e83c27be5faa23d67e0c033b583be4bfcf",
+  "devDependencies": {
+    "@types/marked": "^6.0.0",
+    "@types/node": "^24.10.1",
+    "@types/react": "^19.2.6",
+    "ink-testing-library": "^4.0.0",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.10",
+    "@typescript-eslint/eslint-plugin": "^8.48.0",
+    "@typescript-eslint/parser": "^8.48.0",
+    "eslint": "^9.39.1",
+    "lint-staged": "^16.2.7",
+    "prettier": "^3.7.3"
+  },
+  "dependencies": {
+    "commander": "^14.0.2",
+    "husky": "^9.1.7",
+    "ink": "^6.5.0",
+    "marked": "^17.0.0",
+    "react": "^19.2.0",
+    "simple-git": "^3.30.0"
+  }
+}
