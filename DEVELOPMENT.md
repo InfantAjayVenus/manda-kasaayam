@@ -66,6 +66,7 @@ mdev
 ### 3. **When to Rebuild**
 
 You only need to rebuild when:
+
 - ✅ You want to test the globally installed `manda` command
 - ✅ You're preparing to publish to npm
 - ✅ You want to share the compiled version
@@ -90,14 +91,14 @@ pnpm start manda --name "Test"
 
 ## Quick Reference
 
-| Task | Command | Rebuild Needed? |
-|------|---------|----------------|
-| Run during development | `pnpm start` | ❌ No |
-| Run tests | `pnpm test` | ❌ No |
-| Test global `manda` command | `manda` | ✅ Yes (first time only) |
-| Publish to npm | `npm publish` | ✅ Yes (automatic via prepublishOnly) |
-| Add new dependency | `pnpm add <pkg>` | ❌ No |
-| Change package.json bin | Edit package.json | ✅ Yes + `npm link` |
+| Task                        | Command           | Rebuild Needed?                       |
+| --------------------------- | ----------------- | ------------------------------------- |
+| Run during development      | `pnpm start`      | ❌ No                                 |
+| Run tests                   | `pnpm test`       | ❌ No                                 |
+| Test global `manda` command | `manda`           | ✅ Yes (first time only)              |
+| Publish to npm              | `npm publish`     | ✅ Yes (automatic via prepublishOnly) |
+| Add new dependency          | `pnpm add <pkg>`  | ❌ No                                 |
+| Change package.json bin     | Edit package.json | ✅ Yes + `npm link`                   |
 
 ## Watch Mode for Tests
 
@@ -125,15 +126,19 @@ alias mtest='MANDA_DIR=/tmp/test-notes pnpm --dir=/path/to/manda-kasaayam start'
 ## How It Works
 
 ### Development Mode (tsx)
+
 ```
 Your edit → src/main.ts → tsx executes → Immediate feedback
 ```
+
 No compilation step!
 
 ### Production Mode (built)
+
 ```
-Your edit → src/main.ts → tsc compiles → dist/main.js → bin/manda.js → Global command
+Your edit → src/main.ts → tsc compiles → dist/main.js → Global command
 ```
+
 Requires rebuild.
 
 ## Pro Tips
@@ -149,6 +154,7 @@ Requires rebuild.
    - When testing installation instructions
 
 3. **Create a test notes directory**
+
    ```bash
    mkdir -p ~/test-notes
    export MANDA_TEST_DIR="$HOME/test-notes"
@@ -156,13 +162,14 @@ Requires rebuild.
    ```
 
 4. **Use the built-in development tools**
+
    ```bash
    # TypeScript checking
    pnpm exec tsc --noEmit
-   
+
    # Run specific test file
    pnpm test test/commands/manda.command.test.ts
-   
+
    # Run tests once (no watch)
    pnpm test run
    ```
