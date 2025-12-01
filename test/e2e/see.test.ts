@@ -1,5 +1,5 @@
 import { execSync } from 'child_process';
-import { test, expect } from 'vitest';
+import { expect, test } from 'vitest';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
@@ -50,7 +50,7 @@ function hello() {
       stdio: ['pipe', 'pipe', 'pipe'],
       cwd: path.resolve(__dirname, '../..'),
       env: { ...process.env, EDITOR: 'true', NODE_ENV: 'test' },
-      timeout: 10000 // TUI apps need more time for interactive mode
+      timeout: 10000, // TUI apps need more time for interactive mode
     });
 
     // The test passes if the command executes without error
@@ -104,7 +104,7 @@ function hello() {
       stdio: ['pipe', 'pipe', 'pipe'],
       cwd: path.resolve(__dirname, '../..'),
       env: { ...process.env, EDITOR: 'true', NODE_ENV: 'test' },
-      timeout: 10000 // TUI apps need more time for interactive mode
+      timeout: 10000, // TUI apps need more time for interactive mode
     });
 
     // The test passes if the command executes without error
@@ -130,7 +130,8 @@ test('running "manda see --yester" should display yesterday\'s note with TUI', (
   const yesterdayStr = '2025-11-20';
 
   // Setup: Create a dummy notes directory with yesterday's note
-  const notesDir = createTempNotesDir(`
+  const notesDir = createTempNotesDir(
+    `
 # ${yesterdayStr}
 
 ## Yesterday's Tasks
@@ -139,7 +140,9 @@ test('running "manda see --yester" should display yesterday\'s note with TUI', (
 
 ## Notes
 This is yesterday's note content.
-`, yesterdayStr);
+`,
+    yesterdayStr,
+  );
 
   // Verify the file was created
   const expectedFile = path.join(notesDir, `${yesterdayStr}.md`);
@@ -151,7 +154,7 @@ This is yesterday's note content.
     stdio: ['pipe', 'pipe', 'pipe'],
     cwd: path.resolve(__dirname, '../..'),
     env: { ...process.env, EDITOR: 'true', NODE_ENV: 'test' },
-    timeout: 10000 // TUI apps need more time for interactive mode
+    timeout: 10000, // TUI apps need more time for interactive mode
   });
 
   // The test passes if the command executes without error
@@ -167,16 +170,18 @@ This is yesterday's note content.
 
 test('running "manda see" when note does not exist should create and display empty note', () => {
   // Setup: Create an empty notes directory
-  const tempDir = fs.mkdtempSync(path.join(process.env.GEMINI_TEMP_DIR || '/tmp', 'manda-notes-empty-'));
+  const tempDir = fs.mkdtempSync(
+    path.join(process.env.GEMINI_TEMP_DIR || '/tmp', 'manda-notes-empty-'),
+  );
 
   try {
-    // Execute CLI command
+    // Execute CLI command - it should use TUI rendering with keyboard controls
     const output = execSync(`MANDA_DIR=${tempDir} pnpm tsx src/main.ts see`, {
       encoding: 'utf8',
       stdio: ['pipe', 'pipe', 'pipe'],
       cwd: path.resolve(__dirname, '../..'),
-      env: { ...process.env, EDITOR: 'true', NODE_ENV: 'test' },
-      timeout: 10000 // TUI apps need more time for interactive mode
+      env: { ...process.env, EDITOR: 'true', NODE_ENV: 'test', CI: 'true' },
+      timeout: 10000, // TUI apps need more time for interactive mode
     });
 
     // Should create and display an empty note with TUI
@@ -202,11 +207,11 @@ test('running "manda see" without MANDA_DIR should fail gracefully', () => {
   try {
     // Execute the CLI command - it should fail with an appropriate error message
     expect(() => {
-      execSync(`pnpm tsx src/main.ts see`, {
+      execSync('pnpm tsx src/main.ts see', {
         encoding: 'utf8',
         stdio: ['pipe', 'pipe', 'pipe'],
         cwd: path.resolve(__dirname, '../..'),
-        env: { ...process.env, EDITOR: 'true', NODE_ENV: 'test' }
+        env: { ...process.env, EDITOR: 'true', NODE_ENV: 'test' },
       });
     }).toThrow();
   } finally {
