@@ -1,8 +1,8 @@
 dump
-
 bin
 node_modules/
 dist/
 GITHUB_ACTIONS_SETUP.md
 manda-kasaayam-1.0.0.tgz
 test-cli.sh
+1_Test on Node.js 22.txt
