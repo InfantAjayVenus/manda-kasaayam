@@ -5,7 +5,7 @@
   "type": "module",
   "main": "dist/main.js",
   "bin": {
-    "manda": "./dist/manda.js"
+    "manda": "./dist/main.js"
   },
   "scripts": {
     "start": "tsx src/main.ts",
@@ -23,7 +23,6 @@
   },
   "files": [
     "dist",
-    "bin",
     "README.md",
     "LICENSE"
   ],

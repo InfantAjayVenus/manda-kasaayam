@@ -33,17 +33,20 @@ yarn global add manda-kasaayam
 ### Option 2: Install from Source
 
 1. Clone this repository:
+
 ```bash
 git clone https://github.com/yourusername/manda-kasaayam.git
 cd manda-kasaayam
 ```
 
 2. Install dependencies:
+
 ```bash
 pnpm install
 ```
 
 3. Build the application:
+
 ```bash
 pnpm build
 ```
@@ -51,6 +54,7 @@ pnpm build
 4. Set up the environment variables (see Configuration below)
 
 5. Add to your shell path (optional):
+
 ```bash
 export PATH="$PATH:/path/to/manda-kasaayam/bin"
 ```
@@ -77,6 +81,7 @@ pnpm unlink --global
 ### Basic Usage
 
 Open today's note:
+
 ```bash
 manda
 ```
@@ -84,11 +89,13 @@ manda
 ### Task Management
 
 Launch the interactive task manager:
+
 ```bash
 manda do
 ```
 
 **Task Manager Controls:**
+
 - `↑↓` or `j/k`: Navigate between tasks
 - `Space` or `Enter`: Toggle task completion
 - `g/G`: Jump to first/last task
@@ -97,21 +104,25 @@ manda do
 ### Note Preview
 
 Preview today's note:
+
 ```bash
 manda see
 ```
 
 Preview yesterday's note:
+
 ```bash
 manda see --yester
 ```
 
 Preview a specific date:
+
 ```bash
 manda see --date 2025-11-25
 ```
 
 **Preview Controls:**
+
 - `↑↓` or `j/k`: Scroll content
 - `←` or `h`: Previous day
 - `→` or `l`: Next day
@@ -122,6 +133,7 @@ manda see --date 2025-11-25
 ### Help
 
 Show help information:
+
 ```bash
 manda --help
 ```
@@ -141,6 +153,7 @@ Set these environment variables in your `.zshrc`, `.bashrc`, or shell profile:
 - `REMOTE`: Git remote name (default: `origin`)
 
 **Example:**
+
 ```bash
 export MANDA_DIR="/Users/your_username/Documents/notes"
 export EDITOR="vim"
@@ -188,6 +201,7 @@ Morning meeting notes
 Work on project X
 
 ## Tasks
+
 - [ ] New task for today
 - [x] Completed task
 ```
@@ -276,7 +290,7 @@ pnpm build
 pnpm dev
 
 # Test the built CLI
-node bin/manda.js --help
+node dist/main.js --help
 ```
 
 ### Testing CLI Installation
@@ -327,11 +341,13 @@ This project uses GitHub Actions for automated testing and publishing to npm.
 ### Publishing Process
 
 1. Update version in `package.json`:
+
    ```bash
    npm version patch  # or minor, major
    ```
 
 2. Push changes and tags:
+
    ```bash
    git push origin main --tags
    ```
@@ -371,15 +387,18 @@ This project is licensed under the ISC License - see the [LICENSE](LICENSE) file
 ### Common Issues
 
 **"MANDA_DIR environment variable is not set"**
+
 - Make sure you've set the `MANDA_DIR` environment variable
 - Restart your shell after adding it to your profile
 
 **"Command not found: manda"**
+
 - Make sure the application is built (`pnpm build`)
-- Add the `bin/` directory to your PATH
+- Add the project directory to your PATH (for source installation)
 - Or use `npx manda` if installed via npm
 
 **Git push fails**
+
 - Check your git remote configuration
 - Ensure you have push access to the repository
 - Verify the `REMOTE` environment variable is correct
