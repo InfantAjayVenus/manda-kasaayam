@@ -556,7 +556,7 @@ Some notes.`;
 
       expect(mockFileSystemService.writeFile).toHaveBeenCalledWith(
         '/notes/2025-11-19.md',
-        '# Note\n[20:00]\n',
+        '# Note\n[14:30]\n',
       );
     });
 
@@ -574,7 +574,7 @@ Some notes.`;
 
       expect(mockFileSystemService.writeFile).toHaveBeenCalledWith(
         '/notes/2025-11-19.md',
-        '# Note\n[10:30]\nSome content here\n[20:00]\n',
+        '# Note\n[10:30]\nSome content here\n[14:30]\n',
       );
     });
 
@@ -592,7 +592,7 @@ Some notes.`;
 
       expect(mockFileSystemService.writeFile).toHaveBeenCalledWith(
         '/notes/2025-11-19.md',
-        '# Note\n[09:00]\nMorning content\n[20:00]',
+        '# Note\n[09:00]\nMorning content\n[14:30]',
       );
     });
 
@@ -610,7 +610,7 @@ Some notes.`;
 
       expect(mockFileSystemService.writeFile).toHaveBeenCalledWith(
         '/notes/2025-11-19.md',
-        '# Note\n[09:00]\nMorning content\n[10:30]\nAfternoon content\n[20:00]\n',
+        '# Note\n[09:00]\nMorning content\n[10:30]\nAfternoon content\n[14:30]\n',
       );
     });
   });

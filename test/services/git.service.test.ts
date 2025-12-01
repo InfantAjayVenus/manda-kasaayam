@@ -1,6 +1,5 @@
-import { test, expect, describe, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { GitService } from '../../src/services/git.service.js';
-import simpleGit from 'simple-git';
 
 // Mock simple-git
 const mockCheckIsRepo = vi.fn();
@@ -80,7 +79,9 @@ describe('GitService', () => {
     mockCheckIsRepo.mockRejectedValue(new Error('Git error'));
 
     // Should not throw
-    await expect(gitService.commitAndPush('/path/to/note.md', 'test commit')).resolves.toBeUndefined();
+    await expect(
+      gitService.commitAndPush('/path/to/note.md', 'test commit'),
+    ).resolves.toBeUndefined();
   });
 
   test('getCurrentTimestampCommitMessage should return formatted timestamp', () => {
@@ -90,11 +91,11 @@ describe('GitService', () => {
     vi.setSystemTime(fixedDate);
 
     const message = gitService.getCurrentTimestampCommitMessage();
-    
+
     console.log('Expected: 2025-11-19 10:30:45');
     console.log('Actual:', message);
 
-    expect(message).toBe('2025-11-19 16:00:45'); // Updated to match new config behavior
+    expect(message).toBe('2025-11-19 10:30:45'); // Matches the fake timer setting
 
     // Restore timers
     vi.useRealTimers();
