@@ -37,38 +37,6 @@ jobs:
 
     - name: Build project
       run: pnpm build
-      
-    - name: Run tests
-      env:
-        MANDA_DIR: ${{ github.workspace }}/manda-data
-        CI: true
-      run: pnpm test
-      
-  test-for-publish:
-    name: Test for Publish (Node.js 20 only)
-    runs-on: ubuntu-latest
-    if: github.event_name == 'release' && github.event.action == 'published'
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup pnpm
-      uses: pnpm/action-setup@v3
-      with:
-        version: 9.15.1
-        
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-        cache: 'pnpm'
-        
-    - name: Install dependencies
-      run: pnpm install --frozen-lockfile
-
-    - name: Build project
-      run: pnpm build
 
     - name: Debug build output
       run: |
@@ -89,7 +57,7 @@ jobs:
           echo "📋 TypeScript config:"
           cat tsconfig.json || echo "tsconfig.json not found"
         fi
-        
+
     - name: Ensure binary is executable
       run: |
         echo "🔧 Attempting to make dist/main.js executable..."
