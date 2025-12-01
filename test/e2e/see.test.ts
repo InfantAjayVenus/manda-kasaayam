@@ -4,6 +4,9 @@ import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 
+// Skip TUI tests in CI since they require terminal/raw mode support
+const tuiTest = process.env.CI ? test.skip : test;
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Helper to create a temporary notes directory for testing
@@ -17,7 +20,7 @@ const createTempNotesDir = (content: string, fileName?: string) => {
 // Set test environment
 process.env.NODE_ENV = 'test';
 
-test('running "manda see" should display today\'s note with TUI markdown rendering', () => {
+tuiTest('running "manda see" should display today\'s note with TUI markdown rendering', () => {
   // Setup: Create a dummy notes directory and a today.md file with markdown content
   const notesDir = createTempNotesDir(`
 # ${new Date().toISOString().slice(0, 10)}
@@ -71,7 +74,7 @@ function hello() {
   }
 });
 
-test('running "manda see" should display today\'s note with TUI markdown rendering', () => {
+tuiTest('running "manda see" should display today\'s note with TUI markdown rendering', () => {
   // Setup: Create a dummy notes directory and a today.md file with markdown content
   const notesDir = createTempNotesDir(`
 # ${new Date().toISOString().slice(0, 10)}
@@ -125,7 +128,7 @@ function hello() {
   }
 });
 
-test('running "manda see --yester" should display yesterday\'s note with TUI', () => {
+tuiTest('running "manda see --yester" should display yesterday\'s note with TUI', () => {
   // Use a fixed date for yesterday to avoid timing issues
   const yesterdayStr = '2025-11-20';
 
@@ -168,7 +171,7 @@ This is yesterday's note content.
   fs.rmSync(notesDir, { recursive: true, force: true });
 });
 
-test('running "manda see" when note does not exist should create and display empty note', () => {
+tuiTest('running "manda see" when note does not exist should create and display empty note', () => {
   // Setup: Create an empty notes directory
   const tempDir = fs.mkdtempSync(
     path.join(process.env.GEMINI_TEMP_DIR || '/tmp', 'manda-notes-empty-'),
@@ -199,7 +202,7 @@ test('running "manda see" when note does not exist should create and display emp
   }
 });
 
-test('running "manda see" without MANDA_DIR should fail gracefully', () => {
+tuiTest('running "manda see" without MANDA_DIR should fail gracefully', () => {
   // Remove MANDA_DIR from environment
   const originalMandaDir = process.env.MANDA_DIR;
   delete process.env.MANDA_DIR;
