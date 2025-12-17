@@ -4,13 +4,15 @@ import { NoteService } from '../../src/domain/note.service.js';
 import { FileSystemService } from '../../src/services/file-system.service.js';
 import { EditorService } from '../../src/services/editor.service.js';
 import { render } from 'ink';
+import { findNotePathForDate } from '../../src/utils/fileUtils.js';
 
 vi.mock('../../src/domain/note.service.js');
 vi.mock('../../src/services/file-system.service.js');
 vi.mock('../../src/services/editor.service.js');
+
 vi.mock('ink', () => ({
   render: vi.fn(),
-  useStdin: vi.fn(() => ({ stdin: null, setRawMode: vi.fn() }))
+  useStdin: vi.fn(() => ({ stdin: null, setRawMode: vi.fn() })),
 }));
 
 // Mock process.stdout.write
@@ -38,7 +40,9 @@ describe('SeeCommand', () => {
     vi.mocked(mockNoteService.ensureNoteExists).mockResolvedValue(undefined);
 
     vi.mocked(mockFileSystemService.fileExists).mockResolvedValue(true);
-    vi.mocked(mockFileSystemService.readFile).mockResolvedValue('# Test Note\n\nSome content here.');
+    vi.mocked(mockFileSystemService.readFile).mockResolvedValue(
+      '# Test Note\n\nSome content here.',
+    );
     vi.mocked(mockFileSystemService.listDirectory).mockResolvedValue([]);
 
     vi.mocked(mockEditorService.openFile).mockResolvedValue(undefined);
@@ -49,7 +53,7 @@ describe('SeeCommand', () => {
         setTimeout(() => element.props.onExit(), 10);
       }
       return {
-        waitUntilExit: vi.fn().mockResolvedValue(undefined)
+        waitUntilExit: vi.fn().mockResolvedValue(undefined),
       } as any;
     });
 
@@ -130,16 +134,16 @@ describe('SeeCommand', () => {
       expect.any(Object), // React element
       expect.objectContaining({
         exitOnCtrlC: true,
-        experimentalAlternateScreenBuffer: true
-      })
+        experimentalAlternateScreenBuffer: true,
+      }),
     );
   });
 
-   test('should render yesterday\'s note with correct title', async () => {
+  test("should render yesterday's note with correct title", async () => {
     process.env.MANDA_DIR = '/test/notes';
 
     const command = new SeeCommand(mockNoteService, mockFileSystemService, mockEditorService);
-    
+
     await command.execute({ yester: true });
 
     // Should render with yesterday's date as title
@@ -147,8 +151,8 @@ describe('SeeCommand', () => {
       expect.any(Object), // React element
       expect.objectContaining({
         exitOnCtrlC: true,
-        experimentalAlternateScreenBuffer: true
-      })
+        experimentalAlternateScreenBuffer: true,
+      }),
     );
   });
 
@@ -162,7 +166,7 @@ describe('SeeCommand', () => {
     expect(true).toBe(true);
   });
 
-   test('should display yesterday\'s note when --yester option is used', async () => {
+  test("should display yesterday's note when --yester option is used", async () => {
     process.env.MANDA_DIR = '/test/notes';
 
     const command = new SeeCommand(mockNoteService, mockFileSystemService, mockEditorService);
@@ -189,7 +193,11 @@ describe('SeeCommand', () => {
     process.env.MANDA_DIR = '/test/notes';
 
     // Mock listDirectory to return some files
-    vi.mocked(mockFileSystemService.listDirectory).mockResolvedValue(['2025-11-19.md', '2025-11-20.md', '2025-11-21.md']);
+    vi.mocked(mockFileSystemService.listDirectory).mockResolvedValue([
+      '2025-11-19.md',
+      '2025-11-20.md',
+      '2025-11-21.md',
+    ]);
 
     const command = new SeeCommand(mockNoteService, mockFileSystemService, mockEditorService);
 
@@ -204,7 +212,7 @@ describe('SeeCommand', () => {
         setTimeout(() => element.props.onExit(), 10);
       }
       return {
-        waitUntilExit: vi.fn().mockResolvedValue(undefined)
+        waitUntilExit: vi.fn().mockResolvedValue(undefined),
       } as any;
     });
 
@@ -216,8 +224,8 @@ describe('SeeCommand', () => {
       expect.any(Object),
       expect.objectContaining({
         exitOnCtrlC: true,
-        experimentalAlternateScreenBuffer: true
-      })
+        experimentalAlternateScreenBuffer: true,
+      }),
     );
   });
 
@@ -250,7 +258,7 @@ describe('SeeCommand', () => {
         setTimeout(() => element.props.onExit(), 10);
       }
       return {
-        waitUntilExit: vi.fn().mockResolvedValue(undefined)
+        waitUntilExit: vi.fn().mockResolvedValue(undefined),
       } as any;
     });
 
@@ -291,7 +299,7 @@ describe('SeeCommand', () => {
         setTimeout(() => element.props.onExit(), 10);
       }
       return {
-        waitUntilExit: vi.fn().mockResolvedValue(undefined)
+        waitUntilExit: vi.fn().mockResolvedValue(undefined),
       } as any;
     });
 
@@ -308,25 +316,25 @@ describe('SeeCommand', () => {
   test('should find oldest note correctly', async () => {
     process.env.MANDA_DIR = '/test/notes';
 
-    // Mock listDirectory to return files in random order
-    vi.mocked(mockFileSystemService.listDirectory).mockResolvedValue([
-      '2025-11-21.md',
-      '2025-11-15.md',
-      '2025-11-18.md',
-      'some-other-file.txt'
-    ]);
+    // Mock fileExists to simulate organized note structure
+    // Use a date that's within the 1-year search range from today (2025-12-17)
+    vi.mocked(mockFileSystemService.fileExists).mockImplementation(async (path: string) => {
+      // Organized path for 2025-01-15 exists (oldest in search range)
+      if (path.includes('2025-01-15')) return true;
+      return false;
+    });
 
     const command = new SeeCommand(mockNoteService, mockFileSystemService, mockEditorService);
     const oldestDate = await (command as any).findOldestNote();
 
-    expect(oldestDate).toEqual(new Date('2025-11-15T00:00:00'));
+    expect(oldestDate).toEqual(new Date('2025-01-15T00:00:00'));
   });
 
   test('should return null when no notes exist', async () => {
     process.env.MANDA_DIR = '/test/notes';
 
-    // Mock listDirectory to return no .md files
-    vi.mocked(mockFileSystemService.listDirectory).mockResolvedValue(['some-file.txt', 'another-file.json']);
+    // Mock fileExists to return false for all paths (no notes exist)
+    vi.mocked(mockFileSystemService.fileExists).mockResolvedValue(false);
 
     const command = new SeeCommand(mockNoteService, mockFileSystemService, mockEditorService);
     const oldestDate = await (command as any).findOldestNote();
@@ -334,7 +342,7 @@ describe('SeeCommand', () => {
     expect(oldestDate).toBeNull();
   });
 
-  test('should open editor for today\'s note when e key is pressed', async () => {
+  test("should open editor for today's note when e key is pressed", async () => {
     process.env.MANDA_DIR = '/test/notes';
 
     const command = new SeeCommand(mockNoteService, mockFileSystemService, mockEditorService);
@@ -349,7 +357,7 @@ describe('SeeCommand', () => {
         setTimeout(() => element.props.onExit(), 10);
       }
       return {
-        waitUntilExit: vi.fn().mockResolvedValue(undefined)
+        waitUntilExit: vi.fn().mockResolvedValue(undefined),
       } as any;
     });
 
@@ -376,7 +384,7 @@ describe('SeeCommand', () => {
         setTimeout(() => element.props.onExit(), 10);
       }
       return {
-        waitUntilExit: vi.fn().mockResolvedValue(undefined)
+        waitUntilExit: vi.fn().mockResolvedValue(undefined),
       } as any;
     });
 
@@ -390,7 +398,7 @@ describe('SeeCommand', () => {
     expect(mockEditorService.openFile).not.toHaveBeenCalled();
   });
 
-  test('should navigate to today\'s note even if it does not exist yet', async () => {
+  test("should navigate to today's note even if it does not exist yet", async () => {
     process.env.MANDA_DIR = '/test/notes';
 
     // Mock file system to simulate existing notes
@@ -417,7 +425,7 @@ describe('SeeCommand', () => {
         setTimeout(() => element.props.onExit(), 10);
       }
       return {
-        waitUntilExit: vi.fn().mockResolvedValue(undefined)
+        waitUntilExit: vi.fn().mockResolvedValue(undefined),
       } as any;
     });
 
@@ -430,6 +438,4 @@ describe('SeeCommand', () => {
     // Should have navigated to today's note even though it doesn't exist
     expect(navigateSpy).toHaveBeenCalledWith(new Date('2025-11-24T00:00:00'));
   });
-
-
 });
