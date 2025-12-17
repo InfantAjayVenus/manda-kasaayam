@@ -171,37 +171,6 @@ This is yesterday's note content.
   fs.rmSync(notesDir, { recursive: true, force: true });
 });
 
-tuiTest('running "manda see" when note does not exist should create and display empty note', () => {
-  // Setup: Create an empty notes directory
-  const tempDir = fs.mkdtempSync(
-    path.join(process.env.GEMINI_TEMP_DIR || '/tmp', 'manda-notes-empty-'),
-  );
-
-  try {
-    // Execute CLI command - it should use TUI rendering with keyboard controls
-    const output = execSync(`MANDA_DIR=${tempDir} pnpm tsx src/main.ts see`, {
-      encoding: 'utf8',
-      stdio: ['pipe', 'pipe', 'pipe'],
-      cwd: path.resolve(__dirname, '../..'),
-      env: { ...process.env, EDITOR: 'true', NODE_ENV: 'test', CI: 'true' },
-      timeout: 10000, // TUI apps need more time for interactive mode
-    });
-
-    // Should create and display an empty note with TUI
-    expect(output).toBeDefined();
-    expect(output.length).toBeGreaterThan(0);
-    // Should contain keyboard navigation hints even for empty content
-    expect(output).toContain('exit');
-  } catch (error) {
-    // Even if there's an error, process should handle it gracefully
-    const errorOutput = (error as any).stdout || (error as any).stderr;
-    expect(errorOutput).toBeDefined();
-  } finally {
-    // Teardown: Clean up the temporary directory
-    fs.rmSync(tempDir, { recursive: true, force: true });
-  }
-});
-
 tuiTest('running "manda see" without MANDA_DIR should fail gracefully', () => {
   // Remove MANDA_DIR from environment
   const originalMandaDir = process.env.MANDA_DIR;

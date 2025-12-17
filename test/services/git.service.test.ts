@@ -85,15 +85,12 @@ describe('GitService', () => {
   });
 
   test('getCurrentTimestampCommitMessage should return formatted timestamp', () => {
-    // Mock Date to return a fixed date
-    const fixedDate = new Date('2025-11-19T10:30:45.123Z');
+    // Mock Date to return a fixed local date (avoid timezone issues)
+    const fixedDate = new Date(2025, 10, 19, 10, 30, 45); // Nov 19, 2025, 10:30:45 local time
     vi.useFakeTimers();
     vi.setSystemTime(fixedDate);
 
     const message = gitService.getCurrentTimestampCommitMessage();
-
-    console.log('Expected: 2025-11-19 10:30:45');
-    console.log('Actual:', message);
 
     expect(message).toBe('2025-11-19 10:30:45'); // Matches the fake timer setting
 
