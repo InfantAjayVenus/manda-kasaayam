@@ -3,7 +3,7 @@
  */
 import path from 'path';
 import { AppConfig, formatNoteDate } from '../config/index.js';
-import { FileSystemService } from '../services/file-system.service.js';
+import type { FileSystemService } from '../services/file-system.service.js';
 
 /**
  * Generates the note file path for a given date

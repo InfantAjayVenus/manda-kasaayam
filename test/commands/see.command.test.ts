@@ -4,7 +4,6 @@ import { NoteService } from '../../src/domain/note.service.js';
 import { FileSystemService } from '../../src/services/file-system.service.js';
 import { EditorService } from '../../src/services/editor.service.js';
 import { render } from 'ink';
-import { findNotePathForDate } from '../../src/utils/fileUtils.js';
 
 vi.mock('../../src/domain/note.service.js');
 vi.mock('../../src/services/file-system.service.js');
@@ -14,15 +13,6 @@ vi.mock('ink', () => ({
   render: vi.fn(),
   useStdin: vi.fn(() => ({ stdin: null, setRawMode: vi.fn() })),
 }));
-
-// Mock process.stdout.write
-const mockStdoutWrite = vi.spyOn(process.stdout, 'write').mockImplementation(() => true);
-
-// Mock process.exit
-const mockExit = vi.spyOn(process, 'exit').mockImplementation(() => {
-  // Do nothing in tests - prevent actual exit
-  return undefined as never;
-});
 
 describe('SeeCommand', () => {
   let mockNoteService: NoteService;
