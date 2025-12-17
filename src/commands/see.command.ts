@@ -93,12 +93,13 @@ export class SeeCommand extends BaseCommand {
     const notePath = getNotePathForDate(currentDate);
     const title = formatDateForTitle(currentDate);
 
-    // Check if the note file exists
-    const exists = await this.fileSystemService.fileExists(notePath);
+    // Find the actual note path (checking both flat and organized locations)
+    const actualNotePath = await findNotePathForDate(currentDate, this.fileSystemService);
 
     let content = '';
-    if (exists) {
-      content = await this.fileSystemService.readFile(notePath);
+    if (actualNotePath) {
+      // Read from the actual existing note
+      content = await this.fileSystemService.readFile(actualNotePath);
     } else {
       // Create empty note if it doesn't exist
       await this.noteService.ensureNoteExists(notePath);

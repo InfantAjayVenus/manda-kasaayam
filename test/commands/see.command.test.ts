@@ -1,13 +1,15 @@
-import { test, expect, describe, vi, beforeEach, afterEach } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { SeeCommand } from '../../src/commands/see.command.js';
 import { NoteService } from '../../src/domain/note.service.js';
 import { FileSystemService } from '../../src/services/file-system.service.js';
 import { EditorService } from '../../src/services/editor.service.js';
 import { render } from 'ink';
+import { findNotePathForDate } from '../../src/utils/fileUtils.js';
 
 vi.mock('../../src/domain/note.service.js');
 vi.mock('../../src/services/file-system.service.js');
 vi.mock('../../src/services/editor.service.js');
+vi.mock('../../src/utils/fileUtils.js');
 
 vi.mock('ink', () => ({
   render: vi.fn(),
@@ -87,19 +89,29 @@ describe('SeeCommand', () => {
   test('should check if note file exists', async () => {
     process.env.MANDA_DIR = '/test/notes';
 
+    // Mock findNotePathForDate to return organized path
+    vi.mocked(findNotePathForDate).mockResolvedValue('/test/notes/2025/11/2025-11-25.md');
+
     const command = new SeeCommand(mockNoteService, mockFileSystemService, mockEditorService);
     await command.execute();
 
-    expect(mockFileSystemService.fileExists).toHaveBeenCalledWith('/test/notes/2025-11-25.md');
+    expect(mockFileSystemService.readFile).toHaveBeenCalledWith(
+      '/test/notes/2025/11/2025-11-25.md',
+    );
   });
 
   test('should read note content', async () => {
     process.env.MANDA_DIR = '/test/notes';
 
+    // Mock findNotePathForDate to return organized path
+    vi.mocked(findNotePathForDate).mockResolvedValue('/test/notes/2025/11/2025-11-25.md');
+
     const command = new SeeCommand(mockNoteService, mockFileSystemService, mockEditorService);
     await command.execute();
 
-    expect(mockFileSystemService.readFile).toHaveBeenCalledWith('/test/notes/2025-11-25.md');
+    expect(mockFileSystemService.readFile).toHaveBeenCalledWith(
+      '/test/notes/2025/11/2025-11-25.md',
+    );
   });
 
   test('should create empty note when file does not exist', async () => {
@@ -159,24 +171,32 @@ describe('SeeCommand', () => {
   test("should display yesterday's note when --yester option is used", async () => {
     process.env.MANDA_DIR = '/test/notes';
 
+    // Mock findNotePathForDate to return organized path for yesterday
+    vi.mocked(findNotePathForDate).mockResolvedValue('/test/notes/2025/11/2025-11-24.md');
+
     const command = new SeeCommand(mockNoteService, mockFileSystemService, mockEditorService);
 
     await command.execute({ yester: true });
 
-    // Now it should check for yesterday's note
-    expect(mockFileSystemService.fileExists).toHaveBeenCalledWith('/test/notes/2025-11-24.md');
-    expect(mockFileSystemService.readFile).toHaveBeenCalledWith('/test/notes/2025-11-24.md');
+    // Now it should read from the organized path
+    expect(mockFileSystemService.readFile).toHaveBeenCalledWith(
+      '/test/notes/2025/11/2025-11-24.md',
+    );
   });
 
   test('should display note for specific date when --date option is used', async () => {
     process.env.MANDA_DIR = '/test/notes';
 
+    // Mock findNotePathForDate to return organized path for the specific date
+    vi.mocked(findNotePathForDate).mockResolvedValue('/test/notes/2025/11/2025-11-15.md');
+
     const command = new SeeCommand(mockNoteService, mockFileSystemService, mockEditorService);
     await command.execute({ date: '2025-11-15' });
 
-    // Should check for the specific date note
-    expect(mockFileSystemService.fileExists).toHaveBeenCalledWith('/test/notes/2025-11-15.md');
-    expect(mockFileSystemService.readFile).toHaveBeenCalledWith('/test/notes/2025-11-15.md');
+    // Should read from the organized path
+    expect(mockFileSystemService.readFile).toHaveBeenCalledWith(
+      '/test/notes/2025/11/2025-11-15.md',
+    );
   });
 
   test('should not navigate past today when using next navigation', async () => {
@@ -192,7 +212,6 @@ describe('SeeCommand', () => {
     const command = new SeeCommand(mockNoteService, mockFileSystemService, mockEditorService);
 
     // Mock the render to capture navigation calls
-    const navigationCalls: string[] = [];
     vi.mocked(render).mockImplementation((element: any) => {
       if (element?.props?.onNavigateNext) {
         // Store the navigation function to test it
