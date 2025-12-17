@@ -1,6 +1,6 @@
 # மண்ட கசாயம்
 
-> ஆங்கில பதிப்புக்கு [README.en.md](./README.en.md) பார்க்கவும்
+> English [README.en.md](./README.en.md)
 
 **மண்ட கசாயம்** என்பது தினசரி குறிப்புகளை தானியங்கு ஒழுங்கமைப்பு மற்றும் பணி கண்காணிப்புடன் நிர்வகிக்கும் முனைய பயனர் இடைமுகம் (TUI) பயன்பாடாகும். இது உங்கள் குறிப்புகளை சுத்தமாகவும் ஒழுங்காகவும் வைத்திருக்க உதவுகிறது, மேலும் முடிக்கப்படாத பணிகளை ஒருபோதும் இழக்காமல் இருக்க உறுதி செய்கிறது.
 
@@ -297,12 +297,12 @@ node dist/main.js --help
 
 ```bash
 # உள்ளூர் தொகுப்பை சோதிக்கவும்
-./test-cli.sh
+./docs/test-cli.sh
 
 # அல்லது கைமுறையாக சோதிக்கவும்
 npm pack
 mkdir test-install && cd test-install
-pnpm add ../manda-kasaayam-1.0.0.tgz
+pnpm add ./docs/manda-kasaayam-1.0.0.tgz
 npx manda --help
 cd .. && rm -rf test-install
 ```
@@ -417,7 +417,7 @@ src/
 ## தொடர்புடைய ஆவணங்கள்
 
 - [AGENTS.md](./AGENTS.md) - வளர்ச்சி முறை மற்றும் TDD அணுகுமுறை
-- [DEVELOPMENT.md](./DEVELOPMENT.md) - விரிவான வளர்ச்சி அமைப்பு
+- [DEVELOPMENT.md](./docs/DEVELOPMENT.md) - விரிவான வளர்ச்சி அமைப்பு
 - [GITHUB_ACTIONS_SETUP.md](./GITHUB_ACTIONS_SETUP.md) - CI/CD அமைப்பு வழிகாட்டி
 - [INSTALL.md](./INSTALL.md) - நிறுவல் சரிசெய்தல்
-- [REBUILD.md](./REBUILD.md) - மறு உருவாக்க வழிமுறைகள்
+- [REBUILD.md](./docs/REBUILD.md) - மறு உருவாக்க வழிமுறைகள்

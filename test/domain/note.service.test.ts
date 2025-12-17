@@ -514,7 +514,7 @@ Some notes.`;
 
     test('should replace last timestamp when there is no content after it', async () => {
       vi.useFakeTimers();
-      vi.setSystemTime(new Date('2025-11-19T14:30:00Z'));
+      vi.setSystemTime(new Date(2025, 10, 19, 14, 30, 0)); // Local time to avoid timezone issues
 
       vi.mocked(mockFileSystemService.fileExists).mockResolvedValue(true);
       vi.mocked(mockFileSystemService.readFile).mockResolvedValue('# Note\n[10:30]');
@@ -526,11 +526,13 @@ Some notes.`;
         '/notes/2025-11-19.md',
         '# Note\n[14:30]',
       );
+
+      vi.useRealTimers();
     });
 
     test('should replace last timestamp when there is only whitespace after it', async () => {
       vi.useFakeTimers();
-      vi.setSystemTime(new Date('2025-11-19T14:30:00Z'));
+      vi.setSystemTime(new Date(2025, 10, 19, 14, 30, 0)); // Local time
 
       vi.mocked(mockFileSystemService.fileExists).mockResolvedValue(true);
       vi.mocked(mockFileSystemService.readFile).mockResolvedValue('# Note\n[10:30]\n   \n  ');
@@ -542,11 +544,13 @@ Some notes.`;
         '/notes/2025-11-19.md',
         '# Note\n[14:30]\n   \n  ',
       );
+
+      vi.useRealTimers();
     });
 
     test('should replace last timestamp when it is followed only by newline', async () => {
       vi.useFakeTimers();
-      vi.setSystemTime(new Date('2025-11-19T14:30:00Z'));
+      vi.setSystemTime(new Date(2025, 10, 19, 14, 30, 0)); // Local time
 
       vi.mocked(mockFileSystemService.fileExists).mockResolvedValue(true);
       vi.mocked(mockFileSystemService.readFile).mockResolvedValue('# Note\n[10:30]\n');
@@ -558,11 +562,13 @@ Some notes.`;
         '/notes/2025-11-19.md',
         '# Note\n[14:30]\n',
       );
+
+      vi.useRealTimers();
     });
 
     test('should append new timestamp when there is content after last timestamp', async () => {
       vi.useFakeTimers();
-      vi.setSystemTime(new Date('2025-11-19T14:30:00Z'));
+      vi.setSystemTime(new Date(2025, 10, 19, 14, 30, 0)); // Local time
 
       vi.mocked(mockFileSystemService.fileExists).mockResolvedValue(true);
       vi.mocked(mockFileSystemService.readFile).mockResolvedValue(
@@ -576,11 +582,13 @@ Some notes.`;
         '/notes/2025-11-19.md',
         '# Note\n[10:30]\nSome content here\n[14:30]\n',
       );
+
+      vi.useRealTimers();
     });
 
     test('should replace the last timestamp when there are multiple timestamps and no content after the last one', async () => {
       vi.useFakeTimers();
-      vi.setSystemTime(new Date('2025-11-19T14:30:00Z'));
+      vi.setSystemTime(new Date(2025, 10, 19, 14, 30, 0)); // Local time
 
       vi.mocked(mockFileSystemService.fileExists).mockResolvedValue(true);
       vi.mocked(mockFileSystemService.readFile).mockResolvedValue(
@@ -594,11 +602,13 @@ Some notes.`;
         '/notes/2025-11-19.md',
         '# Note\n[09:00]\nMorning content\n[14:30]',
       );
+
+      vi.useRealTimers();
     });
 
     test('should append new timestamp when there are multiple timestamps with content after the last one', async () => {
       vi.useFakeTimers();
-      vi.setSystemTime(new Date('2025-11-19T14:30:00Z'));
+      vi.setSystemTime(new Date(2025, 10, 19, 14, 30, 0)); // Local time
 
       vi.mocked(mockFileSystemService.fileExists).mockResolvedValue(true);
       vi.mocked(mockFileSystemService.readFile).mockResolvedValue(
@@ -612,6 +622,8 @@ Some notes.`;
         '/notes/2025-11-19.md',
         '# Note\n[09:00]\nMorning content\n[10:30]\nAfternoon content\n[14:30]\n',
       );
+
+      vi.useRealTimers();
     });
   });
 

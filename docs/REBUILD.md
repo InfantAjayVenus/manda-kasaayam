@@ -6,18 +6,19 @@ During development, use `pnpm start` - it runs TypeScript directly, no rebuild n
 
 ## When Do I Need to Rebuild?
 
-| Scenario | Rebuild? | Command |
-|----------|----------|---------|
-| 💻 Developing & testing code | ❌ **NO** | `pnpm start` |
-| 🧪 Running tests | ❌ **NO** | `pnpm test` |
-| 📝 Editing source files | ❌ **NO** | Just save & run `pnpm start` |
-| 🔍 Testing global `manda` command | ✅ **YES** | `pnpm build` (once) |
-| 📦 Before publishing to npm | ✅ **YES** | Auto-runs via `prepublishOnly` |
-| 🆕 First time installation | ✅ **YES** | `pnpm build && npm link` |
+| Scenario                          | Rebuild?   | Command                        |
+| --------------------------------- | ---------- | ------------------------------ |
+| 💻 Developing & testing code      | ❌ **NO**  | `pnpm start`                   |
+| 🧪 Running tests                  | ❌ **NO**  | `pnpm test`                    |
+| 📝 Editing source files           | ❌ **NO**  | Just save & run `pnpm start`   |
+| 🔍 Testing global `manda` command | ✅ **YES** | `pnpm build` (once)            |
+| 📦 Before publishing to npm       | ✅ **YES** | Auto-runs via `prepublishOnly` |
+| 🆕 First time installation        | ✅ **YES** | `pnpm build && npm link`       |
 
 ## Common Workflows
 
 ### Daily Development (99% of the time)
+
 ```bash
 # 1. Edit your code
 vim src/commands/manda.command.ts
@@ -29,6 +30,7 @@ MANDA_DIR=/tmp/test pnpm start
 ```
 
 ### Testing Global Installation (rarely)
+
 ```bash
 # 1. Edit your code
 vim src/commands/manda.command.ts
@@ -41,6 +43,7 @@ manda
 ```
 
 ### Running Tests (frequently)
+
 ```bash
 # No rebuild needed!
 pnpm test
@@ -70,6 +73,6 @@ mdev
 
 ✅ Use `pnpm start` for development  
 ✅ Use `pnpm test` for testing  
-✅ Use `pnpm build` only when needed  
+✅ Use `pnpm build` only when needed
 
 Save yourself time - skip the rebuild! 🚀

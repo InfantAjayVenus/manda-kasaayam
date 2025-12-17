@@ -15,6 +15,7 @@ import {
 import { getNotePathForDate } from '../utils/fileUtils.js';
 import { AppConfig } from '../config/index.js';
 import { InkRenderOptions } from '../types/index.js';
+import { logger } from '../utils/logger.js';
 
 export interface SeeOptions {
   yester?: boolean;
@@ -136,8 +137,8 @@ export class SeeCommand extends BaseCommand {
         .sort((a: Date, b: Date) => a.getTime() - b.getTime());
 
       return dates.length > 0 ? dates[0] : null;
-    } catch (_error) {
-      // eslint-disable-line @typescript-eslint/no-unused-vars
+    } catch (error) {
+      logger.warn(error);
       return null;
     }
   }
