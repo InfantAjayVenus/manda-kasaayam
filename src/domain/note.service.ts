@@ -1,5 +1,6 @@
 import path from 'path';
 import { FileSystemService } from '../services/file-system.service.js';
+import { logger } from '../utils/logger.js';
 
 export class NoteService {
   constructor(private fileSystemService: FileSystemService) {}
@@ -90,8 +91,8 @@ export class NoteService {
           processedDates,
         );
       }
-    } catch (_error) {
-      // eslint-disable-line @typescript-eslint/no-unused-vars
+    } catch (error) {
+      logger.info(error);
       // If there's an error reading yesterday's note, just skip it
       // This ensures the note creation doesn't fail
     }
@@ -201,8 +202,8 @@ export class NoteService {
                 processedDates,
               );
             }
-          } catch (_error) {
-            // eslint-disable-line @typescript-eslint/no-unused-vars
+          } catch (error) {
+            logger.info(error);
             // Ignore errors reading linked files
           }
         }
