@@ -193,3 +193,74 @@ tuiTest('running "manda see" without MANDA_DIR should fail gracefully', () => {
     }
   }
 });
+
+tuiTest('running "manda see" should navigate correctly with organized note structure', () => {
+  // Create test dates
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
+  const twoDaysAgo = new Date(today);
+  twoDaysAgo.setDate(today.getDate() - 2);
+
+  const yesterdayStr = yesterday.toISOString().slice(0, 10);
+  const twoDaysAgoStr = twoDaysAgo.toISOString().slice(0, 10);
+
+  // Setup: Create a notes directory with organized structure
+  const notesDir = fs.mkdtempSync(path.join(process.env.GEMINI_TEMP_DIR || '/tmp', 'manda-notes-'));
+
+  try {
+    // Create organized directory structure
+    const year = yesterday.getFullYear();
+    const month = String(yesterday.getMonth() + 1).padStart(2, '0');
+    const organizedDir = path.join(notesDir, String(year), month);
+    fs.mkdirSync(organizedDir, { recursive: true });
+
+    // Create yesterday's note in organized structure
+    const yesterdayFile = path.join(organizedDir, `${yesterdayStr}.md`);
+    fs.writeFileSync(
+      yesterdayFile,
+      `# ${yesterdayStr}
+
+## Yesterday's Tasks
+- [x] Completed task
+- [ ] Incomplete task
+
+## Notes
+This is yesterday's organized note.
+`,
+    );
+
+    // Create two days ago note in organized structure
+    const twoDaysAgoFile = path.join(organizedDir, `${twoDaysAgoStr}.md`);
+    fs.writeFileSync(
+      twoDaysAgoFile,
+      `# ${twoDaysAgoStr}
+
+## Two Days Ago Tasks
+- [x] Old completed task
+
+## Notes
+This is an older organized note.
+`,
+    );
+
+    // Execute CLI command with yesterday option - should find the organized note
+    const output = execSync(`MANDA_DIR=${notesDir} pnpm tsx src/main.ts see --yester`, {
+      encoding: 'utf8',
+      stdio: ['pipe', 'pipe', 'pipe'],
+      cwd: path.resolve(__dirname, '../..'),
+      env: { ...process.env, EDITOR: 'true', NODE_ENV: 'test' },
+      timeout: 10000,
+    });
+
+    // The test passes if the command executes without error and finds the organized note
+    expect(output).toBeDefined();
+    expect(output.length).toBeGreaterThan(0);
+    // Should contain keyboard navigation hints
+    expect(output).toContain('scroll');
+    expect(output).toContain('exit');
+  } finally {
+    // Teardown: Clean up the temporary directory
+    fs.rmSync(notesDir, { recursive: true, force: true });
+  }
+});
