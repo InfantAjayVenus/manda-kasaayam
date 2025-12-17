@@ -243,3 +243,49 @@ Tests should be robust and not fail due to environmental factors like time, time
 - **Hardcoded Values**: Use relative paths, avoid absolute dates/times, and prefer dynamic assertions over exact string matches where possible.
 
 If tests fail due to these issues, refactor them to be more resilient before committing.
+
+### Pull Request Format
+
+When creating pull requests, use the following structured format for the description to ensure clarity and consistency:
+
+```
+## Description
+
+[Brief overview of what the PR does and why it's needed]
+
+## Changes
+
+### [Emoji] Category Name
+- **Specific change**: Description of what was changed and why.
+- **Another change**: Additional details.
+
+### [Emoji] Another Category
+- **Change details**: More information.
+
+## Technical Details
+
+- **Implementation notes**: Any technical decisions or complexities.
+- **Breaking changes**: If applicable.
+
+## Testing
+
+- **Test coverage**: What was tested.
+- **Manual testing**: If applicable.
+- **CI status**: Expected outcomes.
+
+## Related Issues
+
+- Closes #issue-number
+- Related to #issue-number
+```
+
+#### Category Emojis
+
+- 🧪 **Test**: Test-related changes
+- 🔧 **Code Quality**: Linting, refactoring, etc.
+- 📚 **Documentation**: Docs, comments, README
+- 🔄 **CI/CD**: Build, deployment, automation
+- ✨ **Features**: New functionality
+- 🐛 **Bug Fixes**: Bug resolutions
+- 📦 **Dependencies**: Package updates
+- 🎨 **UI/UX**: Interface changes
