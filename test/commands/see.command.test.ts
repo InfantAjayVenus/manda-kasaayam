@@ -4,7 +4,7 @@ import { NoteService } from '../../src/domain/note.service.js';
 import { FileSystemService } from '../../src/services/file-system.service.js';
 import { EditorService } from '../../src/services/editor.service.js';
 import { render } from 'ink';
-import { findNotePathForDate } from '../../src/utils/fileUtils.js';
+import { findNotePathForDate, getNotePathForDate } from '../../src/utils/fileUtils.js';
 
 vi.mock('../../src/domain/note.service.js');
 vi.mock('../../src/services/file-system.service.js');
@@ -38,6 +38,9 @@ describe('SeeCommand', () => {
     vi.mocked(mockFileSystemService.listDirectory).mockResolvedValue([]);
 
     vi.mocked(mockEditorService.openFile).mockResolvedValue(undefined);
+
+    // Mock fileUtils functions
+    vi.mocked(getNotePathForDate).mockReturnValue('/test/notes/2025-11-25.md');
 
     vi.mocked(render).mockImplementation((element: any) => {
       // Simulate calling onExit after a short delay to resolve the promise
@@ -80,6 +83,9 @@ describe('SeeCommand', () => {
   test('should ensure note file exists', async () => {
     process.env.MANDA_DIR = '/test/notes';
 
+    // Mock findNotePathForDate to return null so ensureNoteExists is called
+    vi.mocked(findNotePathForDate).mockResolvedValue(null);
+
     const command = new SeeCommand(mockNoteService, undefined, mockEditorService);
     await command.execute();
 
@@ -117,6 +123,9 @@ describe('SeeCommand', () => {
   test('should create empty note when file does not exist', async () => {
     process.env.MANDA_DIR = '/test/notes';
     vi.mocked(mockFileSystemService.fileExists).mockResolvedValue(false);
+
+    // Mock findNotePathForDate to return null so ensureNoteExists is called
+    vi.mocked(findNotePathForDate).mockResolvedValue(null);
 
     const command = new SeeCommand(mockNoteService, mockFileSystemService, mockEditorService);
     await command.execute();
@@ -325,12 +334,12 @@ describe('SeeCommand', () => {
   test('should find oldest note correctly', async () => {
     process.env.MANDA_DIR = '/test/notes';
 
-    // Mock fileExists to simulate organized note structure
-    // Use a date that's within the 1-year search range from today (2025-12-17)
-    vi.mocked(mockFileSystemService.fileExists).mockImplementation(async (path: string) => {
-      // Organized path for 2025-01-15 exists (oldest in search range)
-      if (path.includes('2025-01-15')) return true;
-      return false;
+    // Mock findNotePathForDate to return a path only for 2025-01-15
+    vi.mocked(findNotePathForDate).mockImplementation(async (date: Date) => {
+      if (date.getFullYear() === 2025 && date.getMonth() === 0 && date.getDate() === 15) {
+        return '/test/notes/2025/01/2025-01-15.md';
+      }
+      return null;
     });
 
     const command = new SeeCommand(mockNoteService, mockFileSystemService, mockEditorService);
@@ -342,8 +351,8 @@ describe('SeeCommand', () => {
   test('should return null when no notes exist', async () => {
     process.env.MANDA_DIR = '/test/notes';
 
-    // Mock fileExists to return false for all paths (no notes exist)
-    vi.mocked(mockFileSystemService.fileExists).mockResolvedValue(false);
+    // Mock findNotePathForDate to return null for all dates (no notes exist)
+    vi.mocked(findNotePathForDate).mockResolvedValue(null);
 
     const command = new SeeCommand(mockNoteService, mockFileSystemService, mockEditorService);
     const oldestDate = await (command as any).findOldestNote();
