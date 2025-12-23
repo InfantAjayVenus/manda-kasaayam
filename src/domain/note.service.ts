@@ -44,12 +44,16 @@ export class NoteService {
     const notesDir = path.dirname(todayNotePath);
     const incompleteTasks = await this.collectIncompleteTasksFromPreviousNotes(notesDir);
 
+    // Calculate today's date
+    const today = new Date();
+    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    let content = `# ${todayStr}\n\n`;
+
     if (incompleteTasks.length === 0) {
-      return '';
+      return content;
     }
 
     // Format the tasks with links to source notes
-    let content = '';
     for (const [date, tasks] of incompleteTasks) {
       content += `[${date}](${date}.md)\n\n`;
       for (const task of tasks) {
