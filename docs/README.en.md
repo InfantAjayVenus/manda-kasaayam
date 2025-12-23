@@ -190,7 +190,6 @@ notes/
 [2025-11-28](2025-11-28.md)
 
 - [ ] Incomplete task from yesterday
-- [x] Completed task from yesterday
 
 ---
 
