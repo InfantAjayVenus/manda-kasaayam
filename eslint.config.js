@@ -69,9 +69,15 @@ export default [
   },
   {
     files: ['**/*.test.ts', '**/*.test.tsx'],
+    languageOptions: {
+      globals: {
+        setTimeout: 'readonly',
+      },
+    },
     rules: {
       'no-console': 'off', // Allow console in tests
       '@typescript-eslint/no-explicit-any': 'off', // Allow any in tests
+      '@typescript-eslint/no-non-null-assertion': 'off', // Allow non-null assertions in tests
     },
   },
   {

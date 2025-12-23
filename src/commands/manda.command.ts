@@ -7,11 +7,7 @@ export class MandaCommand extends BaseCommand {
   private editorService: EditorService;
   private gitService: GitService;
 
-  constructor(
-    noteService?: NoteService,
-    editorService?: EditorService,
-    gitService?: GitService,
-  ) {
+  constructor(noteService?: NoteService, editorService?: EditorService, gitService?: GitService) {
     super(noteService);
     this.editorService = editorService || new EditorService();
     this.gitService = gitService || new GitService();

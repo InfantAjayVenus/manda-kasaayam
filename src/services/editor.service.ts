@@ -2,7 +2,6 @@ import { execSync, spawn } from 'child_process';
 import { AppConfig, getEditorFromEnvironment, isTestEnvironment } from '../config/index.js';
 
 export class EditorService {
-
   private isCommandAvailable(command: string): boolean {
     try {
       execSync(`command -v ${command}`, { stdio: 'ignore' });

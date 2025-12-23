@@ -12,7 +12,7 @@ import {
   getYesterdayDate,
   isDateBeforeOrEqualToday,
 } from '../utils/dateUtils.js';
-import { getNotePathForDate } from '../utils/fileUtils.js';
+import { findNotePathForDate, getNotePathForDate } from '../utils/fileUtils.js';
 import { AppConfig } from '../config/index.js';
 import { InkRenderOptions } from '../types/index.js';
 import { logger } from '../utils/logger.js';
@@ -93,12 +93,13 @@ export class SeeCommand extends BaseCommand {
     const notePath = getNotePathForDate(currentDate);
     const title = formatDateForTitle(currentDate);
 
-    // Check if the note file exists
-    const exists = await this.fileSystemService.fileExists(notePath);
+    // Find the actual note path (checking both flat and organized locations)
+    const actualNotePath = await findNotePathForDate(currentDate, this.fileSystemService);
 
     let content = '';
-    if (exists) {
-      content = await this.fileSystemService.readFile(notePath);
+    if (actualNotePath) {
+      // Read from the actual existing note
+      content = await this.fileSystemService.readFile(actualNotePath);
     } else {
       // Create empty note if it doesn't exist
       await this.noteService.ensureNoteExists(notePath);
@@ -120,23 +121,25 @@ export class SeeCommand extends BaseCommand {
     if (!notesDir) {
       return null;
     }
-    try {
-      const files = await this.fileSystemService.listDirectory(notesDir);
-      const noteFiles = files.filter((file: string) => file.endsWith('.md'));
 
-      if (noteFiles.length === 0) {
-        return null;
+    try {
+      // Start from 1 year ago and work forward to find the first existing note
+      const startDate = new Date();
+      startDate.setFullYear(startDate.getFullYear() - 1);
+      startDate.setHours(0, 0, 0, 0);
+
+      const checkDate = new Date(startDate);
+      const maxDays = AppConfig.dates.maxSearchDays; // Search up to 365 days back
+
+      for (let i = 0; i < maxDays; i++) {
+        const existingPath = await findNotePathForDate(checkDate, this.fileSystemService);
+        if (existingPath) {
+          return new Date(checkDate);
+        }
+        checkDate.setDate(checkDate.getDate() + 1);
       }
 
-      // Extract dates from filenames and find the oldest
-      const dates = noteFiles
-        .map((file: string) => file.replace('.md', ''))
-        .filter((dateStr: string) => /^\d{4}-\d{2}-\d{2}$/.test(dateStr))
-        .map((dateStr: string) => new Date(dateStr + 'T00:00:00'))
-        .filter((date: Date) => !isNaN(date.getTime()))
-        .sort((a: Date, b: Date) => a.getTime() - b.getTime());
-
-      return dates.length > 0 ? dates[0] : null;
+      return null;
     } catch (error) {
       logger.warn(error);
       return null;
@@ -159,10 +162,9 @@ export class SeeCommand extends BaseCommand {
 
     // Look backwards for an existing note
     while (checkDate >= oldestNote) {
-      const notePath = getNotePathForDate(checkDate);
-      const exists = await this.fileSystemService.fileExists(notePath);
-      if (exists) {
-        return checkDate;
+      const existingPath = await findNotePathForDate(checkDate, this.fileSystemService);
+      if (existingPath) {
+        return new Date(checkDate);
       }
       checkDate.setDate(checkDate.getDate() - 1);
     }
