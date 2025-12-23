@@ -4,12 +4,7 @@
 
 These are behaviors described in the README but not yet implemented in the code. Prioritize based on user requirements.
 
-1. **Automatic Addition of Date Header**
-   - Description: New notes should start with a `# YYYY-MM-DD` header (e.g., `# 2025-11-29`).
-   - Status: Not implemented. Currently, notes are created without this header.
-   - Action: Modify `NoteService.generateNoteWithIncompleteTasks` to prepend the date header automatically.
-
-2. **Carrying Completed Tasks (Potential Mismatch)**
+1. **Carrying Completed Tasks (Potential Mismatch)**
    - Description: The README example shows completed tasks (`- [x]`) being carried alongside incomplete ones for historical context.
    - Status: Not required. Only incomplete tasks are required to be carried.
    - Action: Update the README example.
