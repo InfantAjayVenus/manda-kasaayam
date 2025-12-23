@@ -50,7 +50,7 @@ describe('Manda Command Integration Tests', () => {
     runMandaCommand();
 
     const content = await readNoteFile();
-    expect(content).toMatch(/^\[\d{2}:\d{2}\]\n$/);
+    expect(content).toMatch(/^# \d{4}-\d{2}-\d{2}\n\n\[\d{2}:\d{2}\]\n$/);
   });
 
   test('should append timestamp when note has content after last timestamp', async () => {
@@ -68,7 +68,6 @@ describe('Manda Command Integration Tests', () => {
     // Should have a new timestamp appended
     expect(content).toMatch(/\n\[\d{2}:\d{2}\]\n$/);
   });
-
   test('should replace last timestamp when there is no content after it', async () => {
     // Create initial note with timestamp at the end
     const notePath = path.join(notesDir, getTodayFileName());

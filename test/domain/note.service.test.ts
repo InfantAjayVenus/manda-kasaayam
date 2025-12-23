@@ -72,7 +72,7 @@ describe('NoteService', () => {
       expect(mockFileSystemService.fileExists).toHaveBeenCalledWith('/notes/2025-11-18.md');
       expect(mockFileSystemService.writeFile).toHaveBeenCalledWith(
         '/notes/2025-11-19.md',
-        '[2025-11-18](2025-11-18.md)\n\n- [ ] Incomplete task\n\n---\n\n',
+        '# 2025-11-19\n\n[2025-11-18](2025-11-18.md)\n\n- [ ] Incomplete task\n\n---\n\n',
       );
     });
 
@@ -123,6 +123,7 @@ Some notes here.`);
       expect(result).toContain('- [ ] Incomplete task 2');
       expect(result).not.toContain('- [x] Completed task');
       expect(result).toContain('---');
+      expect(result).toContain('# 2025-11-19');
     });
 
     test('should preserve existing date links when extracting tasks', async () => {
@@ -182,7 +183,7 @@ Some notes.`);
 
       const result = await (service as any).generateNoteWithIncompleteTasks('/notes/2025-11-19.md');
 
-      expect(result).toBe('');
+      expect(result).toBe('# 2025-11-19\n\n');
     });
 
     test("should return empty string when yesterday's note does not exist", async () => {
@@ -193,7 +194,7 @@ Some notes.`);
 
       const result = await (service as any).generateNoteWithIncompleteTasks('/notes/2025-11-19.md');
 
-      expect(result).toBe('');
+      expect(result).toBe('# 2025-11-19\n\n');
     });
   });
 

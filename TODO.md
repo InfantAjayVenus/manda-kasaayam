@@ -9,15 +9,10 @@ These are behaviors described in the README but not yet implemented in the code.
    - Status: Not implemented. Currently, notes are created without this header.
    - Action: Modify `NoteService.generateNoteWithIncompleteTasks` to prepend the date header automatically.
 
-2. **Consistent Previous-Day Link**
-   - Description: Every note should include a link to the previous day's note (e.g., `[2025-11-28](2025-11-28.md)`).
-   - Status: Partially implemented—only added when carrying incomplete tasks. Missing when no tasks are carried.
-   - Action: Update note generation to always include the previous-day link, even without tasks.
-
-3. **Carrying Completed Tasks (Potential Mismatch)**
+2. **Carrying Completed Tasks (Potential Mismatch)**
    - Description: The README example shows completed tasks (`- [x]`) being carried alongside incomplete ones for historical context.
-   - Status: Not implemented. Only incomplete tasks are carried.
-   - Action: Clarify if this is desired; if yes, extend `NoteService.collectIncompleteTasksFromPreviousNotes` to include completed tasks.
+   - Status: Not required. Only incomplete tasks are required to be carried.
+   - Action: Update the README example.
 
 ## Notes
 
