@@ -1,15 +1,16 @@
-# TODO: README vs Implementation Discrepancies
+# TODO
 
-## Unimplemented Features from docs/README.en.md
+## Basic working
 
-These are behaviors described in the README but not yet implemented in the code. Prioritize based on user requirements.
+- [ ] Upon exiting editor, a line separator should be appended to the end of the note
+- [ ] _Bug_: The `manda see` navigation skips to existing note when going backward (h), but walks through all the dates when going forward(l).
+- [ ] _Bug_: The `manda see` preview is miscalculating the window height. The scroll area is significantly larger than the actual window height.
+- [ ] _CI_: Should look into automated versioning and tagging.
 
-1. **Carrying Completed Tasks (Potential Mismatch)**
-   - Description: The README example shows completed tasks (`- [x]`) being carried alongside incomplete ones for historical context.
-   - Status: Not required. Only incomplete tasks are required to be carried.
-   - Action: Update the README example.
+## Lazy Mode
 
-## Notes
-
-- Other features (daily notes, organization, timestamps, TUI, preview, git) are fully implemented and aligned.
-- Review and update the README example if these features are not needed.
+- [ ] As a user, I'll have the sub-command `lazy` available, such that, when I invoke the command `manda lazy`, a TUI like lazygit.
+- [ ] The TUI should have a main pane which shows the contents and a side pane which lists the dates of available notes
+- [ ] Navigating across the panes should be through numbers. 0 - main pane, 1 for dates list pane.
+- [ ] Navigation inside a pane should follow vim motions.
+- [ ] When user enters the key `e`, if the active content is today's, the editor should open. Otherwise a toast notification saying cannot edit older notes should be shown.
