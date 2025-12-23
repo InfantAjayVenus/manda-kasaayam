@@ -71,7 +71,7 @@ jobs:
       run: pnpm build
 
     - name: Ensure binary is executable
-      run: chmod +x dist/main.js
+      run: chmod +x dist/src/main.js
       
     - name: Publish to npm
       run: pnpm publish --no-git-checks --access public
