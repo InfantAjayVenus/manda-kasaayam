@@ -9,10 +9,11 @@
 - **Daily Notes:** Creates a new markdown file for each day in `YYYY-MM-DD.md` format
 - **Automatic Organization:** Moves previous day's notes to organized `YYYY/MM/` directory structure
 - **Task Continuity:** Automatically carries forward incomplete tasks (`- [ ]`) from previous days
-- **Timestamp Tracking:** Adds timestamps `[HH:MM]` each time you open a note
+- **Recursive Task Carrying:** Pulls incomplete tasks from all historical notes by following date links
+- **Smart Timestamps:** Updates the latest timestamp when reopening notes; adds separators after edits
 - **Interactive TUI:** Terminal-based interface for managing tasks with `manda do`
 - **Markdown Preview:** View your notes without opening an editor with `manda see`
-- **Git Integration:** Automatically commits and pushes changes to your notes repository
+- **Optional Git Integration:** Can automatically commit and push changes (can be disabled)
 - **Navigation Support:** Browse through notes with keyboard navigation in preview mode
 
 ## Installation
@@ -94,6 +95,18 @@ Launch the interactive task manager:
 manda do
 ```
 
+Manage tasks from yesterday:
+
+```bash
+manda do --yester
+```
+
+Manage tasks for a specific date:
+
+```bash
+manda do --date 2025-11-25
+```
+
 **Task Manager Controls:**
 
 - `↑↓` or `j/k`: Navigate between tasks
@@ -130,6 +143,8 @@ manda see --date 2025-11-25
 - `g/G`: Jump to top/bottom
 - `q` or `ESC`: Exit
 
+Navigation works between existing notes only.
+
 ### Help
 
 Show help information:
@@ -151,6 +166,7 @@ Set these environment variables in your `.zshrc`, `.bashrc`, or shell profile:
 - `EDITOR`: Your preferred text editor (default: `nvim`)
 - `BRANCH`: Git branch name (default: `main`)
 - `REMOTE`: Git remote name (default: `origin`)
+- `GIT_ENABLED`: Set to `false` to disable automatic git commits and pushes (default: `true`)
 
 **Example:**
 
@@ -190,7 +206,6 @@ notes/
 [2025-11-28](2025-11-28.md)
 
 - [ ] Incomplete task from yesterday
-- [x] Completed task from yesterday
 
 ---
 
@@ -228,12 +243,12 @@ The app automatically adds timestamps when you open a note:
 ## Workflow
 
 1. **Start Your Day:** Run `manda` to open today's note
-2. **Review Tasks:** Incomplete tasks from yesterday are automatically included
-3. **Add Timestamps:** Each time you open the note, a timestamp is added
+2. **Review Tasks:** Incomplete tasks from all previous notes are automatically included
+3. **Add Timestamps:** Latest timestamp updates when reopening; separators added after edits
 4. **Track Progress:** Use `manda do` to interactively manage tasks
 5. **Preview Notes:** Use `manda see` to quickly review notes without editing
-6. **Automatic Organization:** Previous day's notes are moved to `YYYY/MM/` directories
-7. **Git Sync:** All changes are automatically committed and pushed
+6. **Automatic Organization:** Yesterday's note is moved to `YYYY/MM/` directories
+7. **Git Sync:** Changes are automatically committed and pushed (if enabled)
 
 ## Development
 
