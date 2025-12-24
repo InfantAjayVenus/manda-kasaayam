@@ -41,6 +41,17 @@
     "url": "https://github.com/yourusername/manda-kasaayam.git"
   },
   "packageManager": "pnpm@9.15.1+sha512.1acb565e6193efbebda772702950469150cf12bcc764262e7587e71d19dc98a423dff9536e57ea44c49bdf790ff694e83c27be5faa23d67e0c033b583be4bfcf",
+  "release": {
+    "branches": [
+      "main"
+    ],
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/npm",
+      "@semantic-release/github"
+    ]
+  },
   "devDependencies": {
     "@types/marked": "^6.0.0",
     "@types/node": "^24.10.1",
@@ -53,7 +64,8 @@
     "@typescript-eslint/parser": "^8.48.0",
     "eslint": "^9.39.1",
     "lint-staged": "^16.2.7",
-    "prettier": "^3.7.3"
+    "prettier": "^3.7.3",
+    "semantic-release": "^24.0.0"
   },
   "dependencies": {
     "commander": "^14.0.2",
