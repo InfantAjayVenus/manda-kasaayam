@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { Box, Text, useInput } from 'ink';
+import { Box, Text, useInput, useStdout } from 'ink';
 import { marked } from 'marked';
 
 interface MarkdownPreviewProps {
@@ -42,6 +42,7 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
   onEdit,
 }) => {
   const [offset, setOffset] = useState(0);
+  const { stdout } = useStdout();
 
   // Configure marked for task lists
   marked.setOptions({
@@ -92,15 +93,15 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
     } else if (key.pageUp) {
       setOffset(prev => Math.max(0, prev - 10));
     } else if (key.pageDown) {
-      setOffset(prev => prev + 10);
+      setOffset(prev => prev + Math.floor(visibleHeight / 2));
     } else if (input === 'g') {
       setOffset(0);
     } else if (input === 'G') {
-      setOffset(Math.max(0, tokens.length - 20));
+      setOffset(Math.max(0, tokens.length - visibleHeight));
     } else if (key.ctrl && input === 'd') {
-      setOffset(prev => prev + 15);
+      setOffset(prev => prev + Math.floor(visibleHeight / 2));
     } else if (key.ctrl && input === 'u') {
-      setOffset(prev => Math.max(0, prev - 15));
+      setOffset(prev => Math.max(0, prev - Math.floor(visibleHeight / 2)));
     }
   });
 
@@ -447,10 +448,16 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
     [highlightCode],
   );
 
-  // Calculate visible content based on offset
-  const visibleTokens = tokens.slice(offset);
-  const hasMore = offset + visibleTokens.length < tokens.length;
-  const scrollPercentage = tokens.length > 0 ? Math.round((offset / tokens.length) * 100) : 0;
+  // Calculate visible height: terminal rows minus header (if any) minus footer
+  const headerHeight = title ? 3 : 0;
+  const footerHeight = 2;
+  const visibleHeight = Math.max(1, (stdout?.rows || 24) - headerHeight - footerHeight);
+
+  // Calculate visible content based on offset, limited to visible height
+  const visibleTokens = tokens.slice(offset, offset + visibleHeight);
+  const hasMore = offset + visibleHeight < tokens.length;
+  const scrollPercentage =
+    tokens.length > 0 ? Math.round((offset / Math.max(1, tokens.length - visibleHeight)) * 100) : 0;
 
   return (
     <Box flexDirection="column" height="100%">
