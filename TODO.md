@@ -2,9 +2,12 @@
 
 ## Basic working
 
-- [ ] _CI_: Should look into automated versioning and tagging.
-- [ ] _Bug_: The `manda see` navigation skips to existing note when going backward (h), but walks through all the dates when going forward(l).
-- [ ] _Bug_: The `manda see` preview is miscalculating the window height. The scroll area is significantly larger than the actual window height.
+- [x] _CI_: Should look into automated versioning and tagging.
+  - https://github.com/InfantAjayVenus/manda-kasaayam/pull/13
+- [x] _Bug_: The `manda see` navigation skips to existing note when going backward (h), but walks through all the dates when going forward(l).
+  - https://github.com/InfantAjayVenus/manda-kasaayam/pull/14
+- [x] _Bug_: The `manda see` preview is miscalculating the window height. The scroll area is significantly larger than the actual window height.
+  - https://github.com/InfantAjayVenus/manda-kasaayam/pull/15
 
 ## Lazy Mode
 
