@@ -86,13 +86,6 @@ export class SeeCommand extends BaseCommand {
         // Open the note in editor
         const notePath = getNotePathForDate(currentDate);
         await this.editorService.openFile(notePath);
-
-        // Append line separator to the end of the note if not already present
-        const content = await this.fileSystemService.readFile(notePath);
-        if (!content.endsWith('\n---\n\n')) {
-          const updatedContent = content + (content.endsWith('\n') ? '' : '\n') + '---\n\n';
-          await this.fileSystemService.writeFile(notePath, updatedContent);
-        }
       }
       // Note: Editing is disabled for old notes - no action needed when allowEditNotes is false
     };
