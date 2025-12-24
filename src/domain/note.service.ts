@@ -393,14 +393,15 @@ export class NoteService {
     }
 
     // Check if content was added after the last timestamp
-    const lastTimestampIndex = afterContent.lastIndexOf(lastTimestampAfter);
+    const lastTimestampIndexAfter = afterContent.lastIndexOf(lastTimestampAfter);
     const contentAfterLastTimestamp = afterContent.substring(
-      lastTimestampIndex + lastTimestampAfter.length,
+      lastTimestampIndexAfter + lastTimestampAfter.length,
     );
 
     // Check if there's meaningful content after the last timestamp that wasn't there before
+    const lastTimestampIndexBefore = beforeContent.lastIndexOf(lastTimestampBefore);
     const contentAfterBefore = beforeContent.substring(
-      lastTimestampIndex + lastTimestampAfter.length,
+      lastTimestampIndexBefore + lastTimestampBefore.length,
     );
 
     return contentAfterLastTimestamp.trim().length > contentAfterBefore.trim().length;
