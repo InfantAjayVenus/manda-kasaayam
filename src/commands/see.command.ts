@@ -5,13 +5,7 @@ import { EditorService } from '../services/editor.service.js';
 import { render } from 'ink';
 import React from 'react';
 import MarkdownPreview from '../components/MarkdownPreview.js';
-import {
-  formatDateForTitle,
-  getNextDate,
-  getTodayForTests,
-  getYesterdayDate,
-  isDateBeforeOrEqualToday,
-} from '../utils/dateUtils.js';
+import { formatDateForTitle, getTodayForTests, getYesterdayDate } from '../utils/dateUtils.js';
 import { findNotePathForDate, getNotePathForDate } from '../utils/fileUtils.js';
 import { AppConfig } from '../config/index.js';
 import { InkRenderOptions } from '../types/index.js';
@@ -74,9 +68,8 @@ export class SeeCommand extends BaseCommand {
     };
 
     const navigateNext = async () => {
-      const nextDate = getNextDate(currentDate);
-      if (isDateBeforeOrEqualToday(nextDate)) {
-        // Allow navigation to any date before or equal to today, creating the note if needed
+      const nextDate = await this.findNextValidNote(currentDate);
+      if (nextDate) {
         await navigateToDate(nextDate);
       }
     };
@@ -167,6 +160,28 @@ export class SeeCommand extends BaseCommand {
         return new Date(checkDate);
       }
       checkDate.setDate(checkDate.getDate() - 1);
+    }
+
+    return null;
+  }
+
+  private async findNextValidNote(currentDate: Date): Promise<Date | null> {
+    const checkDate = new Date(currentDate);
+    checkDate.setDate(checkDate.getDate() + 1);
+
+    // Don't go beyond today
+    const today = getTodayForTests();
+    if (checkDate > today) {
+      return null;
+    }
+
+    // Look forwards for an existing note
+    while (checkDate <= today) {
+      const existingPath = await findNotePathForDate(checkDate, this.fileSystemService);
+      if (existingPath) {
+        return new Date(checkDate);
+      }
+      checkDate.setDate(checkDate.getDate() + 1);
     }
 
     return null;
